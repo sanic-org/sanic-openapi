@@ -1,27 +1,32 @@
 from sanic import Sanic
 from sanic.response import json
-from sanic_openapi import blueprint
+from sanic_openapi import swagger_blueprint, openapi_blueprint, doc
 
 app = Sanic()
-app.blueprint(blueprint)
+app.blueprint(openapi_blueprint)
+app.blueprint(swagger_blueprint)
+
+
+class Poop:
+    pieces = doc.Integer()
 
 
 class Butt:
-    """
-    :prop pet: Your Pet
-    """
-    pet: str
-
-    def test(self):
-        return None
+    cheeks = doc.Integer()
+    exports = doc.Object(Poop)
 
 
-@app.route("/test")
+class Status:
+    code = doc.Integer()
+    message = doc.String()
+
+
+@app.route("/test", methods=["POST"])
+@doc.consumes(Butt)
+@doc.produces(Status)
 async def test(request):
     """
     Things and stuff
-    :consumes: multipart/form-data Butt
-    :produces: application/json
     :param request:
     :return:
     """
