@@ -19,7 +19,10 @@ app.blueprint(openapi_blueprint)
 app.blueprint(swagger_blueprint)
 ```
 
-You'll now have a Swagger UI at the URL `/swagger`.  Your routes will be automatically categorized by their blueprints.
+You'll now have a Swagger UI at the URL `/swagger`.  
+Your routes will be automatically categorized by their blueprints.
+
+![Example Swagger UI](images/example_pet_store.PNG?raw=true "Swagger UI")
 
 ## Usage
 
