@@ -1,26 +1,39 @@
 import os
-from enum import Enum
+import re
+from itertools import repeat
 
 from sanic.blueprints import Blueprint
 from sanic.response import json
+from sanic.views import CompositionView
 
-from .doc import route_specs, RouteSpec, serialize_schema
+from .doc import route_specs, RouteSpec, serialize_schema, definitions
 from . import config
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-dir_path = os.path.abspath(dir_path + '/../swagger-ui')
+dir_path = os.path.abspath(dir_path + '/swagger-ui')
 
 openapi_blueprint = Blueprint('openapi', url_prefix='openapi')
 swagger_blueprint = Blueprint('swagger', url_prefix='swagger')
 
+swagger_blueprint.static('/', dir_path + '/index.html')
 swagger_blueprint.static('/', dir_path)
 
-_swagger = {}
+_spec = {}
+
+
+# Removes all null values from a dictionary
+def remove_nulls(dictionary, deep=True):
+    return {
+        k: remove_nulls(v, deep) if deep and type(v) is dict else v
+        for k, v in dictionary.items()
+        if v is not None
+    }
+
 
 @openapi_blueprint.listener('before_server_start')
-def build_swagger(app, loop):
-    _swagger['swagger'] = '2.0'
-    _swagger['info'] = {
+def build_spec(app, loop):
+    _spec['swagger'] = '2.0'
+    _spec['info'] = {
         "version": "1.0.0",
         "title": "Sanic Swagger",
         "description": "Thing and stuff",
@@ -33,6 +46,9 @@ def build_swagger(app, loop):
         #     "url": ""
         # }
     }
+    _spec['schemes'] = [
+        'http'
+    ]
 
     paths = {}
     for uri, route in app.router.routes_all.items():
@@ -48,34 +64,62 @@ def build_swagger(app, loop):
         # Methods
         # --------------------------------------------------------------- #
 
+        # Build list of methods and their handler functions
+        handler_type = type(route.handler)
+        if handler_type is CompositionView:
+            view = route.handler
+            method_handlers = view.handlers.items()
+        else:
+            method_handlers = zip(route.methods, repeat(route.handler))
+
         methods = {}
-        for _method in (route.methods or ['GET']):
-            method = {
-                "operationId": route_spec.operation or route.handler.__name__,
-                "parameters": []
-            }
-            if route_spec.summary:
-                method['summary'] = route_spec.summary
-            if route_spec.description:
-                method['description'] = route_spec.description
-            if method not in ('GET', 'DELETE'):
-                method['consumes'] = consumes_content_types
+        for _method, _handler in method_handlers:
+            endpoint = remove_nulls({
+                'operationId': route_spec.operation or _handler.__name__,
+                'summary': route_spec.summary,
+                'description': route_spec.description,
+                'consumes': consumes_content_types,
+                'produces': produces_content_types,
+                'parameters': [{
+                    **serialize_schema(parameter.cast),
+                    'required': True,
+                    'in': 'path',
+                    'name': parameter.name,
+                } for parameter in route.parameters],
+                'responses': {
+                    "200": {
+                        "description": None,
+                        "examples": None,
+                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
+                    }
+                },
+            })
+            if _method not in ('GET', 'DELETE'):
                 if route_spec.consumes:
-                    parameter = serialize_schema(route_spec.consumes)
-                    parameter['in'] = 'body'
-                    parameter['name'] = 'body'
-                    method['parameters'].append(parameter)
+                    endpoint['parameters'].append({
+                        **serialize_schema(route_spec.consumes),
+                        'in': 'body',
+                        'name': 'body',
+                    })
 
-            method['produces'] = produces_content_types
-            methods[_method.lower()] = method
+            methods[_method.lower()] = endpoint
 
-        paths[uri] = methods
+        uri_parsed = uri
+        for parameter in route.parameters:
+            uri_parsed = re.sub('<'+parameter.name+'.+?>', '{'+parameter.name+'}', uri_parsed)
 
-    _swagger['paths'] = paths
+        paths[uri_parsed] = methods
+
+    # --------------------------------------------------------------- #
+    # Definitions
+    # --------------------------------------------------------------- #
+    _spec['definitions'] = { obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+
+    _spec['paths'] = paths
 
 
-@openapi_blueprint.route('/swagger.json')
-def swagger(request):
-    return json(_swagger)
+@openapi_blueprint.route('/spec.json')
+def spec(request):
+    return json(_spec)
 
 
