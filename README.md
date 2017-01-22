@@ -32,7 +32,7 @@ from sanic_openapi import doc
 @doc.summary("Fetches a user by ID")
 @doc.produces({ "user": { "name": str, "id": int } })
 async def get_user(request, user_id):
-    return json({ "user": await Users.get(id=user_id) })
+    ...
 ```
 
 ### Model your input/output
@@ -56,25 +56,17 @@ async def get_garage(request):
         "cars": [{"make": "Nissan", "model": "370Z"}]
     })
 
-@app.put("/garage/car")
-@doc.summary("Adds a car to the garage")
-@doc.consumes({"car": Car})
-@doc.produces({"success": bool})
-async def test(request):
-    cars.append(request.json['car'])
-    return json({"success": True})
-
 ```
 
 ### Get more descriptive
 
 ```python
 class Car:
-    make = doc.String(description="Who made the car")
-    model = doc.String(description="Type of car.  This will vary by make")
-    year = doc.Integer(description="4-digit year of the car", required=False)
+    make = doc.String("Who made the car")
+    model = doc.String("Type of car.  This will vary by make")
+    year = doc.Integer("4-digit year of the car", required=False)
 
 class Garage:
-    spaces = doc.Integer(description="How many cars can fit in the garage")
+    spaces = doc.Integer("How many cars can fit in the garage")
     cars = doc.List(Car, description="All cars in the garage")
 ```
