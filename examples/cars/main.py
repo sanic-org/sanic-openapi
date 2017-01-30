@@ -1,3 +1,11 @@
+import sys
+import os
+import inspect
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+sys.path.insert(0, currentdir + '/../../')
+
+
 from sanic import Sanic
 from sanic_openapi import swagger_blueprint, openapi_blueprint
 from blueprints.car import blueprint as car_blueprint
