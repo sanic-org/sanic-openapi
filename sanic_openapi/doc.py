@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import date, datetime
 
 
 class Field:
@@ -36,11 +37,31 @@ class String(Field):
 
 
 class Boolean(Field):
-    pass
+    def serialize(self):
+        return {
+            "type": "boolean",
+            **super().serialize()
+        }
 
 
 class Tuple(Field):
     pass
+
+
+class Date(Field):
+    def serialize(self):
+        return {
+            "type": "date",
+            **super().serialize()
+        }
+
+
+class DateTime(Field):
+    def serialize(self):
+        return {
+            "type": "dateTime",
+            **super().serialize()
+        }
 
 
 class Dictionary(Field):
@@ -71,6 +92,7 @@ class List(Field):
             "items": items
         }
 
+
 definitions = {}
 
 
@@ -98,25 +120,12 @@ class Object(Field):
 
     def serialize(self):
         return {
+            "type": "object",
             "schema": {
                 "$ref": "#/definitions/{}".format(self.object_name)
             },
             **super().serialize()
         }
-
-
-
-class RouteSpec:
-    consumes = None
-    consumes_content_type = None
-    produces = None
-    produces_content_type = None
-    summary = None
-    description = None
-    operation = None
-
-
-types = {}
 
 
 def serialize_schema(schema):
@@ -138,6 +147,10 @@ def serialize_schema(schema):
             return String().serialize()
         elif schema is bool:
             return Boolean().serialize()
+        elif schema is date:
+            return Date().serialize()
+        elif schema is datetime:
+            return DateTime().serialize()
         else:
             return Object(schema).serialize()
 
@@ -154,16 +167,27 @@ def serialize_schema(schema):
 
     return {}
 
-# types = {}
-# def register_types(obj):
-#     obj_type = type(obj)
-#     if obj_type is type:
-#         types[obj] = True
-#     if issubclass(obj_type, Field):
-#         register_types(obj.types())
-#     if issubclass(obj_type, list):
-#         for sub_obj in obj:
-#             register_types(sub_obj)
+
+# --------------------------------------------------------------- #
+# Route Documenters
+# --------------------------------------------------------------- #
+
+
+class RouteSpec:
+    consumes = None
+    consumes_content_type = None
+    produces = None
+    produces_content_type = None
+    summary = None
+    description = None
+    operation = None
+    blueprint = None
+    tags = None
+
+    def __init__(self):
+        self.tags = []
+        super().__init__()
+
 
 route_specs = defaultdict(RouteSpec)
 
@@ -218,5 +242,12 @@ def produces(*args, content_type=None):
         if args:
             route_specs[func].produces = args[0] if len(args) == 1 else args
             route_specs[func].produces_content_type = content_type
+        return func
+    return inner
+
+
+def tag(name):
+    def inner(func):
+        route_specs[func].tags.append(name)
         return func
     return inner

@@ -7,10 +7,9 @@ from sanic.response import json
 from sanic.views import CompositionView
 
 from .doc import route_specs, RouteSpec, serialize_schema, definitions
-from . import config
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-dir_path = os.path.abspath(dir_path + '/swagger-ui')
+dir_path = os.path.abspath(dir_path + '/ui')
 
 openapi_blueprint = Blueprint('openapi', url_prefix='openapi')
 swagger_blueprint = Blueprint('swagger', url_prefix='swagger')
@@ -19,6 +18,7 @@ swagger_blueprint.static('/', dir_path + '/index.html')
 swagger_blueprint.static('/', dir_path)
 
 _spec = {}
+__version__ = '0.1.0'
 
 
 # Removes all null values from a dictionary
@@ -34,31 +34,37 @@ def remove_nulls(dictionary, deep=True):
 def build_spec(app, loop):
     _spec['swagger'] = '2.0'
     _spec['info'] = {
-        "version": "1.0.0",
-        "title": "Sanic Swagger",
-        "description": "Thing and stuff",
-        # "termsOfService": "",
-        # "contact": {
-        #     "email": ""
-        # },
-        # "license": {
-        #     "name": "",
-        #     "url": ""
-        # }
+        "version": app.config.get('API_VERSION', '1.0.0'),
+        "title": app.config.get('API_TITLE', 'API'),
+        "description": app.config.get('API_DESCRIPTION', ''),
+        "termsOfService": app.config.get('API_TERMS_OF_SERVICE'),
+        "contact": {
+            "email": app.config.get('API_CONTACT_EMAIL')
+        },
+        "license": {
+            "email": app.config.get('API_LICENSE_NAME'),
+            "url": app.config.get('API_LICENSE_URL')
+        }
     }
-    _spec['schemes'] = [
-        'http'
-    ]
+    _spec['schemes'] = app.config.get('API_SCHEMES', ['http'])
+
+    # --------------------------------------------------------------- #
+    # Blueprint Tags
+    # --------------------------------------------------------------- #
+
+    for blueprint in app.blueprints.values():
+        for route in blueprint.routes:
+            route_spec = route_specs[route.handler]
+            route_spec.blueprint = blueprint
+            if not route_spec.tags:
+                route_spec.tags.append(blueprint.name)
 
     paths = {}
     for uri, route in app.router.routes_all.items():
         if uri.startswith("/swagger") or uri.startswith("/openapi") \
-                or '<file_uri' in uri: #TODO: add static flag in sanic routes
+                or '<file_uri' in uri:
+                # TODO: add static flag in sanic routes
             continue
-
-        route_spec = route_specs.get(route.handler) or RouteSpec()
-        consumes_content_types = route_spec.consumes_content_type or config.CONSUMES_CONTENT_TYPE
-        produces_content_types = route_spec.produces_content_type or config.PRODUCES_CONTENT_TYPE
 
         # --------------------------------------------------------------- #
         # Methods
@@ -74,12 +80,19 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
+            route_spec = route_specs.get(_handler) or RouteSpec()
+            consumes_content_types = route_spec.consumes_content_type or \
+                app.config.get('API_CONSUMES_CONTENT_TYPE', 'application/json')
+            produces_content_types = route_spec.produces_content_type or \
+                app.config.get('API_PRODUCES_CONTENT_TYPE', 'application/json')
+
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or _handler.__name__,
                 'summary': route_spec.summary,
                 'description': route_spec.description,
                 'consumes': consumes_content_types,
                 'produces': produces_content_types,
+                'tags': route_spec.tags or None,
                 'parameters': [{
                     **serialize_schema(parameter.cast),
                     'required': True,
@@ -113,7 +126,22 @@ def build_spec(app, loop):
     # --------------------------------------------------------------- #
     # Definitions
     # --------------------------------------------------------------- #
-    _spec['definitions'] = { obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+
+    _spec['definitions'] = {obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+
+    # --------------------------------------------------------------- #
+    # Tags
+    # --------------------------------------------------------------- #
+
+    # TODO: figure out how to get descriptions in these
+    tags = {}
+    for route_spec in route_specs.values():
+        if route_spec.blueprint and route_spec.blueprint.name in ('swagger', 'openapi'):
+                # TODO: add static flag in sanic routes
+            continue
+        for tag in route_spec.tags:
+            tags[tag] = True
+    _spec['tags'] = [{"name": name} for name in tags.keys()]
 
     _spec['paths'] = paths
 
@@ -121,5 +149,3 @@ def build_spec(app, loop):
 @openapi_blueprint.route('/spec.json')
 def spec(request):
     return json(_spec)
-
-
