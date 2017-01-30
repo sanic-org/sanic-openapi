@@ -112,7 +112,7 @@ def build_spec(app, loop):
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub('<'+parameter.name+'.+?>', '{'+parameter.name+'}', uri_parsed)
+            uri_parsed = re.sub('<'+parameter.name+'.*?>', '{'+parameter.name+'}', uri_parsed)
 
         paths[uri_parsed] = methods
 
