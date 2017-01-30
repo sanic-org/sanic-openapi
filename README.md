@@ -26,6 +26,10 @@ app.blueprint(swagger_blueprint)
 You'll now have a Swagger UI at the URL `/swagger`.  
 Your routes will be automatically categorized by their blueprints.
 
+## Example
+
+For an example Swagger UI, see the [Pet Store](http://petstore.swagger.io/)
+
 ## Usage
 
 ### Use simple decorators to document routes:
@@ -74,4 +78,15 @@ class Car:
 class Garage:
     spaces = doc.Integer("How many cars can fit in the garage")
     cars = doc.List(Car, description="All cars in the garage")
+```
+
+### Configure all the things
+
+```python
+app.config.API_VERSION = '1.0.0'
+app.config.API_TITLE = 'Car API'
+app.config.API_DESCRIPTION = 'Car API'
+app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
+app.config.API_PRODUCES_CONTENT_TYPES = ['application/json']
+app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 ```
