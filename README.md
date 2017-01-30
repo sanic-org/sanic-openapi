@@ -1,8 +1,10 @@
 # Sanic OpenAPI
 
-Adds OpenAPI documentation to a Sanic project
+[![Build Status](https://travis-ci.org/channelcat/sanic-openapi.svg?branch=master)](https://travis-ci.org/channelcat/sanic-openapi)
+[![PyPI](https://img.shields.io/pypi/v/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
+[![PyPI](https://img.shields.io/pypi/pyversions/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
 
-!!! This is still very much a work in progress and may not contain all features in the documentation yet !!!
+Adds OpenAPI documentation to a Sanic project
 
 ## Installation
 
