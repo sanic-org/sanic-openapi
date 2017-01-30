@@ -13,7 +13,6 @@ app.blueprint(driver_blueprint)
 app.blueprint(garage_blueprint)
 app.blueprint(manufacturer_blueprint)
 
-
 app.config['API_VERSION'] = '1.0.0'
 app.config['API_TITLE'] = 'Car API'
 app.config['API_TERMS_OF_SERVICE'] = 'Use with caution!'
