@@ -75,9 +75,9 @@ def build_spec(app, loop):
         for _method, _handler in method_handlers:
             route_spec = route_specs.get(_handler) or RouteSpec()
             consumes_content_types = route_spec.consumes_content_type or \
-                getattr(app.config, 'API_CONSUMES_CONTENT_TYPE', 'application/json')
+                getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or \
-                getattr(app.config, 'API_PRODUCES_CONTENT_TYPE', 'application/json')
+                getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
 
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or _handler.__name__,

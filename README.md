@@ -4,7 +4,9 @@
 [![PyPI](https://img.shields.io/pypi/v/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
 [![PyPI](https://img.shields.io/pypi/pyversions/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
 
-Adds OpenAPI documentation to a Sanic project
+Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
+
+![Example Swagger UI](images/code-to-ui.png?raw=true "Swagger UI")
 
 ## Installation
 
@@ -23,8 +25,6 @@ app.blueprint(swagger_blueprint)
 
 You'll now have a Swagger UI at the URL `/swagger`.  
 Your routes will be automatically categorized by their blueprints.
-
-![Example Swagger UI](images/example_pet_store.PNG?raw=true "Swagger UI")
 
 ## Usage
 
