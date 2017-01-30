@@ -1,14 +1,14 @@
 sudo: false
 language: python
 python:
-  - '3.5'
-  - '3.6'
+- '3.5'
+- '3.6'
 install: pip install tox-travis
 script: tox
 deploy:
   provider: pypi
   user: channelcat
   password:
-    secure: jH4+Di2/qcBwWVhI5/3NYd/JuDDgf5/cF85h+oQnAjgwP6me3th9RS0PHL2gjKJrmyRgwrW7a3eSAityo5sQSlBloQCNrtCE30rkDiwtgoIxDW72NR/nE8nUkS9Utgy87eS+3B4NrO7ag4GTqO5ET8SQ4/MCiQwyUQATLXj2s2eTpQvqJeZG6YgoeFAOYvlR580yznXoOwldWlkiymJiWSdR/01lthtWCi40sYC/QoU7psODJ/tPcsqgQtQKyUVsci7mKvp3Y8ImkoO/POM01jYNsS9qLh5pKTNCEYxtyzC77whenCNHn7WReVidd56g1ADosbNo4yY/1D3VAvwjUnkQ0SzdBQfT7IIzccEuC0j1NXKPN97OX0a6XzyUMYJ1XiU3juTJOPxdYBPbsDM3imQiwrOh1faIf0HCgNTN+Lxe5l8obCH7kffNcVUhs2zI0+2t4MS5tjb/OVuYD/TFn+bM33DqzLctTOK/pGn6xefzZcdzb191LPo99Lof+4fo6jNUpb0UmcBu5ZJzxh0lGe8FPIK3UAG/hrYDDgjx8s8RtUJjcEUQz0659XffYx7DLlgHO7cWyfjrHD3yrLzDbYr5mAS4FR+4D917V7UL+on4SsKHN00UuMGPguqSYo/xYyPLnJU5XK0du4MIpsNMB8TtrJOIewOOfD32+AisPQ8=
+    secure: hAnIetURb2/ae7sYrWOrHCwN/9sBYNu7e4qeCAaIckXR4IlhA8odavdY/lvyD+nbQklCU9Xw+LtxExJhUI5IT7/sOKoiTjGxvuA5C5WOxBypuQOO5PiGaU1tTqH64g3mSiju+yRc1ZfMHi8nu/TumJAEh7FH8fqMqvTMlNJI4RhIlZXpbIJb1uPda/tSbehQq2ani2ua96iuhxPpOxqFQV6DrbYQOxj+DRxF5NgYQD/kyB+1drHkvixybYv5uEAvwroflImlYShaQ0fVhHfxsZsCQyuhk4DteXwYu8cfw+Yvi+YCz2eB4LWcIqe6sQUx32zxHRQUmvRfCluPn1ePIcv0f1h7GSMAeA5qbarWnY+m97Pe7IOeiMjUOcbAv10fH0VGx4kOrqnWGcHShHZJQHfFe+lthVJYZCC37y/j1iMSWc6N+QdbJqat1ipaaOnlgA573Cut5KpIoJFnqoFlzZZRTPhIIzVZ5X+vqeQN5Qq7D2BrrfTq2FLWdlq4C/+b0M9V3XvVnParBJAbfaKXZ+K5Ik24zzXwEjQzdjwKeVy+5RPUL+lVeirNrguwt85UQ+z9bo+u4rgZ7EGC6b+Lq60AuET24JrXFyB9t36cB7xduAxlpixp24cSdGehYxhenaFVXifkWyG/bjiezT+XMxn+lRqbv/BqgGW4ADVAbY4=
   on:
     tags: true
