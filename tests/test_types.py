@@ -24,7 +24,7 @@ def test_list_default():
 
     request, response = sanic_endpoint_test(app, 'get', '/openapi/spec.json')
 
-    response_schema = json_loads(response.body)
+    response_schema = json_loads(response.body.decode())
     parameter = response_schema['paths']['/test']['put']['parameters'][0]
 
     assert response.status == 200
