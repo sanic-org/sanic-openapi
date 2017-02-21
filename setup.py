@@ -27,7 +27,7 @@ setup(
     package_data={'sanic_openapi': ['ui/*', 'ui/*/*']},
     platforms='any',
     install_requires=[
-        'sanic>=0.3.0',
+        'sanic>=0.3.1',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

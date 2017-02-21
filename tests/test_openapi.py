@@ -1,10 +1,6 @@
-from json import loads as json_loads, dumps as json_dumps
 from sanic import Sanic
-from sanic.response import json, text, redirect
 from sanic.utils import sanic_endpoint_test
 from sanic_openapi import openapi_blueprint
-
-import pytest
 
 # ------------------------------------------------------------ #
 #  GET

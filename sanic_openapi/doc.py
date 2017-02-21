@@ -80,6 +80,8 @@ class Dictionary(Field):
 class List(Field):
     def __init__(self, items=None, *args, **kwargs):
         self.items = items or []
+        if type(self.items) is not list:
+            self.items = [self.items]
         super().__init__(*args, **kwargs)
 
     def serialize(self):
