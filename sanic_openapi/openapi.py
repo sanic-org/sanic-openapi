@@ -73,6 +73,9 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
+            if _method == 'OPTIONS':
+                continue
+            
             route_spec = route_specs.get(_handler) or RouteSpec()
             consumes_content_types = route_spec.consumes_content_type or \
                 getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
@@ -80,7 +83,7 @@ def build_spec(app, loop):
                 getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
 
             endpoint = remove_nulls({
-                'operationId': route_spec.operation or _handler.__name__,
+                'operationId': route_spec.operation or route.name,
                 'summary': route_spec.summary,
                 'description': route_spec.description,
                 'consumes': consumes_content_types,
