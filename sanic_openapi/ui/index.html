@@ -74,7 +74,7 @@ window.onload = function() {
   var url = '/openapi/spec.json';
   try {
     url = window.location.protocol + '//' + window.location.host + url;
-  } catch() { }
+  } catch(e) { }
 
   // Build a system
   const ui = SwaggerUIBundle({
