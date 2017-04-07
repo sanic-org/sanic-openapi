@@ -20,6 +20,7 @@ async def get_garage(request):
 
 @blueprint.get("/cars")
 @doc.summary("Fetches the cars in the garage")
+@doc.consumes({"doors": int})
 @doc.produces({"cars": [Car]})
 async def get_cars(request):
     return json({

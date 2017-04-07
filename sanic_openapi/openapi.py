@@ -75,12 +75,39 @@ def build_spec(app, loop):
         for _method, _handler in method_handlers:
             if _method == 'OPTIONS':
                 continue
-            
+
             route_spec = route_specs.get(_handler) or RouteSpec()
             consumes_content_types = route_spec.consumes_content_type or \
                 getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or \
                 getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+
+            # Parameters - Path & Query String
+            path_parameters = [{
+                **serialize_schema(parameter.cast),
+                'required': True,
+                'in': 'path',
+                'name': parameter.name,
+            } for parameter in route.parameters]
+            query_string_parameters = []
+            body_parameters = []
+
+            if route_spec.consumes:
+                if _method in ('GET', 'DELETE'):
+                    spec = serialize_schema(route_spec.consumes)
+                    if 'properties' in spec:
+                        for name, prop_spec in spec['properties'].items():
+                            query_string_parameters.append({
+                                **prop_spec,
+                                'in': 'query',
+                                'name': name,
+                            })
+                else:
+                    body_parameters.append({
+                        **serialize_schema(route_spec.consumes),
+                        'in': 'body',
+                        'name': 'body',
+                    })
 
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,
@@ -89,12 +116,7 @@ def build_spec(app, loop):
                 'consumes': consumes_content_types,
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
-                'parameters': [{
-                    **serialize_schema(parameter.cast),
-                    'required': True,
-                    'in': 'path',
-                    'name': parameter.name,
-                } for parameter in route.parameters],
+                'parameters': path_parameters + query_string_parameters + body_parameters,
                 'responses': {
                     "200": {
                         "description": None,
@@ -103,13 +125,6 @@ def build_spec(app, loop):
                     }
                 },
             })
-            if _method not in ('GET', 'DELETE'):
-                if route_spec.consumes:
-                    endpoint['parameters'].append({
-                        **serialize_schema(route_spec.consumes),
-                        'in': 'body',
-                        'name': 'body',
-                    })
 
             methods[_method.lower()] = endpoint
 
