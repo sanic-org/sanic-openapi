@@ -24,7 +24,7 @@ setup(
     author_email='channelcat@gmail.com',
     description='OpenAPI support for Sanic',
     packages=['sanic_openapi'],
-    package_data={'sanic_openapi': ['ui/*', 'ui/*/*']},
+    package_data={'sanic_openapi': ['ui/*']},
     platforms='any',
     install_requires=[
         'sanic>=0.3.1',
