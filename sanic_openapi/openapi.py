@@ -91,6 +91,7 @@ def build_spec(app, loop):
             } for parameter in route.parameters]
             query_string_parameters = []
             body_parameters = []
+            form_parameters = []
 
             if route_spec.consumes:
                 if _method in ('GET', 'DELETE'):
@@ -100,6 +101,15 @@ def build_spec(app, loop):
                             query_string_parameters.append({
                                 **prop_spec,
                                 'in': 'query',
+                                'name': name,
+                            })
+                elif _method in ('POST', 'PUT', 'PATCH') and route_spec.consumes_from == 'formData':
+                    spec = serialize_schema(route_spec.consumes)
+                    if 'properties' in spec:
+                        for name, prop_spec in spec['properties'].items():
+                            form_parameters.append({
+                                **prop_spec,
+                                'in': 'formData',
                                 'name': name,
                             })
                 else:
@@ -116,7 +126,7 @@ def build_spec(app, loop):
                 'consumes': consumes_content_types,
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
-                'parameters': path_parameters + query_string_parameters + body_parameters,
+                'parameters': path_parameters + query_string_parameters + body_parameters + form_parameters,
                 'responses': {
                     "200": {
                         "description": None,

@@ -178,6 +178,7 @@ def serialize_schema(schema):
 class RouteSpec:
     consumes = None
     consumes_content_type = None
+    consumes_from = None
     produces = None
     produces_content_type = None
     summary = None
@@ -195,7 +196,8 @@ route_specs = defaultdict(RouteSpec)
 
 
 def route(summary=None, description=None, consumes=None, produces=None,
-          consumes_content_type=None, produces_content_type=None):
+          consumes_content_type=None, produces_content_type=None,
+          consumes_from=None):
     def inner(func):
         route_spec = route_specs[func]
 
@@ -211,6 +213,8 @@ def route(summary=None, description=None, consumes=None, produces=None,
             route_spec.consumes_content_type = consumes_content_type
         if produces_content_type is not None:
             route_spec.produces_content_type = produces_content_type
+        if consumes_from is not None:
+            route_spec.consumes_from = consumes_from
 
         return func
     return inner
@@ -230,11 +234,12 @@ def description(text):
     return inner
 
 
-def consumes(*args, content_type=None):
+def consumes(*args, content_type=None, source=None):
     def inner(func):
         if args:
             route_specs[func].consumes = args[0] if len(args) == 1 else args
             route_specs[func].consumes_content_type = content_type
+            route_specs[func].consumes_from = source
         return func
     return inner
 
