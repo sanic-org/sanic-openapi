@@ -28,6 +28,15 @@ class Integer(Field):
         }
 
 
+class Float(Field):
+    def serialize(self):
+        return {
+            "type": "number",
+            "format": "double",
+            **super().serialize()
+        }
+
+
 class String(Field):
     def serialize(self):
         return {
@@ -145,6 +154,8 @@ def serialize_schema(schema):
             return List().serialize()
         elif schema is int:
             return Integer().serialize()
+        elif schema is float:
+            return Float().serialize()
         elif schema is str:
             return String().serialize()
         elif schema is bool:
