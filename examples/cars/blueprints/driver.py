@@ -30,6 +30,14 @@ def driver_put(request, driver_id):
     return json({"driver": None})
 
 
+@blueprint.put("/<driver_id:int>/name")
+@doc.summary("Updates a driver's name")
+@doc.consumes({"name": str}, source='formData')
+@doc.produces(Driver)
+def driver_put(request, driver_id):
+    return json({"driver": None})
+
+
 @blueprint.delete("/<driver_id:int>")
 @doc.summary("Deletes a driver")
 @doc.produces(Status)

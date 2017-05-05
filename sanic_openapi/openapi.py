@@ -7,7 +7,6 @@ from sanic.views import CompositionView
 
 from .doc import route_specs, RouteSpec, serialize_schema, definitions
 
-
 blueprint = Blueprint('openapi', url_prefix='openapi')
 
 _spec = {}
@@ -40,6 +39,34 @@ def build_spec(app, loop):
     }
     _spec['schemes'] = getattr(app.config, 'API_SCHEMES', ['http'])
 
+    security_definitions = []
+    _spec['securityDefinitions'] = {}
+    _security_definitions = getattr(app.config, 'API_SECURITY_DEFINITIONS', '')
+    if isinstance(_security_definitions, (tuple, list, set)):
+        security_definitions = [_name.lower() for _name in _security_definitions]
+    elif isinstance(_security_definitions, str):
+        security_definitions.append(_security_definitions.lower())
+
+    for security_definition in security_definitions:
+        if security_definition == 'basic':
+            _spec['securityDefinitions']['basic'] = {'type': 'basic'}
+        elif security_definition == 'apikey':
+            _spec['securityDefinitions']['apiKey'] = {
+                'type': 'apiKey',
+                'name': getattr(app.config, 'API_SECURITY_DEFINITIONS_NAME', 'token'),
+                'in': getattr(app.config, 'API_SECURITY_DEFINITIONS_IN', 'header')
+            }
+        elif security_definition == 'oauth2':
+            _spec['securityDefinitions']['oauth2'] = {
+                'type': 'oauth2',
+                'authorizationUrl': getattr(app.config, 'API_SECURITY_DEFINITIONS_URL',
+                                            'http://swagger.io/api/oauth/dialog'),
+                'flow': getattr(app.config, 'API_SECURITY_DEFINITIONS_FLOW', 'implicit'),
+                'scopes': getattr(app.config, 'API_SECURITY_DEFINITIONS_SCOPES',
+                                  {"write:pets": "modify pets in your account",
+                                   "read:pets": "read your pets"})
+            }
+
     # --------------------------------------------------------------- #
     # Blueprint Tags
     # --------------------------------------------------------------- #
@@ -56,7 +83,7 @@ def build_spec(app, loop):
     for uri, route in app.router.routes_all.items():
         if uri.startswith("/swagger") or uri.startswith("/openapi") \
                 or '<file_uri' in uri:
-                # TODO: add static flag in sanic routes
+            # TODO: add static flag in sanic routes
             continue
 
         # --------------------------------------------------------------- #
@@ -78,9 +105,9 @@ def build_spec(app, loop):
 
             route_spec = route_specs.get(_handler) or RouteSpec()
             consumes_content_types = route_spec.consumes_content_type or \
-                getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
+                                     getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or \
-                getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+                                     getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
 
             # Parameters - Path & Query String
             path_parameters = [{
@@ -91,6 +118,7 @@ def build_spec(app, loop):
             } for parameter in route.parameters]
             query_string_parameters = []
             body_parameters = []
+            form_parameters = []
 
             if route_spec.consumes:
                 if _method in ('GET', 'DELETE'):
@@ -100,6 +128,15 @@ def build_spec(app, loop):
                             query_string_parameters.append({
                                 **prop_spec,
                                 'in': 'query',
+                                'name': name,
+                            })
+                elif _method in ('POST', 'PUT', 'PATCH') and route_spec.consumes_from == 'formData':
+                    spec = serialize_schema(route_spec.consumes)
+                    if 'properties' in spec:
+                        for name, prop_spec in spec['properties'].items():
+                            form_parameters.append({
+                                **prop_spec,
+                                'in': 'formData',
                                 'name': name,
                             })
                 else:
@@ -116,7 +153,7 @@ def build_spec(app, loop):
                 'consumes': consumes_content_types,
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
-                'parameters': path_parameters + query_string_parameters + body_parameters,
+                'parameters': path_parameters + query_string_parameters + body_parameters + form_parameters,
                 'responses': {
                     "200": {
                         "description": None,
@@ -130,7 +167,7 @@ def build_spec(app, loop):
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub('<'+parameter.name+'.*?>', '{'+parameter.name+'}', uri_parsed)
+            uri_parsed = re.sub('<' + parameter.name + '.*?>', '{' + parameter.name + '}', uri_parsed)
 
         paths[uri_parsed] = methods
 
@@ -148,7 +185,7 @@ def build_spec(app, loop):
     tags = {}
     for route_spec in route_specs.values():
         if route_spec.blueprint and route_spec.blueprint.name in ('swagger', 'openapi'):
-                # TODO: add static flag in sanic routes
+            # TODO: add static flag in sanic routes
             continue
         for tag in route_spec.tags:
             tags[tag] = True
