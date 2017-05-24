@@ -7,5 +7,5 @@ dir_path = os.path.abspath(dir_path + '/ui')
 
 blueprint = Blueprint('swagger', url_prefix='swagger')
 
-blueprint.static('/swagger', dir_path + '/index.html')
+blueprint.static('/', dir_path + '/index.html')
 blueprint.static('/', dir_path)
