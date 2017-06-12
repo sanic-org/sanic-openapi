@@ -185,6 +185,7 @@ class RouteSpec:
     operation = None
     blueprint = None
     tags = None
+    exclude = None
 
     def __init__(self):
         self.tags = []
@@ -195,7 +196,8 @@ route_specs = defaultdict(RouteSpec)
 
 
 def route(summary=None, description=None, consumes=None, produces=None,
-          consumes_content_type=None, produces_content_type=None):
+          consumes_content_type=None, produces_content_type=None,
+          exclude=None):
     def inner(func):
         route_spec = route_specs[func]
 
@@ -211,10 +213,17 @@ def route(summary=None, description=None, consumes=None, produces=None,
             route_spec.consumes_content_type = consumes_content_type
         if produces_content_type is not None:
             route_spec.produces_content_type = produces_content_type
+        if exclude is not None:
+            route_spec.exclude = exclude
 
         return func
     return inner
 
+def exclude(boolean):
+    def inner(func):
+        route_specs[func].exclude = boolean
+        return func
+    return inner
 
 def summary(text):
     def inner(func):

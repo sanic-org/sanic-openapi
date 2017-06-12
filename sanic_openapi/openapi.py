@@ -73,10 +73,11 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
-            if _method == 'OPTIONS':
+            route_spec = route_specs.get(_handler) or RouteSpec()
+
+            if _method == 'OPTIONS' or route_spec.exclude:
                 continue
 
-            route_spec = route_specs.get(_handler) or RouteSpec()
             consumes_content_types = route_spec.consumes_content_type or \
                 getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or \
