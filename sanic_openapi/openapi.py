@@ -93,7 +93,7 @@ def build_spec(app, loop):
             body_parameters = []
 
             if route_spec.consumes:
-                if _method in ('GET', 'DELETE'):
+                if _method in ('GET', 'DELETE', 'POST'):
                     spec = serialize_schema(route_spec.consumes)
                     if 'properties' in spec:
                         for name, prop_spec in spec['properties'].items():
