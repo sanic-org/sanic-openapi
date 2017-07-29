@@ -59,7 +59,7 @@ class Date(Field):
 class DateTime(Field):
     def serialize(self):
         return {
-            "type": "dateTime",
+            "type": "datetime",
             **super().serialize()
         }
 
