@@ -28,6 +28,15 @@ class Integer(Field):
         }
 
 
+class Float(Field):
+    def serialize(self):
+        return {
+            "type": "number",
+            "format": "double",
+            **super().serialize()
+        }
+
+
 class String(Field):
     def serialize(self):
         return {
@@ -51,7 +60,8 @@ class Tuple(Field):
 class Date(Field):
     def serialize(self):
         return {
-            "type": "date",
+            "type": "string",
+            "format": "date",
             **super().serialize()
         }
 
@@ -59,7 +69,8 @@ class Date(Field):
 class DateTime(Field):
     def serialize(self):
         return {
-            "type": "dateTime",
+            "type": "string",
+            "format": "date-time",
             **super().serialize()
         }
 
@@ -123,9 +134,7 @@ class Object(Field):
     def serialize(self):
         return {
             "type": "object",
-            "schema": {
-                "$ref": "#/definitions/{}".format(self.object_name)
-            },
+            "$ref": "#/definitions/{}".format(self.object_name),
             **super().serialize()
         }
 
@@ -145,6 +154,8 @@ def serialize_schema(schema):
             return List().serialize()
         elif schema is int:
             return Integer().serialize()
+        elif schema is float:
+            return Float().serialize()
         elif schema is str:
             return String().serialize()
         elif schema is bool:
