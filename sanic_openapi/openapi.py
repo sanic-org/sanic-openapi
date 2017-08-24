@@ -93,6 +93,7 @@ def build_spec(app, loop):
             } for parameter in route.parameters]
             query_string_parameters = []
             body_parameters = []
+            header_parameters = []
 
             if route_spec.header:
                 header_parameters = [{
@@ -116,47 +117,38 @@ def build_spec(app, loop):
                         'in': 'body',
                         'name': 'body',
                     })
+
+            endpoint = {
+                'operationId': route_spec.operation or route.name,
+                'summary': route_spec.summary,
+                'description': route_spec.description,
+                'consumes': consumes_content_types,
+                'produces': produces_content_types,
+                'tags': route_spec.tags or None,
+                'parameters': path_parameters + query_string_parameters + body_parameters +
+                header_parameters
+            }
             if isinstance(route_spec.produces, dict):
-                body = {
-                    'operationId': route_spec.operation or route.name,
-                    'summary': route_spec.summary,
-                    'description': route_spec.description,
-                    'consumes': consumes_content_types,
-                    'produces': produces_content_types,
-                    'tags': route_spec.tags or None,
-                    'parameters': path_parameters + query_string_parameters + body_parameters +
-                    header_parameters,
-                    'responses': {
-                    }
-                }
+                responses = {'responses': {}}
                 for k in list(route_spec.produces.keys()):
-                    body['responses'].update({
+                    responses['responses'].update({
                         k: {
                             "description": None,
                             "examples": None,
                             "schema": serialize_schema(route_spec.produces[k]) if route_spec.produces[k] else None
                         }
                     })
-                endpoint = remove_nulls(body)
+                endpoint['responses'] = responses
+                endpoint = remove_nulls(endpoint)
             else:
-                endpoint = remove_nulls({
-                    'operationId': route_spec.operation or route.name,
-                    'summary': route_spec.summary,
-                    'description': route_spec.description,
-                    'consumes': consumes_content_types,
-                    'produces': produces_content_types,
-                    'tags': route_spec.tags or None,
-                    'parameters': path_parameters + query_string_parameters + body_parameters +
-                    header_parameters,
-                    'responses': {
-                        "200": {
-                            "description": None,
-                            "examples": None,
-                            "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
-                        }
-                    },
-                })
-
+                responses = {'responses': {
+                    "200": {
+                        "description": None,
+                        "examples": None,
+                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
+                    }
+                }}
+                endpoint['responses'] = responses
             methods[_method.lower()] = endpoint
 
         uri_parsed = uri
