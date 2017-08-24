@@ -102,21 +102,22 @@ def build_spec(app, loop):
                 } for header in route_spec.header]
 
             if route_spec.consumes:
-                if _method in ('GET', 'DELETE', 'POST'):
-                    spec = serialize_schema(route_spec.consumes)
-                    if 'properties' in spec:
-                        for name, prop_spec in spec['properties'].items():
-                            query_string_parameters.append({
-                                **prop_spec,
-                                'in': 'query',
-                                'name': name,
-                            })
-                else:
-                    body_parameters.append({
-                        **serialize_schema(route_spec.consumes),
-                        'in': 'body',
-                        'name': 'body',
-                    })
+                for consume in route_spec.consumes:
+                    if isinstance(consume, dict):
+                        spec = serialize_schema(consume)
+                        if 'properties' in spec:
+                            for name, prop_spec in spec['properties'].items():
+                                query_string_parameters.append({
+                                    **prop_spec,
+                                    'in': 'query',
+                                    'name': name,
+                                })
+                    else:
+                        body_parameters.append({
+                            **serialize_schema(consume),
+                            'in': 'body',
+                            'name': 'body',
+                        })
 
             endpoint = {
                 'operationId': route_spec.operation or route.name,
