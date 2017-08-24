@@ -138,7 +138,7 @@ def build_spec(app, loop):
                             "schema": serialize_schema(route_spec.produces[k]) if route_spec.produces[k] else None
                         }
                     })
-                endpoint['responses'] = responses
+                endpoint.update(responses)
                 endpoint = remove_nulls(endpoint)
             else:
                 responses = {'responses': {
@@ -148,7 +148,7 @@ def build_spec(app, loop):
                         "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
                     }
                 }}
-                endpoint['responses'] = responses
+                endpoint.update(responses)
             methods[_method.lower()] = endpoint
 
         uri_parsed = uri
