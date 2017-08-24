@@ -130,7 +130,7 @@ def build_spec(app, loop):
             }
             if route_spec.produces:
                 responses = {'responses': {}}
-                for k in list(route_spec.produces.keys()):
+                for k in route_spec.produces.keys():
                     responses['responses'].update({
                         k: {
                             "description": None,

@@ -72,8 +72,11 @@ class Dictionary(Field):
     def serialize(self):
         return {
             "type": "object",
-            "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
-            **super().serialize()
+            "properties": {key: serialize_schema(schema)
+                           if not isinstance(schema, str)
+                           else {"type": "string"}
+                           for key, schema in self.fields.items()},
+            ** super().serialize()
         }
 
 
