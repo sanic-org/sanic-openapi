@@ -78,9 +78,11 @@ def build_spec(app, loop):
 
             route_spec = route_specs.get(_handler) or RouteSpec()
             consumes_content_types = route_spec.consumes_content_type or \
-                getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
+                getattr(app.config, 'API_CONSUMES_CONTENT_TYPES',
+                        ['application/json'])
             produces_content_types = route_spec.produces_content_type or \
-                getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+                getattr(app.config, 'API_PRODUCES_CONTENT_TYPES',
+                        ['application/json'])
 
             # Parameters - Path & Query String
             path_parameters = [{
@@ -92,8 +94,14 @@ def build_spec(app, loop):
             query_string_parameters = []
             body_parameters = []
 
+            if route_spec.header:
+                header_parameters = [{
+                    'in': 'header',
+                    'name': header
+                } for header in route_spec.header]
+
             if route_spec.consumes:
-                if _method in ('GET', 'DELETE'):
+                if _method in ('GET', 'DELETE', 'POST'):
                     spec = serialize_schema(route_spec.consumes)
                     if 'properties' in spec:
                         for name, prop_spec in spec['properties'].items():
@@ -108,29 +116,53 @@ def build_spec(app, loop):
                         'in': 'body',
                         'name': 'body',
                     })
-
-            endpoint = remove_nulls({
-                'operationId': route_spec.operation or route.name,
-                'summary': route_spec.summary,
-                'description': route_spec.description,
-                'consumes': consumes_content_types,
-                'produces': produces_content_types,
-                'tags': route_spec.tags or None,
-                'parameters': path_parameters + query_string_parameters + body_parameters,
-                'responses': {
-                    "200": {
-                        "description": None,
-                        "examples": None,
-                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
+            if isinstance(route_spec.produces, dict):
+                body = {
+                    'operationId': route_spec.operation or route.name,
+                    'summary': route_spec.summary,
+                    'description': route_spec.description,
+                    'consumes': consumes_content_types,
+                    'produces': produces_content_types,
+                    'tags': route_spec.tags or None,
+                    'parameters': path_parameters + query_string_parameters + body_parameters +
+                    header_parameters,
+                    'responses': {
                     }
-                },
-            })
+                }
+                for k in list(route_spec.produces.keys()):
+                    body['responses'].update({
+                        k: {
+                            "description": None,
+                            "examples": None,
+                            "schema": serialize_schema(route_spec.produces[k]) if route_spec.produces[k] else None
+                        }
+                    })
+                endpoint = remove_nulls(body)
+            else:
+                endpoint = remove_nulls({
+                    'operationId': route_spec.operation or route.name,
+                    'summary': route_spec.summary,
+                    'description': route_spec.description,
+                    'consumes': consumes_content_types,
+                    'produces': produces_content_types,
+                    'tags': route_spec.tags or None,
+                    'parameters': path_parameters + query_string_parameters + body_parameters +
+                    header_parameters,
+                    'responses': {
+                        "200": {
+                            "description": None,
+                            "examples": None,
+                            "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
+                        }
+                    },
+                })
 
             methods[_method.lower()] = endpoint
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub('<'+parameter.name+'.*?>', '{'+parameter.name+'}', uri_parsed)
+            uri_parsed = re.sub('<' + parameter.name + '.*?>',
+                                '{' + parameter.name + '}', uri_parsed)
 
         paths[uri_parsed] = methods
 
@@ -138,7 +170,8 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec['definitions'] = {obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+    _spec['definitions'] = {
+        obj.object_name: definition for cls, (obj, definition) in definitions.items()}
 
     # --------------------------------------------------------------- #
     # Tags
