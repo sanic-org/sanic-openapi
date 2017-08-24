@@ -128,7 +128,7 @@ def build_spec(app, loop):
                 'parameters': path_parameters + query_string_parameters + body_parameters +
                 header_parameters
             }
-            if isinstance(route_spec.produces, dict):
+            if route_spec.produces:
                 responses = {'responses': {}}
                 for k in list(route_spec.produces.keys()):
                     responses['responses'].update({
@@ -140,15 +140,6 @@ def build_spec(app, loop):
                     })
                 endpoint.update(responses)
                 endpoint = remove_nulls(endpoint)
-            else:
-                responses = {'responses': {
-                    "200": {
-                        "description": None,
-                        "examples": None,
-                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
-                    }
-                }}
-                endpoint.update(responses)
             methods[_method.lower()] = endpoint
 
         uri_parsed = uri
