@@ -3,10 +3,11 @@ from datetime import date, datetime
 
 
 class Field:
-    def __init__(self, description=None, required=None, name=None):
+    def __init__(self, description=None, required=None, name=None, choices=None):
         self.name = name
         self.description = description
         self.required = required
+        self.choices = choices
 
     def serialize(self):
         output = {}
@@ -16,6 +17,8 @@ class Field:
             output['description'] = self.description
         if self.required is not None:
             output['required'] = self.required
+        if self.choices is not None:
+            output['enum'] = self.choices
         return output
 
 
