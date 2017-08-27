@@ -19,4 +19,4 @@ app.config.API_TITLE = 'Car API'
 app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
 app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 
-app.run(debug=True)
+app.run(host="0.0.0.0", debug=True)
