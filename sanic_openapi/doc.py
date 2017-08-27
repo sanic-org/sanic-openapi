@@ -233,11 +233,13 @@ def route(summary=None, description=None, consumes=None, produces=None,
         return func
     return inner
 
+
 def exclude(boolean):
     def inner(func):
         route_specs[func].exclude = boolean
         return func
     return inner
+
 
 def summary(text):
     def inner(func):
