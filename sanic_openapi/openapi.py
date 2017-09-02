@@ -84,31 +84,25 @@ def build_spec(app, loop):
                 getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
 
             # Parameters - Path & Query String
-            path_parameters = [{
-                **serialize_schema(parameter.cast),
-                'required': True,
-                'in': 'path',
-                'name': parameter.name,
-            } for parameter in route.parameters]
-            query_string_parameters = []
-            body_parameters = []
+            route_parameters = []
+            for parameter in route.parameters:
+                route_parameters.append({
+                    **serialize_schema(parameter.cast),
+                    'required': True,
+                    'in': 'path',
+                    'name': parameter.name
+                })
 
-            if route_spec.consumes:
-                if _method in ('GET', 'DELETE', 'POST'):
-                    spec = serialize_schema(route_spec.consumes)
-                    if 'properties' in spec:
-                        for name, prop_spec in spec['properties'].items():
-                            query_string_parameters.append({
-                                **prop_spec,
-                                'in': 'query',
-                                'name': name,
-                            })
-                else:
-                    body_parameters.append({
-                        **serialize_schema(route_spec.consumes),
-                        'in': 'body',
-                        'name': 'body',
-                    })
+            for consumer in route_spec.consumes:
+                spec = serialize_schema(consumer.field)
+                if 'properties' in spec:
+                    for name, prop_spec in spec['properties'].items():
+                        route_parameters.append({
+                            **prop_spec,
+                            'required': consumer.required,
+                            'in': consumer.location,
+                            'name': name
+                        })
 
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,
@@ -117,7 +111,7 @@ def build_spec(app, loop):
                 'consumes': consumes_content_types,
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
-                'parameters': path_parameters + query_string_parameters + body_parameters,
+                'parameters': route_parameters,
                 'responses': {
                     "200": {
                         "description": None,
@@ -156,7 +150,6 @@ def build_spec(app, loop):
     _spec['tags'] = [{"name": name} for name in tags.keys()]
 
     _spec['paths'] = paths
-
 
 @blueprint.route('/spec.json')
 def spec(request):
