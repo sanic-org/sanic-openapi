@@ -189,7 +189,7 @@ def serialize_schema(schema):
 # --------------------------------------------------------------- #
 
 
-class RouteSpec:
+class RouteSpec(object):
     consumes = None
     consumes_content_type = None
     produces = None
@@ -203,7 +203,19 @@ class RouteSpec:
 
     def __init__(self):
         self.tags = []
+        self.consumes = []
         super().__init__()
+
+
+class RouteField(object):
+    field = None
+    location = None
+    required = None
+
+    def __init__(self, field, location=None, required=False):
+        self.field = field
+        self.location = location
+        self.required = required
 
 
 route_specs = defaultdict(RouteSpec)
@@ -255,11 +267,13 @@ def description(text):
     return inner
 
 
-def consumes(*args, content_type=None):
+def consumes(*args, content_type=None, location='query', required=False):
     def inner(func):
         if args:
-            route_specs[func].consumes = args[0] if len(args) == 1 else args
-            route_specs[func].consumes_content_type = content_type
+            for arg in args:
+                field = RouteField(arg, location, required)
+                route_specs[func].consumes.append(field)
+                route_specs[func].consumes_content_type = content_type
         return func
     return inner
 
@@ -267,7 +281,8 @@ def consumes(*args, content_type=None):
 def produces(*args, content_type=None):
     def inner(func):
         if args:
-            route_specs[func].produces = args[0] if len(args) == 1 else args
+            field = RouteField(args[0])
+            route_specs[func].produces = field
             route_specs[func].produces_content_type = content_type
         return func
     return inner

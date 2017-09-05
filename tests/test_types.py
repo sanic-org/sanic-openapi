@@ -14,7 +14,7 @@ def test_list_default():
     app.blueprint(openapi_blueprint)
 
     @app.put('/test')
-    @doc.consumes(doc.List(int, description="All the numbers"))
+    @doc.consumes(doc.List(int, description="All the numbers"), location="body")
     def test(request):
         return json({"test": True})
 
