@@ -206,6 +206,7 @@ class RouteSpec(object):
         self.consumes = []
         super().__init__()
 
+
 class RouteField(object):
     field = None
     location = None
@@ -215,6 +216,7 @@ class RouteField(object):
         self.field = field
         self.location = location
         self.required = required
+
 
 route_specs = defaultdict(RouteSpec)
 

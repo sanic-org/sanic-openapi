@@ -164,6 +164,7 @@ def build_spec(app, loop):
 
     _spec['paths'] = paths
 
+
 @blueprint.route('/spec.json')
 def spec(request):
     return json(_spec)
