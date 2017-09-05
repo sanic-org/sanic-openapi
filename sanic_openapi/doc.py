@@ -267,7 +267,7 @@ def description(text):
     return inner
 
 
-def consumes(*args, content_type=None, location=None, required=False):
+def consumes(*args, content_type=None, location='query', required=False):
     def inner(func):
         if args:
             for arg in args:
