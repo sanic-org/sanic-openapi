@@ -97,12 +97,25 @@ def build_spec(app, loop):
                 spec = serialize_schema(consumer.field)
                 if 'properties' in spec:
                     for name, prop_spec in spec['properties'].items():
-                        route_parameters.append({
+                        route_param = {
                             **prop_spec,
                             'required': consumer.required,
                             'in': consumer.location,
                             'name': name
-                        })
+                        }
+                else:
+                    route_param = {
+                        **spec,
+                        'required': consumer.required,
+                        'in': consumer.location,
+                        'name': consumer.field.name if hasattr(consumer.field, 'name') else 'body'
+                    }
+
+                if '$ref' in route_param:
+                    route_param["schema"] = {'$ref': route_param['$ref']}
+                    del route_param['$ref']
+
+                route_parameters.append(route_param)
 
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,

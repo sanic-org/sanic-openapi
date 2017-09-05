@@ -211,7 +211,7 @@ class RouteField(object):
     location = None
     required = None
 
-    def __init__(self, field, location, required):
+    def __init__(self, field, location=None, required=False):
         self.field = field
         self.location = location
         self.required = required
@@ -276,10 +276,11 @@ def consumes(*args, content_type=None, location=None, required=False):
     return inner
 
 
-def produces(*args, content_type=None, location=None):
+def produces(*args, content_type=None):
     def inner(func):
         if args:
-            route_specs[func].produces = args[0] if len(args) == 1 else args
+            field = RouteField(args[0])
+            route_specs[func].produces = field
             route_specs[func].produces_content_type = content_type
         return func
     return inner
