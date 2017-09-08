@@ -73,11 +73,21 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
-            route_spec = route_specs.get(_handler) or RouteSpec()
-
+            
+            _methods = {
+                'GET': lambda : _handler.view_class.get,
+                'POST': lambda :_handler.view_class.post,
+                'PUT': lambda :_handler.view_class.put,
+                'PATCH': lambda :_handler.view_class.patch,
+                'DELETE': lambda :_handler.view_class.delete
+            }
+            if 'view_class' in dir(_handler):
+                
+                route_spec = route_specs.get(_methods.get(_method)()) or RouteSpec()
+            else:
+                route_spec = route_specs.get(_handler) or RouteSpec()
             if _method == 'OPTIONS' or route_spec.exclude:
                 continue
-
             consumes_content_types = route_spec.consumes_content_type or \
                 getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or \

@@ -1,0 +1,226 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Blueprint	../examples/cars/blueprints/car.py	/^from sanic.blueprints import Blueprint$/;"	kind:namespace	line:1
+Blueprint	../examples/cars/blueprints/driver.py	/^from sanic.blueprints import Blueprint$/;"	kind:namespace	line:1
+Blueprint	../examples/cars/blueprints/garage.py	/^from sanic.blueprints import Blueprint$/;"	kind:namespace	line:1
+Blueprint	../examples/cars/blueprints/manufacturer.py	/^from sanic.blueprints import Blueprint$/;"	kind:namespace	line:1
+Blueprint	../sanic_openapi/openapi.py	/^from sanic.blueprints import Blueprint$/;"	kind:namespace	line:4
+Blueprint	../sanic_openapi/swagger.py	/^from sanic.blueprints import Blueprint$/;"	kind:namespace	line:3
+Boolean	../sanic_openapi/doc.py	/^class Boolean(Field):$/;"	kind:class	line:51
+Car	../examples/cars/blueprints/car.py	/^from models import Car, Status$/;"	kind:namespace	line:5
+Car	../examples/cars/blueprints/garage.py	/^from models import Garage, Car, Status$/;"	kind:namespace	line:5
+Car	../examples/cars/data.py	/^from models import Car, Driver, Garage, Manufacturer, Status$/;"	kind:namespace	line:1
+Car	../examples/cars/models.py	/^class Car:$/;"	kind:class	line:14
+CompositionView	../sanic_openapi/openapi.py	/^from sanic.views import CompositionView$/;"	kind:namespace	line:6
+Date	../sanic_openapi/doc.py	/^class Date(Field):$/;"	kind:class	line:63
+DateTime	../sanic_openapi/doc.py	/^class DateTime(Field):$/;"	kind:class	line:72
+Dictionary	../sanic_openapi/doc.py	/^class Dictionary(Field):$/;"	kind:class	line:81
+Driver	../examples/cars/blueprints/driver.py	/^from models import Driver, Status$/;"	kind:namespace	line:5
+Driver	../examples/cars/blueprints/manufacturer.py	/^from models import Driver, Status$/;"	kind:namespace	line:5
+Driver	../examples/cars/data.py	/^from models import Car, Driver, Garage, Manufacturer, Status$/;"	kind:namespace	line:1
+Driver	../examples/cars/models.py	/^class Driver:$/;"	kind:class	line:9
+Field	../sanic_openapi/doc.py	/^class Field:$/;"	kind:class	line:5
+Float	../sanic_openapi/doc.py	/^class Float(Field):$/;"	kind:class	line:34
+Garage	../examples/cars/blueprints/garage.py	/^from models import Garage, Car, Status$/;"	kind:namespace	line:5
+Garage	../examples/cars/data.py	/^from models import Car, Driver, Garage, Manufacturer, Status$/;"	kind:namespace	line:1
+Garage	../examples/cars/models.py	/^class Garage:$/;"	kind:class	line:23
+Integer	../sanic_openapi/doc.py	/^class Integer(Field):$/;"	kind:class	line:25
+List	../sanic_openapi/doc.py	/^class List(Field):$/;"	kind:class	line:94
+Manufacturer	../examples/cars/data.py	/^from models import Car, Driver, Garage, Manufacturer, Status$/;"	kind:namespace	line:1
+Manufacturer	../examples/cars/models.py	/^class Manufacturer:$/;"	kind:class	line:4
+Object	../sanic_openapi/doc.py	/^class Object(Field):$/;"	kind:class	line:115
+RouteField	../sanic_openapi/doc.py	/^class RouteField(object):$/;"	kind:class	line:210
+RouteSpec	../sanic_openapi/doc.py	/^class RouteSpec(object):$/;"	kind:class	line:192
+RouteSpec	../sanic_openapi/openapi.py	/^from .doc import route_specs, RouteSpec, serialize_schema, definitions$/;"	kind:namespace	line:8
+Sanic	../examples/cars/main.py	/^from sanic import Sanic$/;"	kind:namespace	line:1
+Sanic	../tests/test_openapi.py	/^from sanic import Sanic$/;"	kind:namespace	line:1
+Sanic	../tests/test_types.py	/^from sanic import Sanic$/;"	kind:namespace	line:2
+Status	../examples/cars/blueprints/car.py	/^from models import Car, Status$/;"	kind:namespace	line:5
+Status	../examples/cars/blueprints/driver.py	/^from models import Driver, Status$/;"	kind:namespace	line:5
+Status	../examples/cars/blueprints/garage.py	/^from models import Garage, Car, Status$/;"	kind:namespace	line:5
+Status	../examples/cars/blueprints/manufacturer.py	/^from models import Driver, Status$/;"	kind:namespace	line:5
+Status	../examples/cars/data.py	/^from models import Car, Driver, Garage, Manufacturer, Status$/;"	kind:namespace	line:1
+Status	../examples/cars/models.py	/^class Status:$/;"	kind:class	line:28
+String	../sanic_openapi/doc.py	/^class String(Field):$/;"	kind:class	line:43
+Tuple	../sanic_openapi/doc.py	/^class Tuple(Field):$/;"	kind:class	line:59
+__all__	../sanic_openapi/__init__.py	/^__all__ = ['openapi_blueprint', 'swagger_blueprint']$/;"	kind:variable	line:5
+__init__	../sanic_openapi/doc.py	/^    def __init__(self):$/;"	kind:member	line:204
+__init__	../sanic_openapi/doc.py	/^    def __init__(self, cls, *args, object_name=None, **kwargs):$/;"	kind:member	line:116
+__init__	../sanic_openapi/doc.py	/^    def __init__(self, description=None, required=None, name=None, choices=None):$/;"	kind:member	line:6
+__init__	../sanic_openapi/doc.py	/^    def __init__(self, field, location=None, required=False):$/;"	kind:member	line:215
+__init__	../sanic_openapi/doc.py	/^    def __init__(self, fields=None, **kwargs):$/;"	kind:member	line:82
+__init__	../sanic_openapi/doc.py	/^    def __init__(self, items=None, *args, **kwargs):$/;"	kind:member	line:95
+__init__.py	../sanic_openapi/__init__.py	1;"	kind:file	line:1
+__version__	../sanic_openapi/__init__.py	/^__version__ = '0.4.0'$/;"	kind:variable	line:4
+_spec	../sanic_openapi/openapi.py	/^_spec = {}$/;"	kind:variable	line:13
+add_car	../examples/cars/blueprints/garage.py	/^async def add_car(request):$/;"	kind:function	line:32
+app	../examples/cars/main.py	/^app = Sanic()$/;"	kind:variable	line:8
+author	../setup.py	/^    author='Channel Cat',$/;"	kind:variable	line:23
+author_email	../setup.py	/^    author_email='channelcat@gmail.com',$/;"	kind:variable	line:24
+birthday	../examples/cars/models.py	/^    birthday = date$/;"	kind:variable	line:11
+blueprint	../examples/cars/blueprints/car.py	/^blueprint = Blueprint('Car', '\/car')$/;"	kind:variable	line:9
+blueprint	../examples/cars/blueprints/driver.py	/^blueprint = Blueprint('Driver', '\/driver')$/;"	kind:variable	line:9
+blueprint	../examples/cars/blueprints/garage.py	/^blueprint = Blueprint('Garage', '\/garage')$/;"	kind:variable	line:10
+blueprint	../examples/cars/blueprints/manufacturer.py	/^blueprint = Blueprint('Manufacturer', '\/manufacturer')$/;"	kind:variable	line:9
+blueprint	../sanic_openapi/doc.py	/^    blueprint = None$/;"	kind:variable	line:200
+blueprint	../sanic_openapi/openapi.py	/^blueprint = Blueprint('openapi', url_prefix='openapi')$/;"	kind:variable	line:11
+blueprint	../sanic_openapi/swagger.py	/^blueprint = Blueprint('swagger', url_prefix='swagger')$/;"	kind:variable	line:8
+build_spec	../sanic_openapi/openapi.py	/^def build_spec(app, loop):$/;"	kind:function	line:26
+car.py	../examples/cars/blueprints/car.py	1;"	kind:file	line:1
+car_blueprint	../examples/cars/main.py	/^from blueprints.car import blueprint as car_blueprint$/;"	kind:namespace	line:3
+car_get	../examples/cars/blueprints/car.py	/^def car_get(request, car_id):$/;"	kind:function	line:23
+car_list	../examples/cars/blueprints/car.py	/^def car_list(request):$/;"	kind:function	line:16
+car_put	../examples/cars/blueprints/car.py	/^def car_put(request, car_id):$/;"	kind:function	line:32
+car_put	../examples/cars/blueprints/car.py	/^def car_put(request, car_id):$/;"	kind:function	line:39
+cars	../examples/cars/models.py	/^    cars = [Car]$/;"	kind:variable	line:25
+classifiers	../setup.py	/^    classifiers=[$/;"	kind:variable	line:32
+codecs	../setup.py	/^import codecs$/;"	kind:namespace	line:4
+color	../examples/cars/models.py	/^    color = str$/;"	kind:variable	line:17
+consumes	../sanic_openapi/doc.py	/^    consumes = None$/;"	kind:variable	line:193
+consumes	../sanic_openapi/doc.py	/^def consumes(*args, content_type=None, location='query', required=False):$/;"	kind:function	line:270
+consumes_content_type	../sanic_openapi/doc.py	/^    consumes_content_type = None$/;"	kind:variable	line:194
+data.py	../examples/cars/data.py	1;"	kind:file	line:1
+date	../examples/cars/models.py	/^from datetime import date$/;"	kind:namespace	line:1
+date	../sanic_openapi/doc.py	/^from datetime import date, datetime$/;"	kind:namespace	line:2
+datetime	../examples/cars/data.py	/^import datetime$/;"	kind:namespace	line:2
+datetime	../sanic_openapi/doc.py	/^from datetime import date, datetime$/;"	kind:namespace	line:2
+defaultdict	../sanic_openapi/doc.py	/^from collections import defaultdict$/;"	kind:namespace	line:1
+definition	../sanic_openapi/doc.py	/^    def definition(self):$/;"	kind:member	line:126
+definitions	../sanic_openapi/doc.py	/^definitions = {}$/;"	kind:variable	line:112
+definitions	../sanic_openapi/openapi.py	/^from .doc import route_specs, RouteSpec, serialize_schema, definitions$/;"	kind:namespace	line:8
+description	../sanic_openapi/doc.py	/^    description = None$/;"	kind:variable	line:198
+description	../sanic_openapi/doc.py	/^def description(text):$/;"	kind:function	line:263
+description	../setup.py	/^    description='OpenAPI support for Sanic',$/;"	kind:variable	line:25
+dir_path	../sanic_openapi/swagger.py	/^dir_path = os.path.abspath(dir_path + '\/ui')$/;"	kind:variable	line:6
+dir_path	../sanic_openapi/swagger.py	/^dir_path = os.path.dirname(os.path.realpath(__file__))$/;"	kind:variable	line:5
+doc	../examples/cars/blueprints/car.py	/^from sanic_openapi import doc$/;"	kind:namespace	line:3
+doc	../examples/cars/blueprints/driver.py	/^from sanic_openapi import doc$/;"	kind:namespace	line:3
+doc	../examples/cars/blueprints/garage.py	/^from sanic_openapi import doc$/;"	kind:namespace	line:3
+doc	../examples/cars/blueprints/manufacturer.py	/^from sanic_openapi import doc$/;"	kind:namespace	line:3
+doc	../tests/test_types.py	/^from sanic_openapi import openapi_blueprint, doc$/;"	kind:namespace	line:4
+doc.py	../sanic_openapi/doc.py	1;"	kind:file	line:1
+doors	../examples/cars/models.py	/^    doors = int$/;"	kind:variable	line:16
+driver	../examples/cars/models.py	/^    driver = Driver$/;"	kind:variable	line:19
+driver.py	../examples/cars/blueprints/driver.py	1;"	kind:file	line:1
+driver_blueprint	../examples/cars/main.py	/^from blueprints.driver import blueprint as driver_blueprint$/;"	kind:namespace	line:4
+driver_delete	../examples/cars/blueprints/driver.py	/^def driver_delete(request, driver_id):$/;"	kind:function	line:37
+driver_get	../examples/cars/blueprints/driver.py	/^def driver_get(request, driver_id):$/;"	kind:function	line:22
+driver_list	../examples/cars/blueprints/driver.py	/^def driver_list(request):$/;"	kind:function	line:15
+driver_put	../examples/cars/blueprints/driver.py	/^def driver_put(request, driver_id):$/;"	kind:function	line:30
+exclude	../sanic_openapi/doc.py	/^    exclude = None$/;"	kind:variable	line:202
+exclude	../sanic_openapi/doc.py	/^def exclude(boolean):$/;"	kind:function	line:249
+field	../sanic_openapi/doc.py	/^    field = None$/;"	kind:variable	line:211
+garage.py	../examples/cars/blueprints/garage.py	1;"	kind:file	line:1
+garage_blueprint	../examples/cars/main.py	/^from blueprints.garage import blueprint as garage_blueprint$/;"	kind:namespace	line:5
+get_cars	../examples/cars/blueprints/garage.py	/^async def get_cars(request):$/;"	kind:function	line:24
+get_garage	../examples/cars/blueprints/garage.py	/^async def get_garage(request):$/;"	kind:function	line:16
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:227
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:250
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:257
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:264
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:271
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:282
+inner	../sanic_openapi/doc.py	/^    def inner(func):$/;"	kind:function	line:292
+install_requires	../setup.py	/^    install_requires=[$/;"	kind:variable	line:29
+json	../examples/cars/blueprints/car.py	/^from sanic.response import json$/;"	kind:namespace	line:2
+json	../examples/cars/blueprints/driver.py	/^from sanic.response import json$/;"	kind:namespace	line:2
+json	../examples/cars/blueprints/driver.py	/^import json$/;"	kind:namespace	line:7
+json	../examples/cars/blueprints/garage.py	/^from sanic.response import json$/;"	kind:namespace	line:2
+json	../examples/cars/blueprints/garage.py	/^import json$/;"	kind:namespace	line:7
+json	../examples/cars/blueprints/manufacturer.py	/^from sanic.response import json$/;"	kind:namespace	line:2
+json	../sanic_openapi/openapi.py	/^from sanic.response import json$/;"	kind:namespace	line:5
+json	../tests/test_types.py	/^from sanic.response import json$/;"	kind:namespace	line:3
+json_loads	../tests/test_types.py	/^from json import loads as json_loads$/;"	kind:namespace	line:1
+license	../setup.py	/^    license='MIT',$/;"	kind:variable	line:22
+location	../sanic_openapi/doc.py	/^    location = None$/;"	kind:variable	line:212
+main.py	../examples/cars/main.py	1;"	kind:file	line:1
+make	../examples/cars/models.py	/^    make = Manufacturer$/;"	kind:variable	line:18
+manufacturer.py	../examples/cars/blueprints/manufacturer.py	1;"	kind:file	line:1
+manufacturer_blueprint	../examples/cars/main.py	/^from blueprints.manufacturer import blueprint as manufacturer_blueprint$/;"	kind:namespace	line:6
+manufacturer_delete	../examples/cars/blueprints/manufacturer.py	/^def manufacturer_delete(request, manufacturer_id):$/;"	kind:function	line:37
+manufacturer_get	../examples/cars/blueprints/manufacturer.py	/^def manufacturer_get(request, manufacturer_id):$/;"	kind:function	line:22
+manufacturer_list	../examples/cars/blueprints/manufacturer.py	/^def manufacturer_list(request):$/;"	kind:function	line:15
+manufacturer_put	../examples/cars/blueprints/manufacturer.py	/^def manufacturer_put(request, manufacturer_id):$/;"	kind:function	line:30
+models.py	../examples/cars/models.py	1;"	kind:file	line:1
+name	../examples/cars/models.py	/^    name = str$/;"	kind:variable	line:10
+name	../examples/cars/models.py	/^    name = str$/;"	kind:variable	line:5
+name	../setup.py	/^    name='sanic-openapi',$/;"	kind:variable	line:19
+on	../examples/cars/models.py	/^    on = bool$/;"	kind:variable	line:15
+openapi.py	../sanic_openapi/openapi.py	1;"	kind:file	line:1
+openapi_blueprint	../examples/cars/main.py	/^from sanic_openapi import swagger_blueprint, openapi_blueprint$/;"	kind:namespace	line:2
+openapi_blueprint	../sanic_openapi/__init__.py	/^from .openapi import blueprint as openapi_blueprint$/;"	kind:namespace	line:1
+openapi_blueprint	../tests/test_openapi.py	/^from sanic_openapi import openapi_blueprint$/;"	kind:namespace	line:2
+openapi_blueprint	../tests/test_types.py	/^from sanic_openapi import openapi_blueprint, doc$/;"	kind:namespace	line:4
+operation	../sanic_openapi/doc.py	/^    operation = None$/;"	kind:variable	line:199
+os	../sanic_openapi/swagger.py	/^import os$/;"	kind:namespace	line:1
+os	../setup.py	/^import os$/;"	kind:namespace	line:5
+package_data	../setup.py	/^    package_data={'sanic_openapi': ['ui\/*']},$/;"	kind:variable	line:27
+packages	../setup.py	/^    packages=['sanic_openapi'],$/;"	kind:variable	line:26
+passengers	../examples/cars/models.py	/^    passengers = [Driver]$/;"	kind:variable	line:20
+platforms	../setup.py	/^    platforms='any',$/;"	kind:variable	line:28
+produces	../sanic_openapi/doc.py	/^    produces = None$/;"	kind:variable	line:195
+produces	../sanic_openapi/doc.py	/^def produces(*args, content_type=None):$/;"	kind:function	line:281
+produces_content_type	../sanic_openapi/doc.py	/^    produces_content_type = None$/;"	kind:variable	line:196
+re	../sanic_openapi/openapi.py	/^import re$/;"	kind:namespace	line:1
+re	../setup.py	/^import re$/;"	kind:namespace	line:6
+remove_nulls	../sanic_openapi/openapi.py	/^def remove_nulls(dictionary, deep=True):$/;"	kind:function	line:17
+repeat	../sanic_openapi/openapi.py	/^from itertools import repeat$/;"	kind:namespace	line:2
+required	../sanic_openapi/doc.py	/^    required = None$/;"	kind:variable	line:213
+route	../sanic_openapi/doc.py	/^def route(summary=None, description=None, consumes=None, produces=None,$/;"	kind:function	line:224
+route_specs	../sanic_openapi/doc.py	/^route_specs = defaultdict(RouteSpec)$/;"	kind:variable	line:221
+route_specs	../sanic_openapi/openapi.py	/^from .doc import route_specs, RouteSpec, serialize_schema, definitions$/;"	kind:namespace	line:8
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:101
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:12
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:137
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:26
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:35
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:44
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:52
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:64
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:73
+serialize	../sanic_openapi/doc.py	/^    def serialize(self):$/;"	kind:member	line:86
+serialize_schema	../sanic_openapi/doc.py	/^def serialize_schema(schema):$/;"	kind:function	line:145
+serialize_schema	../sanic_openapi/openapi.py	/^from .doc import route_specs, RouteSpec, serialize_schema, definitions$/;"	kind:namespace	line:8
+setup	../setup.py	/^from setuptools import setup$/;"	kind:namespace	line:7
+setup.py	../setup.py	1;"	kind:file	line:1
+spaces	../examples/cars/models.py	/^    spaces = int$/;"	kind:variable	line:24
+spec	../sanic_openapi/openapi.py	/^def spec(request):$/;"	kind:function	line:169
+start_date	../examples/cars/models.py	/^    start_date = date$/;"	kind:variable	line:6
+success	../examples/cars/models.py	/^    success = bool$/;"	kind:variable	line:29
+summary	../sanic_openapi/doc.py	/^    summary = None$/;"	kind:variable	line:197
+summary	../sanic_openapi/doc.py	/^def summary(text):$/;"	kind:function	line:256
+swagger.py	../sanic_openapi/swagger.py	1;"	kind:file	line:1
+swagger_blueprint	../examples/cars/main.py	/^from sanic_openapi import swagger_blueprint, openapi_blueprint$/;"	kind:namespace	line:2
+swagger_blueprint	../sanic_openapi/__init__.py	/^from .swagger import blueprint as swagger_blueprint$/;"	kind:namespace	line:2
+tag	../sanic_openapi/doc.py	/^def tag(name):$/;"	kind:function	line:291
+tags	../sanic_openapi/doc.py	/^    tags = None$/;"	kind:variable	line:201
+test	../tests/test_types.py	/^    def test(request):$/;"	kind:function	line:18
+test_car	../examples/cars/blueprints/car.py	/^from data import test_car, test_success$/;"	kind:namespace	line:6
+test_car	../examples/cars/data.py	/^test_car = Car()$/;"	kind:variable	line:6
+test_car	../examples/cars/data.py	/^test_car = {$/;"	kind:variable	line:22
+test_driver	../examples/cars/blueprints/driver.py	/^from data import test_driver, test_success$/;"	kind:namespace	line:6
+test_driver	../examples/cars/data.py	/^test_driver = Driver()$/;"	kind:variable	line:5
+test_driver	../examples/cars/data.py	/^test_driver = {$/;"	kind:variable	line:16
+test_garage	../examples/cars/blueprints/garage.py	/^from data import test_garage, test_success$/;"	kind:namespace	line:6
+test_garage	../examples/cars/data.py	/^test_garage = Garage()$/;"	kind:variable	line:7
+test_garage	../examples/cars/data.py	/^test_garage = {$/;"	kind:variable	line:31
+test_get_docs	../tests/test_openapi.py	/^def test_get_docs():$/;"	kind:function	line:8
+test_list_default	../tests/test_types.py	/^def test_list_default():$/;"	kind:function	line:11
+test_manufacturer	../examples/cars/blueprints/manufacturer.py	/^from data import test_manufacturer, test_success$/;"	kind:namespace	line:6
+test_manufacturer	../examples/cars/data.py	/^test_manufacturer = Manufacturer()$/;"	kind:variable	line:4
+test_manufacturer	../examples/cars/data.py	/^test_manufacturer = {$/;"	kind:variable	line:10
+test_openapi.py	../tests/test_openapi.py	1;"	kind:file	line:1
+test_status	../examples/cars/data.py	/^test_status = Status()$/;"	kind:variable	line:8
+test_success	../examples/cars/blueprints/car.py	/^from data import test_car, test_success$/;"	kind:namespace	line:6
+test_success	../examples/cars/blueprints/driver.py	/^from data import test_driver, test_success$/;"	kind:namespace	line:6
+test_success	../examples/cars/blueprints/garage.py	/^from data import test_garage, test_success$/;"	kind:namespace	line:6
+test_success	../examples/cars/blueprints/manufacturer.py	/^from data import test_manufacturer, test_success$/;"	kind:namespace	line:6
+test_success	../examples/cars/data.py	/^test_success = {$/;"	kind:variable	line:36
+test_types.py	../tests/test_types.py	1;"	kind:file	line:1
+url	../setup.py	/^    url='http:\/\/github.com\/channelcat\/sanic\/',$/;"	kind:variable	line:21
+version	../setup.py	/^        version = re.findall(r"^__version__ = '([^']+)'\\r?$",$/;"	kind:variable	line:13
+version	../setup.py	/^    version=version,$/;"	kind:variable	line:20
