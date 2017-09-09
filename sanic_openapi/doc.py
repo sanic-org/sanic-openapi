@@ -293,3 +293,6 @@ def tag(name):
         route_specs[func].tags.append(name)
         return func
     return inner
+
+
+excluded_paths = set()

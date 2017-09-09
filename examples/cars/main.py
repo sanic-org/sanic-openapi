@@ -1,11 +1,14 @@
 from sanic import Sanic
 from sanic_openapi import swagger_blueprint, openapi_blueprint
+from sanic_openapi import doc
 from blueprints.car import blueprint as car_blueprint
 from blueprints.driver import blueprint as driver_blueprint
 from blueprints.garage import blueprint as garage_blueprint
 from blueprints.manufacturer import blueprint as manufacturer_blueprint
 
 app = Sanic()
+doc.excluded_paths.add('/robots.txt')
+app.static('/robots.txt', 'examples/robots.txt')
 
 app.blueprint(openapi_blueprint)
 app.blueprint(swagger_blueprint)
