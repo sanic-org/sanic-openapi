@@ -114,7 +114,6 @@ def build_spec(app, loop):
                             'in': consumer.location,
                             'name': name
                         }
-                        route_parameters.append(route_param)
                 else:
                     route_param = {
                         **spec,
@@ -122,11 +121,10 @@ def build_spec(app, loop):
                         'in': consumer.location,
                         'name': consumer.field.name if hasattr(consumer.field, 'name') else 'body'
                     }
-                    route_parameters.append(route_param)
                 if '$ref' in route_param:
                     route_param["schema"] = {'$ref': route_param['$ref']}
                     del route_param['$ref']
-                    route_parameters.append(route_param)
+                route_parameters.append(route_param)
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,
                 'summary': route_spec.summary,
