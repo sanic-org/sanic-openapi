@@ -280,7 +280,7 @@ def consumes(*args, content_type=None, location='query', required=False):
     return inner
 
 
-def responses(code, description=None, examples=None, schema=None):
+def response(code, description=None, examples=None, schema=None):
     def inner(func):
         route_specs[func].responses[code] = {
             'description': description,
