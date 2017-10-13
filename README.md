@@ -40,12 +40,14 @@ from sanic_openapi import doc
 @app.get("/user/<user_id:int>")
 @doc.summary("Fetches a user by ID")
 @doc.produces({ "user": { "name": str, "id": int } })
+@doc.response(404, 'Not found')
 async def get_user(request, user_id):
     ...
 
 @app.post("/user")
 @doc.summary("Creates a user")
 @doc.consumes({"user": { "name": str }}, location="body")
+@doc.response(201, 'Created')
 async def create_user(request):
     ...
 ```

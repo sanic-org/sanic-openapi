@@ -10,8 +10,8 @@ def test_responses():
     app.blueprint(openapi_blueprint)
 
     @app.put('/test', strict_slashes=True)
-    @doc.responses(201, 'Created')
-    @doc.responses(404, 'Not found')
+    @doc.response(201, 'Created')
+    @doc.response(404, 'Not found')
     def test(request):
         return json({"test": True})
 
