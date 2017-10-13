@@ -125,7 +125,7 @@ def build_spec(app, loop):
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
                 'parameters': route_parameters,
-                'responses': {
+                'responses': route_spec.responses or {
                     "200": {
                         "description": None,
                         "examples": None,

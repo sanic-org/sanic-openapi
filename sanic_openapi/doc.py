@@ -191,6 +191,7 @@ def serialize_schema(schema):
 
 class RouteSpec(object):
     consumes = None
+    responses = None
     consumes_content_type = None
     produces = None
     produces_content_type = None
@@ -204,6 +205,7 @@ class RouteSpec(object):
     def __init__(self):
         self.tags = []
         self.consumes = []
+        self.responses = {}
         super().__init__()
 
 
@@ -274,6 +276,18 @@ def consumes(*args, content_type=None, location='query', required=False):
                 field = RouteField(arg, location, required)
                 route_specs[func].consumes.append(field)
                 route_specs[func].consumes_content_type = content_type
+        return func
+    return inner
+
+
+def responses(code, description=None, examples=None, schema=None):
+    def inner(func):
+        route_specs[func].responses[code] = {
+            'description': description,
+            'examples': examples,
+            'schema': schema
+        }
+
         return func
     return inner
 
