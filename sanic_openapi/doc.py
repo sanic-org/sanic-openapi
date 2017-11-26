@@ -302,3 +302,4 @@ def response(code, description=None, examples=None):
         route_specs[func].responses[code] = {'description': description, 'example': examples}
         return func
     return inner
+
