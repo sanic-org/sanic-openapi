@@ -200,10 +200,12 @@ class RouteSpec(object):
     blueprint = None
     tags = None
     exclude = None
+    responses = None
 
     def __init__(self):
         self.tags = []
         self.consumes = []
+        self.responses = {}
         super().__init__()
 
 
@@ -291,5 +293,12 @@ def produces(*args, content_type=None):
 def tag(name):
     def inner(func):
         route_specs[func].tags.append(name)
+        return func
+    return inner
+
+
+def response(code, description=None, examples=None):
+    def inner(func):
+        route_specs[func].responses[code] = {'description': description, 'example': examples}
         return func
     return inner

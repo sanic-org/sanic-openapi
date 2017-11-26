@@ -96,3 +96,14 @@ app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
 app.config.API_PRODUCES_CONTENT_TYPES = ['application/json']
 app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 ```
+
+### Additional documentation strings
+
+A new response decorator will allow you to add a series of responses
+supporting a status code, description and optional example.
+
+```python
+@doc.response('200', 'Successful Operation', {'handle': '1195ff38-d2e2-11e7-8edb-bcaec5447bf4'})
+@doc.response('404', 'File not found')
+@doc.response('500', 'Application erroor')
+```

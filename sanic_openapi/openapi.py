@@ -117,6 +117,13 @@ def build_spec(app, loop):
 
                 route_parameters.append(route_param)
 
+            if '200' not in route_spec.responses:
+                route_spec.responses['200'] = {
+                    "description": 'successful operation',
+                    "example": None,
+                    "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
+                }
+
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,
                 'summary': route_spec.summary,
@@ -125,13 +132,7 @@ def build_spec(app, loop):
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
                 'parameters': route_parameters,
-                'responses': {
-                    "200": {
-                        "description": None,
-                        "examples": None,
-                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
-                    }
-                },
+                'responses': route_spec.responses
             })
 
             methods[_method.lower()] = endpoint
