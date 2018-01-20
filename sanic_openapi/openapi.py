@@ -45,7 +45,8 @@ def build_spec(app, loop):
     # Authorization
     # --------------------------------------------------------------- #
 
-    _spec['securityDefinitions'] = getattr(app.config, 'API_SECURITY', None)
+    _spec['securityDefinitions'] = getattr(app.config, 'API_SECURITY_DEFINITIONS', None)
+    _spec['security'] = getattr(app.config, 'API_SECURITY', None)
 
     # --------------------------------------------------------------- #
     # Blueprint Tags
