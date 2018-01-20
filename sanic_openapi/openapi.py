@@ -29,16 +29,23 @@ def build_spec(app, loop):
         "version": getattr(app.config, 'API_VERSION', '1.0.0'),
         "title": getattr(app.config, 'API_TITLE', 'API'),
         "description": getattr(app.config, 'API_DESCRIPTION', ''),
-        "termsOfService": getattr(app.config, 'API_TERMS_OF_SERVICE', None),
+        "termsOfService": getattr(app.config, 'API_TERMS_OF_SERVICE', ''),
         "contact": {
             "email": getattr(app.config, 'API_CONTACT_EMAIL', None)
         },
         "license": {
-            "email": getattr(app.config, 'API_LICENSE_NAME', None),
+            "name": getattr(app.config, 'API_LICENSE_NAME', None),
             "url": getattr(app.config, 'API_LICENSE_URL', None)
-        }
+        },
+
     }
     _spec['schemes'] = getattr(app.config, 'API_SCHEMES', ['http'])
+
+    # --------------------------------------------------------------- #
+    # Authorization
+    # --------------------------------------------------------------- #
+
+    _spec['securityDefinitions'] = getattr(app.config, 'API_SECURITY', None)
 
     # --------------------------------------------------------------- #
     # Blueprint Tags
@@ -79,9 +86,9 @@ def build_spec(app, loop):
                 continue
 
             consumes_content_types = route_spec.consumes_content_type or \
-                getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
+                                     getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or \
-                getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+                                     getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
 
             # Parameters - Path & Query String
             route_parameters = []
@@ -117,6 +124,19 @@ def build_spec(app, loop):
 
                 route_parameters.append(route_param)
 
+            responses = {
+                "200": {
+                    "schema": serialize_schema(route_spec.produces.field) if route_spec.produces else None,
+                    "description": route_spec.produces.description if route_spec.produces else None
+                }
+            }
+
+            for (status_code, routefield) in route_spec.response:
+                responses[f"{status_code}"] = {
+                    "schema": serialize_schema(routefield.field),
+                    "description": routefield.description
+                }
+
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,
                 'summary': route_spec.summary,
@@ -125,13 +145,7 @@ def build_spec(app, loop):
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
                 'parameters': route_parameters,
-                'responses': {
-                    "200": {
-                        "description": None,
-                        "examples": None,
-                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
-                    }
-                },
+                'responses': responses
             })
 
             methods[_method.lower()] = endpoint
