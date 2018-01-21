@@ -94,10 +94,11 @@ def build_spec(app, loop):
             if _method == 'OPTIONS' or route_spec.exclude:
                 continue
 
-            consumes_content_types = route_spec.consumes_content_type or \
-                                     getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
-            produces_content_types = route_spec.produces_content_type or \
-                                     getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+            api_consumes_content_types = getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
+            consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
+
+            api_produces_content_types = getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+            produces_content_types = route_spec.produces_content_type or api_produces_content_types
 
             # Parameters - Path & Query String
             route_parameters = []
@@ -141,7 +142,7 @@ def build_spec(app, loop):
             }
 
             for (status_code, routefield) in route_spec.response:
-                responses[f"{status_code}"] = {
+                responses["{}" . format(status_code)] = {
                     "schema": serialize_schema(routefield.field),
                     "description": routefield.description
                 }
