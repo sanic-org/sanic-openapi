@@ -90,21 +90,21 @@ class Garage:
 
 ```python
 garage = doc.JsonBody({
-        "spaces": doc.Integer,
-        "cars": [
-            {
-                "make": doc.String,
-                "model": doc.String,
-                "year": doc.Integer
-            }
-        ]
-    })
+    "spaces": doc.Integer,
+    "cars": [
+        {
+            "make": doc.String,
+            "model": doc.String,
+            "year": doc.Integer
+        }
+    ]
+})
 
 @app.post("/store/garage")
 @doc.summary("Stores a garage object")
 @doc.consumes(garage, content_type="application/json", location="body")
 async def store_garage(request):
-    # TODO: Do some storing here
+    store_garage(request.json)
     return json(request.json)
 ```
 
