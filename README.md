@@ -122,13 +122,15 @@ app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 
 #### Including OpenAPI's host, basePath and security parameters
 
+Just follow the OpenAPI 2.0 specification on this
+
 ``` python
 app.config.API_HOST = 'subdomain.host.ext'
 app.config.API_BASEPATH = '/v2/api/'
 
 app.config.API_SECURITY = [
     {
-        'OKTA_TOKEN': []
+        'authToken': []
     }
 ]
 
@@ -148,6 +150,7 @@ app.config.API_SECURITY_DEFINITIONS = {
         }
     }
 }
+
 ```
 
 ### Set responses for different HTTP status codes
