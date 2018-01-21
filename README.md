@@ -45,7 +45,7 @@ async def get_user(request, user_id):
 
 @app.post("/user")
 @doc.summary("Creates a user")
-@doc.consumes({"user": { "name": str }}, location="body")
+@doc.consumes(doc.JsonBody({"user": { "name": str }}), location="body")
 async def create_user(request):
     ...
 ```
