@@ -41,6 +41,14 @@ def build_spec(app, loop):
     }
     _spec['schemes'] = getattr(app.config, 'API_SCHEMES', ['http'])
 
+    host = getattr(app.config, 'API_HOST', None)
+    if host is not None:
+        _spec['host'] = host
+
+    base_path = getattr(app.config, 'API_BASEPATH', None)
+    if base_path is not None:
+        _spec['basePath'] = base_path
+
     # --------------------------------------------------------------- #
     # Authorization
     # --------------------------------------------------------------- #
