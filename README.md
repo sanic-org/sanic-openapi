@@ -86,6 +86,29 @@ class Garage:
     cars = doc.List(Car, description="All cars in the garage")
 ```
 
+### Specify a JSON body without extensive modelling
+
+```python
+garage = doc.JsonBody({
+        "spaces": doc.Integer,
+        "cars": [
+            {
+                "make": doc.String,
+                "model": doc.String,
+                "year": doc.Integer
+            }
+        ]
+    })
+
+@app.post("/store/garage")
+@doc.summary("Stores a garage object")
+@doc.consumes(garage, content_type="application/json", location="body")
+async def store_garage(request):
+    # TODO: Do some storing here
+    return json(request.json)
+```
+
+
 ### Configure all the things
 
 ```python
@@ -95,4 +118,46 @@ app.config.API_DESCRIPTION = 'Car API'
 app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
 app.config.API_PRODUCES_CONTENT_TYPES = ['application/json']
 app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
+```
+
+#### Including OpenAPI's host, basePath and security parameters
+
+``` python
+app.config.API_HOST = 'subdomain.host.ext'
+app.config.API_BASEPATH = '/v2/api/'
+
+app.config.API_SECURITY = [
+    {
+        'OKTA_TOKEN': []
+    }
+]
+
+app.config.API_SECURITY_DEFINITIONS = {
+    'authToken': {
+        'type': 'apiKey', 
+        'in': 'header', 
+        'name': 'Authorization', 
+        'description': 'Paste your auth token and do not forget to add "Bearer " in front of it'
+    }, 
+    'OAuth2': {
+        'type': 'oauth2', 
+        'flow': 'application', 
+        'tokenUrl': 'https://your.authserver.ext/v1/token', 
+        'scopes': {
+            'some_scope': 'Grants access to this API'
+        }
+    }
+}
+```
+
+### Set responses for different HTTP status codes
+
+```python
+@app.get("/garage/<id>")
+@doc.summary("Gets the whole garage")
+@doc.produces(Garage)
+@doc.response(404, {"message": str}, description="When the garage cannot be found")
+async def get_garage(request, id):
+    garage = some_fetch_function(id)
+    return json(garage)
 ```
