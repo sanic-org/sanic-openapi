@@ -72,15 +72,9 @@
 <script>
 window.onload = function() {
 
-  var openapiPath = '/openapi/spec.json'
-  var url = window.location.protocol + '//' + window.location.host + openapiPath;
-  try {
-    url = window.location.href.split("/swagger/")[0] + openapiPath;
-  } catch(e) { }
-
   // Build a system
   const ui = SwaggerUIBundle({
-    url: url,
+    url: "swagger.json",
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [

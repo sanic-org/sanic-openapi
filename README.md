@@ -14,16 +14,15 @@ Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
 pip install sanic-openapi
 ```
 
-Add OpenAPI and Swagger UI:
+Add Swagger UI with the OpenAPI spec:
 
 ```python
-from sanic_openapi import swagger_blueprint, openapi_blueprint
+from sanic_openapi import swagger_blueprint
 
-app.blueprint(openapi_blueprint)
 app.blueprint(swagger_blueprint)
 ```
 
-You'll now have a Swagger UI at the URL `/swagger`.  
+You'll now have a Swagger UI at the URL `/swagger` and an OpenAPI 2.0 spec at `/swagger/swagger.json`.  
 Your routes will be automatically categorized by their blueprints.
 
 ## Example

@@ -1,5 +1,5 @@
 from sanic import Sanic
-from sanic_openapi import openapi_blueprint
+from sanic_openapi import swagger_blueprint
 
 # ------------------------------------------------------------ #
 #  GET
@@ -7,7 +7,7 @@ from sanic_openapi import openapi_blueprint
 
 def test_get_docs():
     app = Sanic('test_get')
-    app.blueprint(openapi_blueprint)
+    app.blueprint(swagger_blueprint)
     
-    request, response = app.test_client.get('/openapi/spec.json')
+    request, response = app.test_client.get('/swagger/swagger.json')
     assert response.status == 200
