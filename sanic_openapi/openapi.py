@@ -4,6 +4,7 @@ from itertools import repeat
 from sanic.blueprints import Blueprint
 from sanic.response import json
 from sanic.views import CompositionView
+from sanic.constants import HTTP_METHODS
 
 from .doc import route_specs, RouteSpec, serialize_schema, definitions
 
@@ -47,10 +48,21 @@ def build_spec(app, loop):
     for blueprint in app.blueprints.values():
         if hasattr(blueprint, 'routes'):
             for route in blueprint.routes:
-                route_spec = route_specs[route.handler]
-                route_spec.blueprint = blueprint
-                if not route_spec.tags:
-                    route_spec.tags.append(blueprint.name)
+                if hasattr(route.handler, 'view_class'):
+                    # class based view
+                    view = route.handler.view_class
+                    for http_method in HTTP_METHODS:
+                        _handler = getattr(view, http_method.lower(), None)
+                        if _handler:
+                            route_spec = route_specs[_handler]
+                            route_spec.blueprint = blueprint
+                            if not route_spec.tags:
+                                route_spec.tags.append(blueprint.name)
+                else:
+                    route_spec = route_specs[route.handler]
+                    route_spec.blueprint = blueprint
+                    if not route_spec.tags:
+                        route_spec.tags.append(blueprint.name)
 
     paths = {}
     for uri, route in app.router.routes_all.items():
@@ -73,7 +85,11 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
-            route_spec = route_specs.get(_handler) or RouteSpec()
+            if hasattr(_handler, 'view_class'):
+                view_handler = getattr(_handler.view_class, _method.lower())
+                route_spec = route_specs.get(view_handler) or RouteSpec()
+            else:
+                route_spec = route_specs.get(_handler) or RouteSpec()
 
             if _method == 'OPTIONS' or route_spec.exclude:
                 continue
