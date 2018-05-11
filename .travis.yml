@@ -7,8 +7,6 @@ install: pip install tox-travis
 script: tox
 deploy:
   provider: pypi
-  user: channelcat
-  password:
-    secure: hAnIetURb2/ae7sYrWOrHCwN/9sBYNu7e4qeCAaIckXR4IlhA8odavdY/lvyD+nbQklCU9Xw+LtxExJhUI5IT7/sOKoiTjGxvuA5C5WOxBypuQOO5PiGaU1tTqH64g3mSiju+yRc1ZfMHi8nu/TumJAEh7FH8fqMqvTMlNJI4RhIlZXpbIJb1uPda/tSbehQq2ani2ua96iuhxPpOxqFQV6DrbYQOxj+DRxF5NgYQD/kyB+1drHkvixybYv5uEAvwroflImlYShaQ0fVhHfxsZsCQyuhk4DteXwYu8cfw+Yvi+YCz2eB4LWcIqe6sQUx32zxHRQUmvRfCluPn1ePIcv0f1h7GSMAeA5qbarWnY+m97Pe7IOeiMjUOcbAv10fH0VGx4kOrqnWGcHShHZJQHfFe+lthVJYZCC37y/j1iMSWc6N+QdbJqat1ipaaOnlgA573Cut5KpIoJFnqoFlzZZRTPhIIzVZ5X+vqeQN5Qq7D2BrrfTq2FLWdlq4C/+b0M9V3XvVnParBJAbfaKXZ+K5Ik24zzXwEjQzdjwKeVy+5RPUL+lVeirNrguwt85UQ+z9bo+u4rgZ7EGC6b+Lq60AuET24JrXFyB9t36cB7xduAxlpixp24cSdGehYxhenaFVXifkWyG/bjiezT+XMxn+lRqbv/BqgGW4ADVAbY4=
+  user: 'matsurihime'
   on:
     tags: true
