@@ -5,7 +5,8 @@ from sanic.blueprints import Blueprint
 from sanic.response import json
 from sanic.views import CompositionView
 
-from .doc import route_specs, RouteSpec, serialize_schema, definitions
+from .doc import excluded_paths, definitions, route_specs, serialize_schema
+from .doc import RouteSpec
 
 
 blueprint = Blueprint('openapi', url_prefix='openapi')
@@ -57,6 +58,8 @@ def build_spec(app, loop):
         if uri.startswith("/swagger") or uri.startswith("/openapi") \
                 or '<file_uri' in uri:
                 # TODO: add static flag in sanic routes
+            continue
+        if any(uri.startswith(path) for path in excluded_paths):
             continue
 
         # --------------------------------------------------------------- #
