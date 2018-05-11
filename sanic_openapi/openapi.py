@@ -122,7 +122,7 @@ def build_spec(app, loop):
 
             responses = {
                 '200': {
-                    'schema': serialize_schema(route_spec.produces.field),
+                    'schema': serialize_schema(route_spec.produces.field) if route_spec.produces.field else None,
                     'description': route_spec.produces.description,
                 }
             }
