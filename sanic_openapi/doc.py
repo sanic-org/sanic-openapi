@@ -111,6 +111,7 @@ class List(Field):
 
 
 definitions = {}
+excluded_paths = set()
 
 
 class Object(Field):
