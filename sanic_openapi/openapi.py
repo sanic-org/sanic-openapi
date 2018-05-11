@@ -29,13 +29,13 @@ def build_spec(app, loop):
         "version": getattr(app.config, 'API_VERSION', '1.0.0'),
         "title": getattr(app.config, 'API_TITLE', 'API'),
         "description": getattr(app.config, 'API_DESCRIPTION', ''),
-        "termsOfService": getattr(app.config, 'API_TERMS_OF_SERVICE', None),
+        "termsOfService": getattr(app.config, 'API_TERMS_OF_SERVICE', ''),
         "contact": {
-            "email": getattr(app.config, 'API_CONTACT_EMAIL', None)
+            "email": getattr(app.config, 'API_CONTACT_EMAIL', None),
         },
         "license": {
-            "email": getattr(app.config, 'API_LICENSE_NAME', None),
-            "url": getattr(app.config, 'API_LICENSE_URL', None)
+            "name": getattr(app.config, 'API_LICENSE_NAME', None),
+            "url": getattr(app.config, 'API_LICENSE_URL', None),
         }
     }
     _spec['schemes'] = getattr(app.config, 'API_SCHEMES', ['http'])
@@ -86,11 +86,14 @@ def build_spec(app, loop):
             # Parameters - Path & Query String
             route_parameters = []
             for parameter in route.parameters:
+                param_description = route_spec.path_parameters[parameter.name] \
+                    if parameter.name in route_spec.path_parameters.keys() else ''
                 route_parameters.append({
                     **serialize_schema(parameter.cast),
                     'required': True,
                     'in': 'path',
-                    'name': parameter.name
+                    'name': parameter.name,
+                    'description': param_description,
                 })
 
             for consumer in route_spec.consumes:
@@ -101,14 +104,14 @@ def build_spec(app, loop):
                             **prop_spec,
                             'required': consumer.required,
                             'in': consumer.location,
-                            'name': name
+                            'name': name,
                         }
                 else:
                     route_param = {
                         **spec,
                         'required': consumer.required,
                         'in': consumer.location,
-                        'name': consumer.field.name if hasattr(consumer.field, 'name') else 'body'
+                        'name': consumer.field.name if hasattr(consumer.field, 'name') else 'body',
                     }
 
                 if '$ref' in route_param:
@@ -116,6 +119,22 @@ def build_spec(app, loop):
                     del route_param['$ref']
 
                 route_parameters.append(route_param)
+
+            responses = {
+                '200': {
+                    'schema': serialize_schema(route_spec.produces.field),
+                    'description': route_spec.produces.description,
+                }
+            }
+
+            for (status_code, route_field) in route_spec.responses:
+                if route_field.override_default:
+                    del responses['200']
+
+                responses[str(status_code)] = {
+                    'schema': serialize_schema(route_field.field),
+                    'description': route_field.description,
+                }
 
             endpoint = remove_nulls({
                 'operationId': route_spec.operation or route.name,
@@ -125,13 +144,7 @@ def build_spec(app, loop):
                 'produces': produces_content_types,
                 'tags': route_spec.tags or None,
                 'parameters': route_parameters,
-                'responses': {
-                    "200": {
-                        "description": None,
-                        "examples": None,
-                        "schema": serialize_schema(route_spec.produces) if route_spec.produces else None
-                    }
-                },
+                'responses': responses,
             })
 
             methods[_method.lower()] = endpoint
@@ -166,5 +179,5 @@ def build_spec(app, loop):
 
 
 @blueprint.route('/spec.json')
-def spec(request):
+def spec(_):
     return json(_spec)
