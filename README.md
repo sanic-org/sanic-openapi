@@ -1,8 +1,8 @@
 # Sanic OpenAPI
 
-[![Build Status](https://travis-ci.org/channelcat/sanic-openapi.svg?branch=master)](https://travis-ci.org/channelcat/sanic-openapi)
-[![PyPI](https://img.shields.io/pypi/v/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
-[![PyPI](https://img.shields.io/pypi/pyversions/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
+[![Build Status](https://travis-ci.org/matsurihime/fork-sanic-openapi.svg?branch=master)](https://travis-ci.org/matsurihime/fork-sanic-openapi)
+[![PyPI](https://img.shields.io/pypi/v/fork-sanic-openapi.svg)](https://pypi.python.org/pypi/fork-sanic-openapi/)
+[![PyPI](https://img.shields.io/pypi/pyversions/fork-sanic-openapi.svg)](https://pypi.python.org/pypi/fork-sanic-openapi/)
 
 Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
 
