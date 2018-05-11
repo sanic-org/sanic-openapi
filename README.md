@@ -11,7 +11,7 @@ Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
 ## Installation
 
 ```shell
-pip install sanic-openapi
+pip install fork-sanic-openapi
 ```
 
 Add OpenAPI and Swagger UI:
