@@ -118,6 +118,7 @@ def build_spec(app, loop):
                             'required': consumer.required,
                             'in': consumer.location,
                             'name': name,
+                            'description': consumer.description,
                         }
                 else:
                     route_param = {
@@ -125,6 +126,7 @@ def build_spec(app, loop):
                         'required': consumer.required,
                         'in': consumer.location,
                         'name': consumer.field.name if hasattr(consumer.field, 'name') else 'body',
+                        'description': consumer.description,
                     }
 
                 if '$ref' in route_param:
