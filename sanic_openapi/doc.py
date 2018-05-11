@@ -99,6 +99,7 @@ class List(Field):
         super().__init__(*args, **kwargs)
 
     def serialize(self):
+        items = None
         if len(self.items) > 1:
             items = Tuple(self.items).serialize()
         elif self.items:
@@ -194,6 +195,8 @@ class RouteSpec(object):
     consumes_content_type = None
     produces = None
     produces_content_type = None
+    path_parameters = None
+    responses = None
     summary = None
     description = None
     operation = None
@@ -204,6 +207,8 @@ class RouteSpec(object):
     def __init__(self):
         self.tags = []
         self.consumes = []
+        self.responses = []
+        self.path_parameters = {}
         super().__init__()
 
 
@@ -211,19 +216,23 @@ class RouteField(object):
     field = None
     location = None
     required = None
+    description = None
+    override_default = False
 
-    def __init__(self, field, location=None, required=False):
+    def __init__(self, field, location=None, required=False, description=None, override_default=False):
         self.field = field
         self.location = location
         self.required = required
+        self.description = description
+        self.override_default = override_default
 
 
 route_specs = defaultdict(RouteSpec)
 
 
 def route(summary=None, description=None, consumes=None, produces=None,
-          consumes_content_type=None, produces_content_type=None,
-          exclude=None):
+          consumes_content_type=None, produces_content_type=None, responses=None,
+          exclude=None, path_parameters=None):
     def inner(func):
         route_spec = route_specs[func]
 
@@ -241,6 +250,10 @@ def route(summary=None, description=None, consumes=None, produces=None,
             route_spec.produces_content_type = produces_content_type
         if exclude is not None:
             route_spec.exclude = exclude
+        if path_parameters is not None:
+            route_spec.path_parameters = path_parameters
+        if responses is not None:
+            route_spec.responses = responses
 
         return func
     return inner
@@ -267,23 +280,41 @@ def description(text):
     return inner
 
 
-def consumes(*args, content_type=None, location='query', required=False):
+def consumes(*args, description=None, content_type=None, location='query', required=False):
     def inner(func):
         if args:
             for arg in args:
-                field = RouteField(arg, location, required)
+                field = RouteField(field=arg, description=description, location=location, required=required)
                 route_specs[func].consumes.append(field)
-                route_specs[func].consumes_content_type = content_type
+                route_specs[func].consumes_content_type = [content_type] if content_type else None
         return func
     return inner
 
 
-def produces(*args, content_type=None):
+def produces(*args, description=None, content_type=None):
     def inner(func):
         if args:
-            field = RouteField(args[0])
+            field = RouteField(field=args[0], description=description)
             route_specs[func].produces = field
-            route_specs[func].produces_content_type = content_type
+            route_specs[func].produces_content_type = [content_type] if content_type else None
+        return func
+    return inner
+
+
+def responses(*args, description=None, override_default=False):
+    def inner(func):
+        if args:
+            status_code = args[0]
+            field = RouteField(args[1], description=description, override_default=override_default)
+            route_specs[func].responses.append((status_code, field))
+        return func
+    return inner
+
+
+def path(name, description=None):
+    def inner(func):
+        if description:
+            route_specs[func].path_parameters[name] = description
         return func
     return inner
 
