@@ -3,7 +3,7 @@ from itertools import repeat
 
 from sanic.blueprints import Blueprint
 from sanic.response import json
-from sanic.views import CompositionView
+from sanic.views import CompositionView, HTTPMethodView
 
 from .doc import route_specs, RouteSpec, serialize_schema, definitions
 
@@ -68,6 +68,12 @@ def build_spec(app, loop):
         if handler_type is CompositionView:
             view = route.handler
             method_handlers = view.handlers.items()
+        elif hasattr(route.handler, 'view_class') and \
+                issubclass(route.handler.view_class, HTTPMethodView):
+            method_handlers = [
+                (method, getattr(route.handler.view_class, method.lower(), route.handler))
+                for method in route.methods
+            ]
         else:
             method_handlers = zip(route.methods, repeat(route.handler))
 
