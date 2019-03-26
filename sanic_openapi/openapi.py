@@ -56,7 +56,7 @@ def build_spec(app, loop):
     for uri, route in app.router.routes_all.items():
         if uri.startswith("/swagger") or uri.startswith("/openapi") \
                 or '<file_uri' in uri:
-                # TODO: add static flag in sanic routes
+            # TODO: add static flag in sanic routes
             continue
 
         # --------------------------------------------------------------- #
@@ -156,7 +156,7 @@ def build_spec(app, loop):
     tags = {}
     for route_spec in route_specs.values():
         if route_spec.blueprint and route_spec.blueprint.name in ('swagger', 'openapi'):
-                # TODO: add static flag in sanic routes
+            # TODO: add static flag in sanic routes
             continue
         for tag in route_spec.tags:
             tags[tag] = True
