@@ -91,6 +91,21 @@ class Dictionary(Field):
         }
 
 
+class JsonBody(Field):
+    def __init__(self, fields=None, **kwargs):
+        self.fields = fields or {}
+        super().__init__(**kwargs, name="body")
+
+    def serialize(self):
+        return {
+            "schema": {
+                "type": "object",
+                "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
+            },
+            **super().serialize()
+        }
+
+
 class List(Field):
     def __init__(self, items=None, *args, **kwargs):
         self.items = items or []
@@ -200,10 +215,12 @@ class RouteSpec(object):
     blueprint = None
     tags = None
     exclude = None
+    response = None
 
     def __init__(self):
         self.tags = []
         self.consumes = []
+        self.response = []
         super().__init__()
 
 
@@ -211,11 +228,13 @@ class RouteField(object):
     field = None
     location = None
     required = None
+    description = None
 
-    def __init__(self, field, location=None, required=False):
+    def __init__(self, field, location=None, required=False, description=None):
         self.field = field
         self.location = location
         self.required = required
+        self.description = description
 
 
 route_specs = defaultdict(RouteSpec)
@@ -223,7 +242,7 @@ route_specs = defaultdict(RouteSpec)
 
 def route(summary=None, description=None, consumes=None, produces=None,
           consumes_content_type=None, produces_content_type=None,
-          exclude=None):
+          exclude=None, response=None):
     def inner(func):
         route_spec = route_specs[func]
 
@@ -241,6 +260,8 @@ def route(summary=None, description=None, consumes=None, produces=None,
             route_spec.produces_content_type = produces_content_type
         if exclude is not None:
             route_spec.exclude = exclude
+        if response is not None:
+            route_spec.response = response
 
         return func
     return inner
@@ -273,17 +294,27 @@ def consumes(*args, content_type=None, location='query', required=False):
             for arg in args:
                 field = RouteField(arg, location, required)
                 route_specs[func].consumes.append(field)
-                route_specs[func].consumes_content_type = content_type
+                route_specs[func].consumes_content_type = [content_type]
         return func
     return inner
 
 
-def produces(*args, content_type=None):
+def produces(*args, description=None, content_type=None):
     def inner(func):
         if args:
-            field = RouteField(args[0])
-            route_specs[func].produces = field
-            route_specs[func].produces_content_type = content_type
+            routefield = RouteField(args[0], description=description)
+            route_specs[func].produces = routefield
+            route_specs[func].produces_content_type = [content_type]
+        return func
+    return inner
+
+
+def response(*args, description=None):
+    def inner(func):
+        if args:
+            status_code = args[0]
+            routefield = RouteField(args[1], description=description)
+            route_specs[func].response.append((status_code, routefield))
         return func
     return inner
 

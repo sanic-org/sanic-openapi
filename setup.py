@@ -18,7 +18,7 @@ with codecs.open(os.path.join(os.path.abspath(os.path.dirname(
 setup(
     name='sanic-openapi',
     version=version,
-    url='http://github.com/channelcat/sanic/',
+    url='http://github.com/channelcat/sanic-openapi/',
     license='MIT',
     author='Channel Cat',
     author_email='channelcat@gmail.com',
@@ -27,7 +27,7 @@ setup(
     package_data={'sanic_openapi': ['ui/*']},
     platforms='any',
     install_requires=[
-        'sanic>=0.6.0',
+        'sanic>=0.7.0',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
