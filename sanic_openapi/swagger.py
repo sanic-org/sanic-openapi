@@ -15,11 +15,11 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.abspath(dir_path + '/ui')
 
 
-
 # Redirect "/swagger" to "/swagger/"
 @blueprint.route('', strict_slashes=True)
 def index(request):
     return redirect("{}/".format(blueprint.url_prefix))
+
 
 blueprint.static('/', dir_path + '/index.html', strict_slashes=True)
 blueprint.static('/', dir_path)
