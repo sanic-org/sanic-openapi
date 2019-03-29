@@ -3,7 +3,7 @@ from itertools import repeat
 import os
 
 from sanic.blueprints import Blueprint
-from sanic.response import json
+from sanic.response import json, redirect
 from sanic.views import CompositionView
 
 from .doc import route_specs, RouteSpec, serialize_schema, definitions
@@ -14,7 +14,14 @@ blueprint = Blueprint('swagger', url_prefix='swagger')
 dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.abspath(dir_path + '/ui')
 
-blueprint.static('/', dir_path + '/index.html')
+
+
+# Redirect "/swagger" to "/swagger/"
+@blueprint.route('', strict_slashes=True)
+def index(request):
+    return redirect("{}/".format(blueprint.url_prefix))
+
+blueprint.static('/', dir_path + '/index.html', strict_slashes=True)
 blueprint.static('/', dir_path)
 
 
