@@ -30,6 +30,12 @@ def remove_nulls(dictionary, deep=True):
     }
 
 
+def get_swagger_url(app):
+    bp = app.blueprints.get('swagger')
+    if bp and bp.url_prefix:
+        return '/{}'.format(bp.url_prefix.strip('/'))
+
+
 @blueprint.listener('before_server_start')
 def build_spec(app, loop):
     _spec['swagger'] = '2.0'
@@ -77,8 +83,9 @@ def build_spec(app, loop):
                     route_spec.tags.append(blueprint.name)
 
     paths = {}
+    swagger_url = get_swagger_url(app)
     for uri, route in app.router.routes_all.items():
-        if uri.startswith("/swagger") or '<file_uri' in uri:
+        if uri.startswith("/swagger") or uri.startswith(swagger_url) or '<file_uri' in uri:
             # TODO: add static flag in sanic routes
             continue
 
