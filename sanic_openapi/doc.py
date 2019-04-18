@@ -210,6 +210,7 @@ class RouteSpec(object):
     produces = None
     produces_content_type = None
     summary = None
+    deprecated = None
     description = None
     operation = None
     blueprint = None
@@ -240,7 +241,7 @@ class RouteField(object):
 route_specs = defaultdict(RouteSpec)
 
 
-def route(summary=None, description=None, consumes=None, produces=None,
+def route(summary=None, deprecated=None, description=None, consumes=None, produces=None,
           consumes_content_type=None, produces_content_type=None,
           exclude=None, response=None):
     def inner(func):
@@ -248,6 +249,8 @@ def route(summary=None, description=None, consumes=None, produces=None,
 
         if summary is not None:
             route_spec.summary = summary
+        if deprecated is not None:
+            route_spec.deprecated = deprecated
         if description is not None:
             route_spec.description = description
         if consumes is not None:
@@ -266,6 +269,12 @@ def route(summary=None, description=None, consumes=None, produces=None,
         return func
     return inner
 
+
+def deprecated(boolean):
+    def inner(func):
+        route_specs[func].deprecated = boolean
+        return func
+    return inner
 
 def exclude(boolean):
     def inner(func):
