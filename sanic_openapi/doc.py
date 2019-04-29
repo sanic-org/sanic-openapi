@@ -145,7 +145,7 @@ class Object(Field):
                 key: serialize_schema(schema)
                 for key, schema in self.cls.__dict__.items()
                 if not key.startswith("_")
-                },
+            },
             **super().serialize()
         }
 
@@ -270,11 +270,12 @@ def route(summary=None, deprecated=None, description=None, consumes=None, produc
     return inner
 
 
-def deprecated(boolean):
+def deprecated(boolean=True):
     def inner(func):
         route_specs[func].deprecated = boolean
         return func
     return inner
+
 
 def exclude(boolean):
     def inner(func):
