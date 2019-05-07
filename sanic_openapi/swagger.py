@@ -3,7 +3,7 @@ from itertools import repeat
 import os
 
 from sanic.blueprints import Blueprint
-from sanic.response import json
+from sanic.response import redirect, json
 from sanic.views import CompositionView
 
 from .doc import route_specs, RouteSpec, serialize_schema, definitions
@@ -14,7 +14,6 @@ blueprint = Blueprint('swagger', url_prefix='swagger')
 dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.abspath(dir_path + '/ui')
 
-blueprint.static('/', dir_path + '/index.html')
 blueprint.static('/', dir_path)
 
 
@@ -61,7 +60,8 @@ def build_spec(app, loop):
     # Authorization
     # --------------------------------------------------------------- #
 
-    _spec['securityDefinitions'] = getattr(app.config, 'API_SECURITY_DEFINITIONS', None)
+    _spec['securityDefinitions'] = getattr(
+        app.config, 'API_SECURITY_DEFINITIONS', None)
     _spec['security'] = getattr(app.config, 'API_SECURITY', None)
 
     # --------------------------------------------------------------- #
@@ -101,10 +101,12 @@ def build_spec(app, loop):
             if _method == 'OPTIONS' or route_spec.exclude:
                 continue
 
-            api_consumes_content_types = getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
+            api_consumes_content_types = getattr(
+                app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
 
-            api_produces_content_types = getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+            api_produces_content_types = getattr(
+                app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or api_produces_content_types
 
             # Parameters - Path & Query String
@@ -170,7 +172,8 @@ def build_spec(app, loop):
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub('<'+parameter.name+'.*?>', '{'+parameter.name+'}', uri_parsed)
+            uri_parsed = re.sub('<'+parameter.name+'.*?>',
+                                '{'+parameter.name+'}', uri_parsed)
 
         paths[uri_parsed] = methods
 
@@ -178,7 +181,8 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec['definitions'] = {obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+    _spec['definitions'] = {
+        obj.object_name: definition for cls, (obj, definition) in definitions.items()}
 
     # --------------------------------------------------------------- #
     # Tags
@@ -195,6 +199,12 @@ def build_spec(app, loop):
     _spec['tags'] = [{"name": name} for name in tags.keys()]
 
     _spec['paths'] = paths
+
+
+# Redirect "/swagger" to "/swagger/"
+@blueprint.route("", strict_slashes=True)
+def index(request):
+    return redirect("{}/{}".format(blueprint.url_prefix, 'index.html'))
 
 
 @blueprint.route('/swagger.json')
