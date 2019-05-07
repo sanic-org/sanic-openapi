@@ -120,7 +120,8 @@ class List(Field):
             items = serialize_schema(self.items[0])
         return {
             "type": "array",
-            "items": items
+            "items": items,
+            **super().serialize()
         }
 
 
