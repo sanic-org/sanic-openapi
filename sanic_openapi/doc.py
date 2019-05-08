@@ -277,7 +277,6 @@ def deprecated(boolean):
         return func
     return inner
 
-
 def exclude(boolean):
     def inner(func):
         route_specs[func].exclude = boolean
