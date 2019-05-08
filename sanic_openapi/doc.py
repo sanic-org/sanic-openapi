@@ -120,8 +120,7 @@ class List(Field):
             items = serialize_schema(self.items[0])
         return {
             "type": "array",
-            "items": items,
-            **super().serialize()
+            "items": items
         }
 
 
@@ -206,13 +205,12 @@ def serialize_schema(schema):
 
 
 class RouteSpec(object):
-    consumes = None
     deprecated = None
+    consumes = None
     consumes_content_type = None
     produces = None
     produces_content_type = None
     summary = None
-    deprecated = None
     description = None
     operation = None
     blueprint = None
@@ -272,7 +270,7 @@ def route(summary=None, deprecated=None, description=None, consumes=None, produc
     return inner
 
 
-def deprecated(boolean: bool = True):
+def deprecated(boolean):
     def inner(func):
         route_specs[func].deprecated = boolean
         return func
