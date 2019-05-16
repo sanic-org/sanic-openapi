@@ -215,7 +215,4 @@ def config(request):
     if hasattr(request.app.config, 'SWAGGER_UI_CONFIGURATION'):
         options = getattr(request.app.config, 'SWAGGER_UI_CONFIGURATION')
 
-    if hasattr(request.app.config, 'API_VALIDATOR_URL'):
-        options['validatorUrl'] = getattr(request.app.config, 'API_VALIDATOR_URL')
-
     return json(options)
