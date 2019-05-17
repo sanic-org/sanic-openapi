@@ -226,3 +226,13 @@ def build_spec(app, loop):
 @blueprint.route('/swagger.json')
 def spec(request):
     return json(_spec)
+
+
+@blueprint.route('/swagger-config')
+def config(request):
+    options = {}
+
+    if hasattr(request.app.config, 'SWAGGER_UI_CONFIGURATION'):
+        options = getattr(request.app.config, 'SWAGGER_UI_CONFIGURATION')
+
+    return json(options)
