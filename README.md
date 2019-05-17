@@ -152,6 +152,18 @@ app.config.API_SECURITY_DEFINITIONS = {
 
 ```
 
+### Set Swagger-UI configuration parameters
+
+Here you can set any configuration described in the swagger-ui documentation
+
+```python
+app.config.SWAGGER_UI_CONFIGURATION = {
+    'validatorUrl': None, # Disable Swagger validator
+    'displayRequestDuration': True,
+    'docExpansion': 'full'
+}
+```
+
 ### Set responses for different HTTP status codes
 
 ```python
