@@ -1,5 +1,5 @@
 from sanic_openapi import doc
-from sanic_openapi import openapi_blueprint, swagger_blueprint
+from sanic_openapi import swagger_blueprint
 from sanic import Sanic
 from sanic.response import json
 
@@ -7,7 +7,6 @@ from blueprint import blueprint
 
 app = Sanic()
 
-app.blueprint(openapi_blueprint)
 app.blueprint(swagger_blueprint)
 app.blueprint(blueprint)
 
