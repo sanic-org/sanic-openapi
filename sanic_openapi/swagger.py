@@ -68,7 +68,8 @@ def build_spec(app, loop):
     # Authorization
     # --------------------------------------------------------------- #
 
-    _spec['securityDefinitions'] = getattr(app.config, 'API_SECURITY_DEFINITIONS', None)
+    _spec['securityDefinitions'] = getattr(
+        app.config, 'API_SECURITY_DEFINITIONS', None)
     _spec['security'] = getattr(app.config, 'API_SECURITY', None)
 
     # --------------------------------------------------------------- #
@@ -78,10 +79,21 @@ def build_spec(app, loop):
     for blueprint in app.blueprints.values():
         if hasattr(blueprint, 'routes'):
             for route in blueprint.routes:
-                route_spec = route_specs[route.handler]
-                route_spec.blueprint = blueprint
-                if not route_spec.tags:
-                    route_spec.tags.append(blueprint.name)
+                if hasattr(route.handler, 'view_class'):
+                    # class based view
+                    view = route.handler.view_class
+                    for http_method in route.methods:
+                        _handler = getattr(view, http_method.lower(), None)
+                        if _handler:
+                            route_spec = route_specs[_handler]
+                            route_spec.blueprint = blueprint
+                            if not route_spec.tags:
+                                route_spec.tags.append(blueprint.name)
+                else:
+                    route_spec = route_specs[route.handler]
+                    route_spec.blueprint = blueprint
+                    if not route_spec.tags:
+                        route_spec.tags.append(blueprint.name)
 
     paths = {}
     for uri, route in app.router.routes_all.items():
@@ -103,15 +115,21 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
-            route_spec = route_specs.get(_handler) or RouteSpec()
+            if hasattr(_handler, 'view_class'):
+                view_handler = getattr(_handler.view_class, _method.lower())
+                route_spec = route_specs.get(view_handler) or RouteSpec()
+            else:
+                route_spec = route_specs.get(_handler) or RouteSpec()
 
             if _method == 'OPTIONS' or route_spec.exclude:
                 continue
 
-            api_consumes_content_types = getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
+            api_consumes_content_types = getattr(
+                app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
             consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
 
-            api_produces_content_types = getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
+            api_produces_content_types = getattr(
+                app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
             produces_content_types = route_spec.produces_content_type or api_produces_content_types
 
             # Parameters - Path & Query String
@@ -176,7 +194,8 @@ def build_spec(app, loop):
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub('<'+parameter.name+'.*?>', '{'+parameter.name+'}', uri_parsed)
+            uri_parsed = re.sub('<'+parameter.name+'.*?>',
+                                '{'+parameter.name+'}', uri_parsed)
 
         paths[uri_parsed] = methods
 
@@ -184,7 +203,8 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec['definitions'] = {obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+    _spec['definitions'] = {
+        obj.object_name: definition for cls, (obj, definition) in definitions.items()}
 
     # --------------------------------------------------------------- #
     # Tags
