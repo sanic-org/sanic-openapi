@@ -89,3 +89,6 @@ ENV/
 
 .idea
 sanic/*
+
+# mypy
+.mypy_cache/
