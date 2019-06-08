@@ -1,4 +1,5 @@
 from sanic import Sanic
+
 from sanic_openapi import swagger_blueprint
 
 # ------------------------------------------------------------ #

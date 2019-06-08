@@ -1,6 +1,6 @@
+import os
 import re
 from itertools import repeat
-import os
 
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect

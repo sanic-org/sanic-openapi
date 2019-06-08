@@ -1,8 +1,9 @@
 from json import loads as json_loads
+
 from sanic import Sanic
 from sanic.response import json
-from sanic_openapi import swagger_blueprint, doc
 
+from sanic_openapi import doc, swagger_blueprint
 
 # ------------------------------------------------------------ #
 #  GET
