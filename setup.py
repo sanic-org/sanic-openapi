@@ -15,6 +15,7 @@ test_requires = [
     "coverage==4.5.3",
     "pytest==4.6.2",
     "pytest-cov==2.7.1",
+    "pytest-html==1.20.0",
     "pytest-runner==5.1",
     "tox==3.12.1",
 ]
