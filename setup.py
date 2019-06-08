@@ -26,7 +26,7 @@ with codecs.open(
     os.path.join(project_root, "sanic_openapi", "__init__.py"), "r", "latin1"
 ) as fp:
     try:
-        version = re.findall(r"^__version__ = '([^']+)'\r?$", fp.read(), re.M)[0]
+        version = re.findall(r"^__version__ = \"([^']+)\"\r?$", fp.read(), re.M)[0]
     except IndexError:
         raise RuntimeError("Unable to determine version.")
 
