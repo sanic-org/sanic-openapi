@@ -204,7 +204,9 @@ def build_spec(app, loop):
     # --------------------------------------------------------------- #
 
     _spec['definitions'] = {
-        obj.object_name: definition for _, (obj, definition) in definitions.items()}
+        obj.object_name: definition
+        for obj, definition in definitions.values()
+    }
 
     # --------------------------------------------------------------- #
     # Tags
