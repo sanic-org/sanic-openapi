@@ -6,7 +6,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
-from .doc import route_specs, RouteSpec, serialize_schema, definitions
+from .doc import route_specs, RouteSpec, serialize_schema, definitions, route as doc_route
 
 
 blueprint = Blueprint('swagger', url_prefix='swagger')
@@ -97,7 +97,8 @@ def build_spec(app, loop):
 
     paths = {}
     for uri, route in app.router.routes_all.items():
-        if uri.startswith("/swagger") or '<file_uri' in uri:
+
+        if "static" in route.name:
             # TODO: add static flag in sanic routes
             continue
 
@@ -197,7 +198,8 @@ def build_spec(app, loop):
             uri_parsed = re.sub('<'+parameter.name+'.*?>',
                                 '{'+parameter.name+'}', uri_parsed)
 
-        paths[uri_parsed] = methods
+        if methods:
+            paths[uri_parsed] = methods
 
     # --------------------------------------------------------------- #
     # Definitions
@@ -224,6 +226,7 @@ def build_spec(app, loop):
 
 
 @blueprint.route('/swagger.json')
+@doc_route(exclude=True)
 def spec(request):
     return json(_spec)
 
