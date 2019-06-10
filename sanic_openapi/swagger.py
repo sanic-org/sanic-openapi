@@ -6,8 +6,9 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
-from .doc import route_specs, RouteSpec, serialize_schema, definitions, route as doc_route
-
+from .doc import RouteSpec, definitions
+from .doc import route as doc_route
+from .doc import route_specs, serialize_schema
 
 blueprint = Blueprint("swagger", url_prefix="swagger")
 
@@ -239,7 +240,7 @@ def build_spec(app, loop):
     _spec["paths"] = paths
 
 
-@blueprint.route('/swagger.json')
+@blueprint.route("/swagger.json")
 @doc_route(exclude=True)
 def spec(request):
     return json(_spec)
