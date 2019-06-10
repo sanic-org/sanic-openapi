@@ -53,6 +53,7 @@ After running tests, it will generate test reports under `test_reports/` which i
 ## Compatibility
 
 Because this project is a plugin of `Sanic`, it is necessary to clarify which versions of `Sanic` and which versions of `Python` are supported. This is a compatibility matrix of `Sanic` and `Python`.:
+
 |                   | Python 3.5 | Python 3.6 | Python 3.7 |
 |------------------:|-----------:|------------|-----------:|
 | Sanic 18.12 (LTS) |        Yes |        Yes |        Yes |
