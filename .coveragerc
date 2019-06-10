@@ -1,0 +1,6 @@
+[run]
+source = sanic_openapi
+branch = True
+
+[html]
+directory = test_reports/coverage
