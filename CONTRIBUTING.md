@@ -1,6 +1,6 @@
 # Contributing Guide
 
-First of all, thank you for joinjoining us to make this project better. Here are some guidelines to help you contribute to this project. Hoping you feel they are useful.
+First of all, thank you for joining us to make this project better. Here are some guidelines to help you contribute to this project. We hope that you find them useful.
 
 ## Develop Installation
 
@@ -59,7 +59,7 @@ Because this project is a plugin of `Sanic`, it is necessary to clarify which ve
 | Sanic 19.03       |        Yes |        Yes |        Yes |
 | Sanic 19.06       |        No  |        Yes |        Yes |
 
-Please make sure your contribution support `Sanic 18.12` and `Python 3.5` **UNLESS** there is any specific needed.
+Please make sure your contribution supports `Sanic 18.12` and `Python 3.5` **UNLESS** there is any specific need.
 
 Some discussion of compatibility:
 
