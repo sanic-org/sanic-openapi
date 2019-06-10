@@ -1,10 +1,15 @@
 import pytest
 from sanic import Sanic
-from sanic_openapi import swagger_blueprint
+
+import sanic_openapi
 
 
 @pytest.fixture()
 def app():
-    app = Sanic('test')
-    app.blueprint(swagger_blueprint)
-    return app
+    app = Sanic("test")
+    app.blueprint(sanic_openapi.swagger_blueprint)
+    yield app
+
+    # Clean up
+    sanic_openapi.swagger.definitions = {}
+    sanic_openapi.swagger._spec = {}
