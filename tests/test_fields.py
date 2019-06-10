@@ -1,26 +1,222 @@
-from json import loads as json_loads
-
-from sanic.response import json
+import pytest
+from sanic.response import text
 
 from sanic_openapi import doc
 
-# ------------------------------------------------------------ #
-#  GET
-# ------------------------------------------------------------ #
 
+@pytest.mark.parametrize(
+    "description, required, name, choices, field_serialize, path_parameters",
+    [
+        (None, None, None, None, {}, [{"required": True, "in": "body", "name": None}]),
+        (
+            "The test field",
+            None,
+            None,
+            None,
+            {"description": "The test field"},
+            [
+                {
+                    "description": "The test field",
+                    "required": True,
+                    "in": "body",
+                    "name": None,
+                }
+            ],
+        ),
+        (
+            None,
+            False,
+            None,
+            None,
+            {"required": False},
+            [
+                {"required": True, "in": "body", "name": None}
+            ],  # Required will be override by doc.consumes()
+        ),
+        (
+            None,
+            None,
+            "test",
+            None,
+            {"name": "test"},
+            [{"required": True, "in": "body", "name": "test"}],
+        ),
+        (
+            None,
+            None,
+            None,
+            ["A", "B", "C"],
+            {"enum": ["A", "B", "C"]},
+            [{"enum": ["A", "B", "C"], "required": True, "in": "body", "name": None}],
+        ),
+    ],
+)
+def test_base_field(
+    app, description, required, name, choices, field_serialize, path_parameters
+):
 
-def test_list_default(app):
+    field = doc.Field(
+        description=description, required=required, name=name, choices=choices
+    )
+    assert field.serialize() == field_serialize
 
-    @app.put("/test")
-    @doc.consumes(doc.List(int, description="All the numbers"), location="body")
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
     def test(request):
-        return json({"test": True})
+        return text("test")
 
     _, response = app.test_client.get("/swagger/swagger.json")
-
-    response_schema = json_loads(response.body.decode())
-    parameter = response_schema["paths"]["/test"]["put"]["parameters"][0]
-
     assert response.status == 200
-    assert parameter["type"] == "array"
-    assert parameter["items"]["type"] == "integer"
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"] == path_parameters
+
+
+def test_integer_field(app):
+
+    field = doc.Integer()
+    assert field.serialize() == {"type": "integer", "format": "int64"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "integer",
+        "format": "int64",
+    }
+
+
+def test_float_field(app):
+
+    field = doc.Float()
+    assert field.serialize() == {"type": "number", "format": "double"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "number",
+        "format": "double",
+    }
+
+
+def test_string_field(app):
+
+    field = doc.String()
+    assert field.serialize() == {"type": "string"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "string",
+    }
+
+
+def test_boolean_field(app):
+
+    field = doc.Boolean()
+    assert field.serialize() == {"type": "boolean"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "boolean",
+    }
+
+
+def test_date_field(app):
+
+    field = doc.Date()
+    assert field.serialize() == {"type": "string", "format": "date"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "string",
+        "format": "date",
+    }
+
+
+def test_datetime_field(app):
+
+    field = doc.DateTime()
+    assert field.serialize() == {"type": "string", "format": "date-time"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "string",
+        "format": "date-time",
+    }
