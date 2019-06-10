@@ -4,6 +4,7 @@
 [![PyPI](https://img.shields.io/pypi/v/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
 [![PyPI](https://img.shields.io/pypi/pyversions/sanic-openapi.svg)](https://pypi.python.org/pypi/sanic-openapi/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
+[![codecov](https://codecov.io/gh/huge-success/sanic-openapi/branch/master/graph/badge.svg)](https://codecov.io/gh/huge-success/sanic-openapi)
 
 Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
 
