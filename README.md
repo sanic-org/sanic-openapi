@@ -22,7 +22,7 @@ from sanic_openapi import swagger_blueprint
 app.blueprint(swagger_blueprint)
 ```
 
-You'll now have a Swagger UI at the URL `/swagger` and an OpenAPI 2.0 spec at `/swagger/swagger.json`.  
+You'll now have a Swagger UI at the URL `/swagger/` and an OpenAPI 2.0 spec at `/swagger/swagger.json`.
 Your routes will be automatically categorized by their blueprints.
 
 ## Example
@@ -150,6 +150,18 @@ app.config.API_SECURITY_DEFINITIONS = {
     }
 }
 
+```
+
+### Set Swagger-UI configuration parameters
+
+Here you can set any configuration described in the swagger-ui documentation
+
+```python
+app.config.SWAGGER_UI_CONFIGURATION = {
+    'validatorUrl': None, # Disable Swagger validator
+    'displayRequestDuration': True,
+    'docExpansion': 'full'
+}
 ```
 
 ### Set responses for different HTTP status codes
