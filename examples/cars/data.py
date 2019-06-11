@@ -1,4 +1,4 @@
-from models import Car, Driver, Garage, Manufacturer, Status
+from models import Car, Driver, Garage, Manufacturer, Status, Station
 import datetime
 
 test_manufacturer = Manufacturer()
@@ -6,6 +6,7 @@ test_driver = Driver()
 test_car = Car()
 test_garage = Garage()
 test_status = Status()
+test_station = Station()
 
 test_manufacturer = {
     'id': 1,
@@ -35,4 +36,9 @@ test_garage = {
 
 test_success = {
     'success': True
+}
+
+test_station = {
+    'contact': 00000000,
+    'location': 'Seattle',
 }

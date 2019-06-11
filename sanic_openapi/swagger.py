@@ -1,28 +1,29 @@
+import os
 import re
 from itertools import repeat
-import os
 
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
-from .doc import route_specs, RouteSpec, serialize_schema, definitions
+from .doc import RouteSpec, definitions
+from .doc import route as doc_route
+from .doc import route_specs, serialize_schema
 
-
-blueprint = Blueprint('swagger', url_prefix='swagger')
+blueprint = Blueprint("swagger", url_prefix="swagger")
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-dir_path = os.path.abspath(dir_path + '/ui')
+dir_path = os.path.abspath(dir_path + "/ui")
 
 
 # Redirect "/swagger" to "/swagger/"
-@blueprint.route('', strict_slashes=True)
+@blueprint.route("", strict_slashes=True)
 def index(request):
     return redirect("{}/".format(blueprint.url_prefix))
 
 
-blueprint.static('/', dir_path + '/index.html', strict_slashes=True)
-blueprint.static('/', dir_path)
+blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
+blueprint.static("/", dir_path)
 
 
 _spec = {}
@@ -37,55 +38,64 @@ def remove_nulls(dictionary, deep=True):
     }
 
 
-@blueprint.listener('before_server_start')
+@blueprint.listener("before_server_start")
 def build_spec(app, loop):
-    _spec['swagger'] = '2.0'
-    _spec['info'] = {
-        "version": getattr(app.config, 'API_VERSION', '1.0.0'),
-        "title": getattr(app.config, 'API_TITLE', 'API'),
-        "description": getattr(app.config, 'API_DESCRIPTION', ''),
-        "termsOfService": getattr(app.config, 'API_TERMS_OF_SERVICE', ''),
-        "contact": {
-            "email": getattr(app.config, 'API_CONTACT_EMAIL', None)
-        },
+    _spec["swagger"] = "2.0"
+    _spec["info"] = {
+        "version": getattr(app.config, "API_VERSION", "1.0.0"),
+        "title": getattr(app.config, "API_TITLE", "API"),
+        "description": getattr(app.config, "API_DESCRIPTION", ""),
+        "termsOfService": getattr(app.config, "API_TERMS_OF_SERVICE", ""),
+        "contact": {"email": getattr(app.config, "API_CONTACT_EMAIL", None)},
         "license": {
-            "name": getattr(app.config, 'API_LICENSE_NAME', None),
-            "url": getattr(app.config, 'API_LICENSE_URL', None)
+            "name": getattr(app.config, "API_LICENSE_NAME", None),
+            "url": getattr(app.config, "API_LICENSE_URL", None),
         },
-
     }
-    _spec['schemes'] = getattr(app.config, 'API_SCHEMES', ['http'])
+    _spec["schemes"] = getattr(app.config, "API_SCHEMES", ["http"])
 
-    host = getattr(app.config, 'API_HOST', None)
+    host = getattr(app.config, "API_HOST", None)
     if host is not None:
-        _spec['host'] = host
+        _spec["host"] = host
 
-    base_path = getattr(app.config, 'API_BASEPATH', None)
+    base_path = getattr(app.config, "API_BASEPATH", None)
     if base_path is not None:
-        _spec['basePath'] = base_path
+        _spec["basePath"] = base_path
 
     # --------------------------------------------------------------- #
     # Authorization
     # --------------------------------------------------------------- #
 
-    _spec['securityDefinitions'] = getattr(app.config, 'API_SECURITY_DEFINITIONS', None)
-    _spec['security'] = getattr(app.config, 'API_SECURITY', None)
+    _spec["securityDefinitions"] = getattr(app.config, "API_SECURITY_DEFINITIONS", None)
+    _spec["security"] = getattr(app.config, "API_SECURITY", None)
 
     # --------------------------------------------------------------- #
     # Blueprint Tags
     # --------------------------------------------------------------- #
 
     for blueprint in app.blueprints.values():
-        if hasattr(blueprint, 'routes'):
+        if hasattr(blueprint, "routes"):
             for route in blueprint.routes:
-                route_spec = route_specs[route.handler]
-                route_spec.blueprint = blueprint
-                if not route_spec.tags:
-                    route_spec.tags.append(blueprint.name)
+                if hasattr(route.handler, "view_class"):
+                    # class based view
+                    view = route.handler.view_class
+                    for http_method in route.methods:
+                        _handler = getattr(view, http_method.lower(), None)
+                        if _handler:
+                            route_spec = route_specs[_handler]
+                            route_spec.blueprint = blueprint
+                            if not route_spec.tags:
+                                route_spec.tags.append(blueprint.name)
+                else:
+                    route_spec = route_specs[route.handler]
+                    route_spec.blueprint = blueprint
+                    if not route_spec.tags:
+                        route_spec.tags.append(blueprint.name)
 
     paths = {}
     for uri, route in app.router.routes_all.items():
-        if uri.startswith("/swagger") or '<file_uri' in uri:
+
+        if "static" in route.name:
             # TODO: add static flag in sanic routes
             continue
 
@@ -103,88 +113,115 @@ def build_spec(app, loop):
 
         methods = {}
         for _method, _handler in method_handlers:
-            route_spec = route_specs.get(_handler) or RouteSpec()
+            if hasattr(_handler, "view_class"):
+                view_handler = getattr(_handler.view_class, _method.lower())
+                route_spec = route_specs.get(view_handler) or RouteSpec()
+            else:
+                route_spec = route_specs.get(_handler) or RouteSpec()
 
-            if _method == 'OPTIONS' or route_spec.exclude:
+            if _method == "OPTIONS" or route_spec.exclude:
                 continue
 
-            api_consumes_content_types = getattr(app.config, 'API_CONSUMES_CONTENT_TYPES', ['application/json'])
-            consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
+            api_consumes_content_types = getattr(
+                app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"]
+            )
+            consumes_content_types = (
+                route_spec.consumes_content_type or api_consumes_content_types
+            )
 
-            api_produces_content_types = getattr(app.config, 'API_PRODUCES_CONTENT_TYPES', ['application/json'])
-            produces_content_types = route_spec.produces_content_type or api_produces_content_types
+            api_produces_content_types = getattr(
+                app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"]
+            )
+            produces_content_types = (
+                route_spec.produces_content_type or api_produces_content_types
+            )
 
             # Parameters - Path & Query String
             route_parameters = []
             for parameter in route.parameters:
-                route_parameters.append({
-                    **serialize_schema(parameter.cast),
-                    'required': True,
-                    'in': 'path',
-                    'name': parameter.name
-                })
+                route_parameters.append(
+                    {
+                        **serialize_schema(parameter.cast),
+                        "required": True,
+                        "in": "path",
+                        "name": parameter.name,
+                    }
+                )
 
             for consumer in route_spec.consumes:
                 spec = serialize_schema(consumer.field)
-                if 'properties' in spec:
-                    for name, prop_spec in spec['properties'].items():
+                if "properties" in spec:
+                    for name, prop_spec in spec["properties"].items():
                         route_param = {
                             **prop_spec,
-                            'required': consumer.required,
-                            'in': consumer.location,
-                            'name': name
+                            "required": consumer.required,
+                            "in": consumer.location,
+                            "name": name,
                         }
                 else:
                     route_param = {
                         **spec,
-                        'required': consumer.required,
-                        'in': consumer.location,
-                        'name': consumer.field.name if hasattr(consumer.field, 'name') else 'body'
+                        "required": consumer.required,
+                        "in": consumer.location,
+                        "name": consumer.field.name
+                        if hasattr(consumer.field, "name")
+                        else "body",
                     }
 
-                if '$ref' in route_param:
-                    route_param["schema"] = {'$ref': route_param['$ref']}
-                    del route_param['$ref']
+                if "$ref" in route_param:
+                    route_param["schema"] = {"$ref": route_param["$ref"]}
+                    del route_param["$ref"]
 
                 route_parameters.append(route_param)
 
             responses = {
                 "200": {
-                    "schema": serialize_schema(route_spec.produces.field) if route_spec.produces else None,
-                    "description": route_spec.produces.description if route_spec.produces else None
+                    "schema": serialize_schema(route_spec.produces.field)
+                    if route_spec.produces
+                    else None,
+                    "description": route_spec.produces.description
+                    if route_spec.produces
+                    else None,
                 }
             }
 
             for (status_code, routefield) in route_spec.response:
-                responses["{}" . format(status_code)] = {
+                responses["{}".format(status_code)] = {
                     "schema": serialize_schema(routefield.field),
-                    "description": routefield.description
+                    "description": routefield.description,
                 }
 
-            endpoint = remove_nulls({
-                'operationId': route_spec.operation or route.name,
-                'summary': route_spec.summary,
-                'description': route_spec.description,
-                'consumes': consumes_content_types,
-                'produces': produces_content_types,
-                'tags': route_spec.tags or None,
-                'parameters': route_parameters,
-                'responses': responses
-            })
+            endpoint = remove_nulls(
+                {
+                    "operationId": route_spec.operation or route.name,
+                    "summary": route_spec.summary,
+                    "description": route_spec.description,
+                    "consumes": consumes_content_types,
+                    "produces": produces_content_types,
+                    "tags": route_spec.tags or None,
+                    "parameters": route_parameters,
+                    "responses": responses,
+                }
+            )
 
             methods[_method.lower()] = endpoint
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub('<'+parameter.name+'.*?>', '{'+parameter.name+'}', uri_parsed)
+            uri_parsed = re.sub(
+                "<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed
+            )
 
-        paths[uri_parsed] = methods
+        if methods:
+            paths[uri_parsed] = methods
 
     # --------------------------------------------------------------- #
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec['definitions'] = {obj.object_name: definition for cls, (obj, definition) in definitions.items()}
+    _spec["definitions"] = {
+        obj.object_name: definition for cls, (obj, definition) in definitions.items()
+    }
 
     # --------------------------------------------------------------- #
     # Tags
@@ -193,26 +230,27 @@ def build_spec(app, loop):
     # TODO: figure out how to get descriptions in these
     tags = {}
     for route_spec in route_specs.values():
-        if route_spec.blueprint and route_spec.blueprint.name in ('swagger'):
+        if route_spec.blueprint and route_spec.blueprint.name in ("swagger"):
             # TODO: add static flag in sanic routes
             continue
         for tag in route_spec.tags:
             tags[tag] = True
-    _spec['tags'] = [{"name": name} for name in tags.keys()]
+    _spec["tags"] = [{"name": name} for name in tags.keys()]
 
-    _spec['paths'] = paths
+    _spec["paths"] = paths
 
 
-@blueprint.route('/swagger.json')
+@blueprint.route("/swagger.json")
+@doc_route(exclude=True)
 def spec(request):
     return json(_spec)
 
 
-@blueprint.route('/swagger-config')
+@blueprint.route("/swagger-config")
 def config(request):
     options = {}
 
-    if hasattr(request.app.config, 'SWAGGER_UI_CONFIGURATION'):
-        options = getattr(request.app.config, 'SWAGGER_UI_CONFIGURATION')
+    if hasattr(request.app.config, "SWAGGER_UI_CONFIGURATION"):
+        options = getattr(request.app.config, "SWAGGER_UI_CONFIGURATION")
 
     return json(options)

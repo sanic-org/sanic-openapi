@@ -1,4 +1,5 @@
 from datetime import date
+from sanic_openapi import doc
 
 
 class Manufacturer:
@@ -27,3 +28,8 @@ class Garage:
 
 class Status:
     success = bool
+
+
+class Station:
+    location = doc.String("location")
+    contact = doc.Integer("phone number")
