@@ -219,7 +219,7 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec['definitions'] = {
+    _spec["definitions"] = {
         obj.object_name: definition for obj, definition in definitions.values()
     }
 
