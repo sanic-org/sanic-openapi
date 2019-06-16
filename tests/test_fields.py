@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 import pytest
 from sanic.response import text
 
@@ -220,3 +222,43 @@ def test_datetime_field(app):
         "type": "string",
         "format": "date-time",
     }
+
+
+class TestSchema:
+    pass
+
+
+@pytest.mark.parametrize(
+    "schema, expected_schema",
+    [
+        (doc.Field, {}),
+        (doc.Field(), {}),
+        (int, {"type": "integer", "format": "int64"}),
+        (doc.Integer, {"type": "integer", "format": "int64"}),
+        (doc.Integer(), {"type": "integer", "format": "int64"}),
+        (float, {"type": "number", "format": "double"}),
+        (doc.Float, {"type": "number", "format": "double"}),
+        (doc.Float(), {"type": "number", "format": "double"}),
+        (str, {"type": "string"}),
+        (doc.String, {"type": "string"}),
+        (doc.String(), {"type": "string"}),
+        (bool, {"type": "boolean"}),
+        (doc.Boolean, {"type": "boolean"}),
+        (doc.Boolean(), {"type": "boolean"}),
+        (date, {"type": "string", "format": "date"}),
+        (doc.Date, {"type": "string", "format": "date"}),
+        (doc.Date(), {"type": "string", "format": "date"}),
+        (datetime, {"type": "string", "format": "date-time"}),
+        (doc.DateTime, {"type": "string", "format": "date-time"}),
+        (doc.DateTime(), {"type": "string", "format": "date-time"}),
+        (TestSchema, {'$ref': '#/definitions/TestSchema', 'type': 'object'}),
+        (dict, {"type": "object", "properties": {}}),
+        ({"foo": "bar"}, {"type": "object", "properties": {"foo": {}}}),
+        (list, {"type": "array", "items": []}),
+        (["foo", "bar"], {"type": "array", "items": {"description": ["foo", "bar"]}}),
+    ],
+)
+def test_serialize_schema(schema, expected_schema):
+    serialized_schema = doc.serialize_schema(schema)
+
+    assert serialized_schema == expected_schema
