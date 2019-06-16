@@ -31,11 +31,12 @@ class SimpleView(HTTPMethodView):
 
 
 def get_handler(request):
-    return text('I am a get method')
+    return text("I am a get method")
+
 
 view = CompositionView()
-view.add(['GET'], get_handler)
-view.add(['POST', 'PUT'], lambda request: text('I am a post/put method'))
+view.add(["GET"], get_handler)
+view.add(["POST", "PUT"], lambda request: text("I am a post/put method"))
 
 
 def test_swagger_endpoint(app):
@@ -157,29 +158,29 @@ def test_blueprint_class_based_view(app):
 
 
 def test_document_compositionview(app):
-    app.add_route(view, '/')
+    app.add_route(view, "/")
 
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert set(swagger_json["paths"]["/"].keys()) == set(['get', 'post', 'put'])
+    assert set(swagger_json["paths"]["/"].keys()) == set(["get", "post", "put"])
     assert {"name": "test"} in swagger_json["tags"]
 
 
-@pytest.mark.skip(reason='Not support now.')
+@pytest.mark.skip(reason="Not support now.")
 def test_document_blueprint_compositionview(app):
 
-    bp = Blueprint('test')
-    bp.add_route(view, '/')
+    bp = Blueprint("test")
+    bp.add_route(view, "/")
 
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert set(swagger_json["paths"]["/"].keys()) == set(['get', 'post', 'put'])
+    assert set(swagger_json["paths"]["/"].keys()) == set(["get", "post", "put"])
 
 
 def test_swagger_ui_config(app):
@@ -221,8 +222,8 @@ def test_swagger_ui_config(app):
             "API_LICENSE_URL": "https://choosealicense.com/licenses/mit/",
         },
         {
-            "API_HOST": 'http://test.sanic-openapi',
-            "API_BASEPATH": '/api_test',
+            "API_HOST": "http://test.sanic-openapi",
+            "API_BASEPATH": "/api_test",
             "API_VERSION": None,
             "API_TITLE": None,
             "API_DESCRIPTION": None,
@@ -242,8 +243,8 @@ def test_configs(app, configs):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert swagger_json['host'] == configs['API_HOST']
-    assert swagger_json['basePath'] == configs['API_BASEPATH']
+    assert swagger_json["host"] == configs["API_HOST"]
+    assert swagger_json["basePath"] == configs["API_BASEPATH"]
 
     info = swagger_json.get("info")
     assert isinstance(info, dict)
@@ -256,21 +257,22 @@ def test_configs(app, configs):
     assert info["license"]["url"] == configs["API_LICENSE_URL"]
 
 
-@pytest.mark.skip(reason="The uri '/static' still in swagger.json now. This might already fixed by #80.")
+@pytest.mark.skip(
+    reason="The uri '/static' still in swagger.json now. This might already fixed by #80."
+)
 def test_skip_static_file(app):
-    app.static('/static', __file__)
+    app.static("/static", __file__)
 
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert '/static' not in swagger_json['paths']
+    assert "/static" not in swagger_json["paths"]
 
 
 def test_uri_parsed(app):
-
-    @app.get('/<name>')
+    @app.get("/<name>")
     def test(request, name):
         return text(name)
 
@@ -279,18 +281,17 @@ def test_uri_parsed(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert '/{name}' in swagger_json['paths']
+    assert "/{name}" in swagger_json["paths"]
 
 
 def test_ignore_options_route(app):
-
-    @app.options('/')
+    @app.options("/")
     def test(request):
-        return text('test')
+        return text("test")
 
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert swagger_json['paths']['/'] == {}
+    assert swagger_json["paths"]["/"] == {}
