@@ -10,7 +10,7 @@ from .doc import RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
 
-blueprint = Blueprint("swagger", url_prefix="swagger")
+blueprint = Blueprint("swagger", url_prefix="/swagger")
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 dir_path = os.path.abspath(dir_path + "/ui")
@@ -94,6 +94,10 @@ def build_spec(app, loop):
 
     paths = {}
     for uri, route in app.router.routes_all.items():
+
+        # Ignore routes under swagger blueprint
+        if route.uri.startswith(blueprint.url_prefix):
+            continue
 
         if "static" in route.name:
             # TODO: add static flag in sanic routes
