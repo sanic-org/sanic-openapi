@@ -257,9 +257,6 @@ def test_configs(app, configs):
     assert info["license"]["url"] == configs["API_LICENSE_URL"]
 
 
-@pytest.mark.skip(
-    reason="The uri '/static' still in swagger.json now. This might already fixed by #80."
-)
 def test_skip_static_file(app):
     app.static("/static", __file__)
 
@@ -294,4 +291,4 @@ def test_ignore_options_route(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert swagger_json["paths"]["/"] == {}
+    assert swagger_json["paths"] == {}

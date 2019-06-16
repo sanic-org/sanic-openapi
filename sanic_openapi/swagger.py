@@ -99,7 +99,8 @@ def build_spec(app, loop):
         if route.uri.startswith(swagger_blueprint.url_prefix):
             continue
 
-        if "static" in route.name:
+        # route.name will be None when using class based view
+        if route.name and "static" in route.name:
             # TODO: add static flag in sanic routes
             continue
 
