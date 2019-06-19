@@ -113,8 +113,9 @@ class Object(Field):
         self.cls = cls
         self.object_name = object_name or cls.__name__
 
-        if self.cls not in definitions:
-            definitions[self.cls] = (self, self.definition)
+        register_as = object_name or "{}.{}".format(cls.__module__, cls.__qualname__)
+        if register_as not in definitions:
+            definitions[register_as] = (self, self.definition)
 
     @property
     def definition(self):
