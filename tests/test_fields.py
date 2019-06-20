@@ -7,7 +7,7 @@ from sanic_openapi import doc
 
 
 @pytest.mark.parametrize(
-    "description, required, name, choices, field_serialize, path_parameters",
+    "description, required, name, choices, serialized_field, path_parameters",
     [
         (None, None, None, None, {}, [{"required": True, "in": "body", "name": None}]),
         (
@@ -54,13 +54,13 @@ from sanic_openapi import doc
     ],
 )
 def test_base_field(
-    app, description, required, name, choices, field_serialize, path_parameters
+    app, description, required, name, choices, serialized_field, path_parameters
 ):
 
     field = doc.Field(
         description=description, required=required, name=name, choices=choices
     )
-    assert field.serialize() == field_serialize
+    assert field.serialize() == serialized_field
 
     @app.get("/")
     @doc.consumes(field, location="body", required=True)
@@ -251,7 +251,7 @@ class TestSchema:
         (datetime, {"type": "string", "format": "date-time"}),
         (doc.DateTime, {"type": "string", "format": "date-time"}),
         (doc.DateTime(), {"type": "string", "format": "date-time"}),
-        (TestSchema, {'$ref': '#/definitions/TestSchema', 'type': 'object'}),
+        (TestSchema, {"$ref": "#/definitions/TestSchema", "type": "object"}),
         (dict, {"type": "object", "properties": {}}),
         ({"foo": "bar"}, {"type": "object", "properties": {"foo": {}}}),
         (list, {"type": "array", "items": []}),
@@ -262,3 +262,104 @@ def test_serialize_schema(schema, expected_schema):
     serialized_schema = doc.serialize_schema(schema)
 
     assert serialized_schema == expected_schema
+
+
+def test_jsonbody_field(app):
+    field = doc.JsonBody()
+    assert field.serialize() == {
+        "name": "body",
+        "schema": {"properties": {}, "type": "object"},
+    }
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": "body",
+        "schema": {"properties": {}, "type": "object"},
+    }
+
+
+@pytest.mark.parametrize(
+    "field, serialized_field, path_parameters",
+    [
+        (
+            doc.List(),
+            {"type": "array", "items": []},
+            {
+                "required": True,
+                "in": "body",
+                "name": None,
+                "type": "array",
+                "items": [],
+            },
+        ),
+        (
+            doc.List(doc.String),
+            {"type": "array", "items": {"type": "string"}},
+            {
+                "required": True,
+                "in": "body",
+                "name": None,
+                "type": "array",
+                "items": {"type": "string"},
+            },
+        ),
+    ],
+)
+def test_list_field(app, field, serialized_field, path_parameters):
+    assert field.serialize() == serialized_field
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == path_parameters
+
+
+@pytest.mark.skip(reason='Failed due to global variables.')
+def test_object_field(app):
+
+    field = doc.Object(TestSchema)
+    assert field.serialize() == {"type": "object", "$ref": "#/definitions/TestSchema"}
+
+    @app.get("/")
+    @doc.consumes(field, location="body", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "body",
+        "name": None,
+        "type": "object",
+        "schema": {"$ref": "#/definitions/TestSchema"},
+    }
+
+    assert swagger_json["definitions"]["TestSchema"] == {
+        "type": "object",
+        "properties": {},
+    }
