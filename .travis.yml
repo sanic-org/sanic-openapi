@@ -13,6 +13,8 @@ install:
   - pip install tox-travis
   - pip install codecov
 script: tox
+after_success:
+- codecov
 deploy:
   provider: pypi
   user: channelcat
