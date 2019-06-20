@@ -9,8 +9,12 @@ matrix:
     - python: 3.7
       dist: xenial
       sudo: true
-install: pip install tox-travis
+install:
+  - pip install tox-travis
+  - pip install codecov
 script: tox
+after_success:
+- codecov
 deploy:
   provider: pypi
   user: channelcat

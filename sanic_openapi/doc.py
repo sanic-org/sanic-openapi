@@ -100,6 +100,8 @@ class List(Field):
             items = Tuple(self.items).serialize()
         elif self.items:
             items = serialize_schema(self.items[0])
+        else:
+            items = []
         return {"type": "array", "items": items, **super().serialize()}
 
 
