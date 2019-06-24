@@ -109,7 +109,6 @@ async def store_garage(request):
     return json(request.json)
 ```
 
-
 ### Configure all the things
 
 ```python
@@ -120,6 +119,11 @@ app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
 app.config.API_PRODUCES_CONTENT_TYPES = ['application/json']
 app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 ```
+
+By default, Sanic registers URIs both with and without a trailing `/` by default. You may specify the type of the shown URIs by setting `app.config.API_URI_FILTER` to one of the following values:
+- `all`: Include both types of URIs.
+- `slash`: Only include URIs with a trailing `/`.
+- All other values (and default): Only include URIs without a trailing `/`.
 
 #### Including OpenAPI's host, basePath and security parameters
 
@@ -137,15 +141,15 @@ app.config.API_SECURITY = [
 
 app.config.API_SECURITY_DEFINITIONS = {
     'authToken': {
-        'type': 'apiKey', 
-        'in': 'header', 
-        'name': 'Authorization', 
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'Authorization',
         'description': 'Paste your auth token and do not forget to add "Bearer " in front of it'
-    }, 
+    },
     'OAuth2': {
-        'type': 'oauth2', 
-        'flow': 'application', 
-        'tokenUrl': 'https://your.authserver.ext/v1/token', 
+        'type': 'oauth2',
+        'flow': 'application',
+        'tokenUrl': 'https://your.authserver.ext/v1/token',
         'scopes': {
             'some_scope': 'Grants access to this API'
         }

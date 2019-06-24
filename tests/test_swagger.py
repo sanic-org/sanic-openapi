@@ -292,3 +292,49 @@ def test_ignore_options_route(app):
 
     swagger_json = response.json
     assert swagger_json["paths"] == {}
+
+
+def test_route_filter_all(app):
+    app.config.update({"API_URI_FILTER": "all"})
+
+    @app.get("/test")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert "/test" in swagger_json["paths"]
+    assert "/test/" in swagger_json["paths"]
+
+
+def test_route_filter_default(app):
+    app.config.update({"API_URI_FILTER": "slash"})
+
+    @app.get("/test")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert "/test" not in swagger_json["paths"]
+    assert "/test/" in swagger_json["paths"]
+
+
+def test_route_filter_slash(app):
+    @app.get("/test")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert "/test" in swagger_json["paths"]
+    assert "/test/" not in swagger_json["paths"]

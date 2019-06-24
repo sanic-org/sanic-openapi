@@ -334,7 +334,7 @@ def test_list_field(app, field, serialized_field, path_parameters):
     assert path["parameters"][0] == path_parameters
 
 
-@pytest.mark.skip(reason='Failed due to global variables.')
+@pytest.mark.skip(reason="Failed due to global variables.")
 def test_object_field(app):
 
     field = doc.Object(TestSchema)
