@@ -148,7 +148,7 @@ def test_produces(app, produces_args, produces_kwargs, responses):
 @pytest.mark.parametrize(
     "response_args, responses",
     [
-        ([], {'200': {}}),
+        ([], {"200": {}}),
         (
             [201, {}],
             {"200": {}, "201": {"schema": {"type": "object", "properties": {}}}},
@@ -170,17 +170,17 @@ def test_response(app, response_args, responses):
     assert swagger_json["paths"]["/"]["post"]["responses"] == responses
 
 
-@pytest.mark.skip(reason='Break tests due to global variables.')
+@pytest.mark.skip(reason="Break tests due to global variables.")
 def test_tag(app):
-    @app.get('/')
-    @doc.tag('test')
+    @app.get("/")
+    @doc.tag("test")
     def test(request):
-        return text('test')
+        return text("test")
 
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert {'name': 'test'} in swagger_json['tags']
-    assert 'test' in swagger_json["paths"]["/"]["get"]['tags']
+    assert {"name": "test"} in swagger_json["tags"]
+    assert "test" in swagger_json["paths"]["/"]["get"]["tags"]
