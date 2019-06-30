@@ -181,7 +181,7 @@ def build_spec(app, loop):
 
             responses = {}
 
-            if (len(route_spec.response) == 0):
+            if len(route_spec.response) == 0:
                 responses["200"] = {
                     "schema": serialize_schema(route_spec.produces.field)
                     if route_spec.produces
