@@ -55,6 +55,9 @@ def test_swagger_endpoint_redirect(app):
     assert str(response.history[0].url).endswith("/swagger")
 
 
+@pytest.mark.skip(
+    reason="https://github.com/huge-success/sanic-openapi/pull/111#pullrequestreview-255118509"
+)
 def test_swagger_json(app):
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
