@@ -197,4 +197,4 @@ def test_operation(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert swagger_json["paths"]["/"]["get"]["operation"] == "This is test operation"
+    assert swagger_json["paths"]["/"]["get"]["operationId"] == "This is test operation"
