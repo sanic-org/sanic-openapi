@@ -184,3 +184,17 @@ def test_tag(app):
     swagger_json = response.json
     assert {"name": "test"} in swagger_json["tags"]
     assert "test" in swagger_json["paths"]["/"]["get"]["tags"]
+
+
+def test_operation(app):
+    @app.get("/")
+    @doc.operation("This is test operation")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert swagger_json["paths"]["/"]["get"]["operation"] == "This is test operation"
