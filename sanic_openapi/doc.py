@@ -321,3 +321,11 @@ def tag(name):
         return func
 
     return inner
+
+
+def operation(name):
+    def inner(func):
+        route_specs[func].operation = name
+        return func
+
+    return inner

@@ -50,10 +50,14 @@ def test_swagger_endpoint_redirect(app):
     assert response.status == 200
     assert response.content_type == "text/html"
     assert len(response.history) == 1
-    assert response.history[0].status == 302
+    status = getattr(response.history[0], 'status', getattr(response.history[0], 'status_code', None)) # For request-async compatibility
+    assert status == 302
     assert str(response.history[0].url).endswith("/swagger")
 
 
+@pytest.mark.skip(
+    reason="https://github.com/huge-success/sanic-openapi/pull/111#pullrequestreview-255118509"
+)
 def test_swagger_json(app):
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
@@ -292,3 +296,49 @@ def test_ignore_options_route(app):
 
     swagger_json = response.json
     assert swagger_json["paths"] == {}
+
+
+def test_route_filter_all(app):
+    app.config.update({"API_URI_FILTER": "all"})
+
+    @app.get("/test")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert "/test" in swagger_json["paths"]
+    assert "/test/" in swagger_json["paths"]
+
+
+def test_route_filter_default(app):
+    app.config.update({"API_URI_FILTER": "slash"})
+
+    @app.get("/test")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert "/test" not in swagger_json["paths"]
+    assert "/test/" in swagger_json["paths"]
+
+
+def test_route_filter_slash(app):
+    @app.get("/test")
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert "/test" in swagger_json["paths"]
+    assert "/test/" not in swagger_json["paths"]
