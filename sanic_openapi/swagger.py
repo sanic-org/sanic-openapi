@@ -216,8 +216,10 @@ def build_spec(app, loop):
 
                 route_parameters.append(route_param)
 
-            responses = {
-                "200": {
+            responses = {}
+
+            if len(route_spec.response) == 0:
+                responses["200"] = {
                     "schema": serialize_schema(route_spec.produces.field)
                     if route_spec.produces
                     else None,
@@ -225,7 +227,6 @@ def build_spec(app, loop):
                     if route_spec.produces
                     else None,
                 }
-            }
 
             for (status_code, routefield) in route_spec.response:
                 responses["{}".format(status_code)] = {

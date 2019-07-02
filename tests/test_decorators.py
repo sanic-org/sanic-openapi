@@ -149,10 +149,7 @@ def test_produces(app, produces_args, produces_kwargs, responses):
     "response_args, responses",
     [
         ([], {"200": {}}),
-        (
-            [201, {}],
-            {"200": {}, "201": {"schema": {"type": "object", "properties": {}}}},
-        ),
+        ([201, {}], {"201": {"schema": {"type": "object", "properties": {}}}}),
     ],
 )
 def test_response(app, response_args, responses):
