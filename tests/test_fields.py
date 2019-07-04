@@ -224,6 +224,30 @@ def test_datetime_field(app):
     }
 
 
+def test_file_field(app):
+
+    field = doc.File()
+    assert field.serialize() == {"type": "file"}
+
+    @app.get("/")
+    @doc.consumes(field, location="formData", required=True)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "required": True,
+        "in": "formData",
+        "name": None,
+        "type": "file",
+    }
+
+
 class TestSchema:
     pass
 

@@ -50,7 +50,9 @@ def test_swagger_endpoint_redirect(app):
     assert response.status == 200
     assert response.content_type == "text/html"
     assert len(response.history) == 1
-    status = getattr(response.history[0], 'status', getattr(response.history[0], 'status_code', None)) # For request-async compatibility
+    status = getattr(
+        response.history[0], "status", getattr(response.history[0], "status_code", None)
+    )  # For request-async compatibility
     assert status == 302
     assert str(response.history[0].url).endswith("/swagger")
 
