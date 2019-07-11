@@ -290,11 +290,8 @@ def consumes(*args, content_type=None, location="query", required=False):
     def inner(func):
         if args:
             for arg in args:
-                if getattr(arg, 'required', required) is not None:
-                    required_param = getattr(arg, 'required', required)
-                else:
-                    required_param = required
-                field = RouteField(arg, location, required_param)
+                required = getattr(arg, 'required', False)
+                field = RouteField(arg, location, required)
                 route_specs[func].consumes.append(field)
                 route_specs[func].consumes_content_type = [content_type]
         return func
