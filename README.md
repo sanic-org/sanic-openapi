@@ -8,7 +8,7 @@
 
 Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
 
-![Example Swagger UI](images/code-to-ui.png?raw=true "Swagger UI")
+![Example Swagger UI](docs/_static/images/code-to-ui.png?raw=true "Swagger UI")
 
 ## Installation
 
@@ -121,6 +121,7 @@ app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 ```
 
 By default, Sanic registers URIs both with and without a trailing `/`. You may specify the type of the shown URIs by setting `app.config.API_URI_FILTER` to one of the following values:
+
 - `all`: Include both types of URIs.
 - `slash`: Only include URIs with a trailing `/`.
 - All other values (and default): Only include URIs without a trailing `/`.
