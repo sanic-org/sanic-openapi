@@ -13,10 +13,13 @@
 import os
 import sys
 
+
 docs_directory = os.path.dirname(os.path.abspath(__file__))
 root_directory = os.path.dirname(docs_directory)
 sys.path.insert(0, root_directory)
 
+
+import sanic_openapi
 
 # -- Project information -----------------------------------------------------
 
@@ -24,6 +27,8 @@ project = "Sanic-OpenAPI"
 copyright = "2019, Sanic Community"
 author = "Sanic Community"
 
+version = sanic_openapi.__version__
+release = sanic_openapi.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -52,3 +57,18 @@ html_theme = "sphinx_rtd_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+
+from recommonmark.transform import AutoStructify
+
+
+def setup(app):
+    app.add_config_value(
+        "recommonmark_config",
+        {
+            "enable_eval_rst": True,
+            "enable_auto_toc_tree": True,
+            "auto_toc_tree_section": "Contents",
+        },
+        True,
+    )
+    app.add_transform(AutoStructify)
