@@ -53,8 +53,8 @@ And you can get your Swagger document at <http://localhost:8000/swagger> like th
 * [Configurations](sanic_openapi/configurations)
 * [Decorators](sanic_openapi/decorators)
 * [Fields](sanic_openapi/fields)
-* [Examples](sanic_openapi/examples)
 * [API Factory](sanic_openapi/api_factory)
+* [Examples](sanic_openapi/examples)
 * [API Reference](sanic_openapi/api_reference)
 
 ## Indices and tables
