@@ -219,6 +219,117 @@ For more detail of those additional information, please check the [document](htt
 
 ## Authentication
 
+If your API have to access with authentication, Swagger can provide related configuration as you need. For more information, check [here](https://swagger.io/docs/specification/2-0/authentication/).
+
+### Basic Authentication
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_SECURITY"] = [{"BasicAuth": []}]
+    app.config["API_SECURITY_DEFINITIONS"] = {"BasicAuth": {"type": "basic"}}
+
+
+    @app.get("/")
+    async def test(request):
+        return json({"token": request.token})
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/BasicAuth_1.png)
+  ![](../_static/images/configurations/BasicAuth_2.png)
+
+### API Key
+
+#### In Header
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_SECURITY"] = [{"ApiKeyAuth": []}]
+    app.config["API_SECURITY_DEFINITIONS"] = {
+        "ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-KEY"}
+    }
+
+
+    @app.get("/")
+    async def test(request):
+        api_key = request.headers.get("X-API-KEY")
+        return json({"api_key": api_key})
+
+    ```
+* Result:
+![](../_static/images/configurations/API_Key_in_header.png)
+
+#### In Query
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_SECURITY"] = [{"ApiKeyAuth": []}]
+    app.config["API_SECURITY_DEFINITIONS"] = {
+        "ApiKeyAuth": {"type": "apiKey", "in": "query", "name": "api_key"}
+    }
+
+
+    @app.get("/")
+    async def test(request):
+        api_key = request.args.get("api_key")
+        return json({"api_key": api_key})
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_Key_in_query.png)
+
+### OAuth2
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_SECURITY"] = [{"OAuth2": []}]
+    app.config["API_SECURITY_DEFINITIONS"] = {
+        "OAuth2": {
+            "type": "oauth2",
+            "flow": "application",
+            "tokenUrl": "https://your.authserver.ext/v1/token",
+            "scopes": {"some_scope": "Grants access to this API"},
+        }
+    }
+
+    ```
+* Result:
+![](../_static/images/configurations/OAuth2.png)
+
 ## URI filter
 
 ## Swagger UI configurations
