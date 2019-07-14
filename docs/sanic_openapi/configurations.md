@@ -2,10 +2,75 @@
 
 Sanic-OpenAPI provides following configurable items:
 
+* API Server
 * API information
 * Authentication(Security Definitions)
 * URI filter
 * Swagger UI configurations
+
+## API Server
+
+By default, Swagger will use exactly the same host which served itself as the API server. But you can still override this by setting following configurations. For more information, please check document at [here](https://swagger.io/docs/specification/2-0/api-host-and-base-path/).
+
+### API_HOST
+
+* Key: `API_HOST`
+* Type: `str` of IP, or hostname
+* Default: `None`
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_HOST"] = "petstore.swagger.io"
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_HOST.png)
+
+### API_BASEPATH
+
+* Key: `API_BASEPATH`
+* Type: `str`
+* Default: `None`
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_BASEPATH"] = "/api"
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_BASEPATH.png)
+
+### API_SCHEMES
+
+* Key: `API_SCHEMES`
+* Type: `list` of schemes
+* Default: `["http"]`
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_SCHEMES"] = ["https"]
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_SCHEMES.png)
 
 ## API information
 
