@@ -327,9 +327,97 @@ If your API have to access with authentication, Swagger can provide related conf
     }
 
     ```
+
 * Result:
 ![](../_static/images/configurations/OAuth2.png)
 
 ## URI filter
 
+By default, Sanic registers URIs both with and without a trailing `/`. You may specify the type of the shown URIs by setting `app.config.API_URI_FILTER` to one of the following values:
+
+* `all`: Include both types of URIs.
+* `slash`: Only include URIs with a trailing `/`.
+* All other values (and default): Only include URIs without a trailing `/`.
+
+### Non-Slash
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+
+
+    @app.get("/test")
+    async def test(request):
+        return json({"Hello": "World"})
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_URI_FILTER_default.png)
+
+### Slash
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_URI_FILTER"] = "slash"
+
+
+    @app.get("/test")
+    async def test(request):
+        return json({"Hello": "World"})
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_URI_FILTER_slash.png)
+
+### All
+
+* Usage:
+
+    ```python
+    from sanic import Sanic
+    from sanic.response import json
+
+    from sanic_openapi import swagger_blueprint
+
+    app = Sanic()
+    app.blueprint(swagger_blueprint)
+    app.config["API_URI_FILTER"] = "all"
+
+
+    @app.get("/test")
+    async def test(request):
+        return json({"Hello": "World"})
+
+    ```
+
+* Result:
+  ![](../_static/images/configurations/API_URI_FILTER_all.png)
+
 ## Swagger UI configurations
+
+Here you can set any configuration described in the Swagger UI [documentation](https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/).
+
+```python
+app.config.SWAGGER_UI_CONFIGURATION = {
+    'validatorUrl': None, # Disable Swagger validator
+    'displayRequestDuration': True,
+    'docExpansion': 'full'
+}
+```
