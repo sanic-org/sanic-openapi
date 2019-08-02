@@ -86,6 +86,19 @@ black --verbose sanic_openapi tests
 isort --recursive sanic_openapi tests
 ```
 
+## Build Document
+
+Contribute documents of this project is also welcome. The document will be published on **Read the Docs** automatically. To preview the outputs, you can run the following commands to build the documents with `sphinx`:
+
+```shell
+cd docs
+make html
+```
+
+And you can open `docs/_build/html/index.html` to preview your works.
+
+> **Note:** Make sure you have install related modules. If you didn't, you can run `pip install -e .['doc']` to install all depedencies to build the documents.
+
 ## Make a Pull Request
 
 If you want to make a Pull Request, here are some suggestions:
