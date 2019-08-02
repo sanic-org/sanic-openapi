@@ -204,8 +204,139 @@ And it would be a upload button on swagger:
 
 ## Dictionary
 
+To be done.
+
 ## JsonBody
+
+To document you request or response body, the `doc.JsonBody` is the best choice. You can put a `dict` into `doc.JsonBody` like this:
+
+```python
+from sanic import Sanic
+from sanic.response import json
+
+from sanic_openapi import doc, swagger_blueprint
+
+app = Sanic()
+app.blueprint(swagger_blueprint)
+
+
+@app.post("/test")
+@doc.consumes(
+    doc.JsonBody(
+        {
+            "useranme": doc.String("The name of your user account."),
+            "password": doc.String("The password of your user account."),
+        }
+    ),
+    location="body",
+)
+async def test(request):
+    return json({})
+
+```
+
+And it will convert to:
+![](../_static/images/fields/josnbody.png)
+
+```eval_rst
+.. note:: The `doc.JsonBody` only support `dict` input. If you want to put a python `class` in body, please use `doc.Object`.
+```
 
 ## List
 
+When design a RESTful with list resources API, the `doc.List` can help you document this API.
+
+For example:
+
+```python
+from sanic import Sanic
+from sanic.response import json
+
+from sanic_openapi import doc, swagger_blueprint
+
+app = Sanic()
+app.blueprint(swagger_blueprint)
+
+
+class User:
+    username = doc.String("The name of your user account.")
+    password = doc.String("The password of your user account.")
+
+
+@app.get("/test")
+@doc.produces(doc.List(User))
+async def test(request):
+    return json([])
+
+```
+
+The swagger will be:
+![](../_static/images/fields/list.png)
+
+```eval_rst
+.. note:: When using a Python `class` to model your data, Sanic-OpenAPI will put it at model definitions.
+```
+
 ## Object
+
+In Sanic-OpenAPI, you can document your data as a Python `class` and it wil be convert to `doc.Object` automaticlly. After the conversion, you can find your model definitions at the bottom of swagger.
+
+```python
+from sanic import Sanic
+from sanic.response import json
+
+from sanic_openapi import doc, swagger_blueprint
+
+app = Sanic()
+app.blueprint(swagger_blueprint)
+
+
+class User:
+    username = doc.String("The name of your user account.")
+    password = doc.String("The password of your user account.")
+
+
+@app.get("/test")
+@doc.produces(User)
+async def test(request):
+    return json({})
+
+```
+
+And the result:
+![](../_static/images/fields/object.png)
+
+
+## Descriptive Field
+
+As previous example, you can use python class to document your request or response body. To make it more descriptive, you can add the descriptoin to every fields if you need. For example:
+
+```python
+from sanic import Sanic
+from sanic.response import json
+
+from sanic_openapi import doc, swagger_blueprint
+
+app = Sanic()
+app.blueprint(swagger_blueprint)
+
+
+class Car:
+    make = doc.String("Who made the car")
+    model = doc.String("Type of car.  This will vary by make")
+    year = doc.Integer("4-digit year of the car", required=False)
+
+class Garage:
+    spaces = doc.Integer("How many cars can fit in the garage")
+    cars = doc.List(Car, description="All cars in the garage")
+
+@app.get("/test")
+@doc.produces(Garage)
+async def test(request):
+    return json({})
+
+
+```
+
+And you can get this model definitions on swagger:
+![](../_static/images/fields/describe_mdoel.png)
