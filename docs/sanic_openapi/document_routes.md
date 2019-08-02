@@ -208,4 +208,6 @@ if __name__ == "__main__":
 The Swagger will looks like:
 ![](../_static/images/composition_view_example.png)
 
-> Note: Sanic-OpenAPI does not support routes of `CompositionView` under `Bluebprint` instance now.
+```eval_rst
+.. note:: Sanic-OpenAPI does not support routes of `CompositionView` under `Bluebprint` instance now.
+```
