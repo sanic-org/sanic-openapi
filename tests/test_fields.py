@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
-import pytest
 from sanic.response import HTTPResponse, text
 
+import pytest
 from sanic_openapi import doc
 
 
@@ -249,7 +249,7 @@ def test_file_field(app):
 
 
 def test_uuid_field(app):
-    field = doc.OAPIUUID()
+    field = doc.UUID()
     assert field.serialize() == {"type": "string", "format": "uuid"}
 
     @app.get("/<id:uuid>")
