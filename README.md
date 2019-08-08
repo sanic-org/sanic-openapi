@@ -74,6 +74,26 @@ async def get_garage(request):
 
 ```
 
+### Use [PEP484](https://www.python.org/dev/peps/pep-0484/)'s type hinting
+
+Provisional support, as discussed at [#128](/../../issues/128)
+```python
+class Car:
+    make: str
+    model: str
+    year: int
+
+@app.get("/single_car")
+@doc.summary("Gets a car ")
+@doc.produces(Car)
+async def get_single_car(request):
+    return json({
+                 "make": "Nissan",
+                 "model": "370Z",
+    })
+
+```
+
 ### Get more descriptive
 
 ```python
