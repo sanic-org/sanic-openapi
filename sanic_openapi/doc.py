@@ -138,7 +138,9 @@ class Object(Field):
             "type": "object",
             "properties": {
                 key: serialize_schema(schema)
-                for key, schema in chain(self.cls.__dict__.items(), typing.get_type_hints(self.cls).items())
+                for key, schema in chain(
+                    self.cls.__dict__.items(), typing.get_type_hints(self.cls).items()
+                )
                 if not key.startswith("_")
             },
             **super().serialize(),
