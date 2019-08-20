@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
-import pytest
-from sanic.response import text
+from sanic.response import HTTPResponse, text
 
+import pytest
 from sanic_openapi import doc
 
 
@@ -245,6 +245,50 @@ def test_file_field(app):
         "in": "formData",
         "name": None,
         "type": "file",
+    }
+
+
+def test_uuid_field(app):
+    field = doc.UUID()
+    assert field.serialize() == {"type": "string", "format": "uuid"}
+
+    @app.get("/<id:uuid>")
+    @doc.response(204, {})
+    def test(request):
+        return HTTPResponse(status=204)
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/{id}"]["get"]
+    assert path["parameters"][0] == {
+        "in": "path",
+        "name": "id",
+        "type": "string",
+        "format": "uuid",
+        "required": True,
+    }
+
+    @app.get("/")
+    @doc.consumes(field, location="formData", required=True)
+    @doc.response(204, {})
+    def test(request):
+        return HTTPResponse(status=204)
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    path = swagger_json["paths"]["/"]["get"]
+    assert path["parameters"][0] == {
+        "in": "formData",
+        "name": None,
+        "type": "string",
+        "format": "uuid",
+        "required": True,
     }
 
 

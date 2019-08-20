@@ -1,3 +1,4 @@
+import uuid
 from collections import defaultdict
 from datetime import date, datetime
 
@@ -110,6 +111,11 @@ class List(Field):
         return {"type": "array", "items": items, **super().serialize()}
 
 
+class UUID(Field):
+    def serialize(self):
+        return {"type": "string", "format": "uuid", **super().serialize()}
+
+
 definitions = {}
 
 
@@ -169,6 +175,8 @@ def serialize_schema(schema):
             return Date().serialize()
         elif schema is datetime:
             return DateTime().serialize()
+        elif schema is uuid.UUID:
+            return UUID().serialize()
         else:
             return Object(schema).serialize()
 
