@@ -11,6 +11,8 @@ install_requires = ["sanic>=18.12.0"]
 
 dev_requires = ["black==19.3b0", "flake8==3.7.7", "isort==4.3.19"]
 
+doc_requires = ["recommonmark==0.5.0", "sphinx==2.1.2", "sphinx-rtd-theme-0.4.3"]
+
 test_requires = [
     "coverage==4.5.3",
     "pytest==4.6.2",
@@ -46,7 +48,11 @@ setup(
     package_data={"sanic_openapi": ["ui/*"]},
     platforms="any",
     install_requires=install_requires,
-    extras_require={"dev": dev_requires + test_requires, "test": test_requires},
+    extras_require={
+        "dev": dev_requires + test_requires + doc_requires,
+        "test": test_requires,
+        "doc": doc_requires,
+    },
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Environment :: Web Environment",
