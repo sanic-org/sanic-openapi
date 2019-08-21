@@ -69,7 +69,7 @@ def remove_nulls(dictionary, deep=True):
     }
 
 
-@swagger_blueprint.listener("before_server_start")
+@swagger_blueprint.listener("after_server_start")
 def build_spec(app, loop):
     _spec["swagger"] = "2.0"
     _spec["info"] = {
