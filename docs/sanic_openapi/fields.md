@@ -311,10 +311,20 @@ And the result:
 
 Provisional support, as discussed at [#128](../../../../issues/128)
 ```python
+from sanic import Sanic
+from sanic.response import json
+
+from sanic_openapi import doc, swagger_blueprint
+
+app = Sanic()
+app.blueprint(swagger_blueprint)
+
+
 class Car:
     make: str
     model: str
     year: int
+
 
 @app.get("/single_car")
 @doc.summary("Gets a car ")
@@ -323,8 +333,8 @@ async def get_single_car(request):
     return json({
                  "make": "Nissan",
                  "model": "370Z",
+                 "year": "2006",
     })
-
 ```
 
 And the result:
