@@ -333,7 +333,7 @@ And the result:
 
 ## Descriptive Field
 
-As previous example, you can use python class to document your request or response body. To make it more descriptive, you can add the descriptoin to every fields if you need. For example:
+As the object example, you can use python class to document your request or response body. To make it more descriptive, you can add the descriptoin to every fields if you need. For example:
 
 ```python
 from sanic import Sanic
