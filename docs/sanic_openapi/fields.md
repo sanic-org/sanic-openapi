@@ -307,7 +307,7 @@ And the result:
 ![](../_static/images/fields/object.png)
 
 
-## Use [PEP484](https://www.python.org/dev/peps/pep-0484/)'s type hinting
+## [PEP484](https://www.python.org/dev/peps/pep-0484/)'s type hinting
 
 Provisional support, as discussed at [#128](../../../../issues/128)
 ```python
