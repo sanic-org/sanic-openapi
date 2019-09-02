@@ -8,8 +8,8 @@ class Manufacturer:
 
 
 class Driver:
-    name = str
-    birthday = date
+    name: str
+    birthday: date
 
 
 class Car:

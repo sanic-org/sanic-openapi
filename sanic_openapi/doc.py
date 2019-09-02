@@ -1,6 +1,8 @@
+import typing
 import uuid
 from collections import defaultdict
 from datetime import date, datetime
+from itertools import chain
 
 
 class Field:
@@ -136,7 +138,9 @@ class Object(Field):
             "type": "object",
             "properties": {
                 key: serialize_schema(schema)
-                for key, schema in self.cls.__dict__.items()
+                for key, schema in chain(
+                    self.cls.__dict__.items(), typing.get_type_hints(self.cls).items()
+                )
                 if not key.startswith("_")
             },
             **super().serialize(),
