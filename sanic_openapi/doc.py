@@ -195,7 +195,7 @@ def serialize_schema(schema):
             return Dictionary(schema).serialize()
         elif schema_type is list:
             return List(schema).serialize()
-        elif getattr(schema, '__origin__', None) in (list, collections.abc.Sequence):
+        elif getattr(schema, "__origin__", None) in (list, collections.abc.Sequence):
             # Type hinting with either List or Sequence
             return List(list(schema.__args__)).serialize()
 
