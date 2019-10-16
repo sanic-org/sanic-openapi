@@ -311,6 +311,8 @@ And the result:
 
 Provisional support, as discussed at [#128](../../../../issues/128)
 ```python
+from typing import List
+
 from sanic import Sanic
 from sanic.response import json
 
@@ -325,16 +327,19 @@ class Car:
     model: str
     year: int
 
+class Garage:
+    cars: List[Car]
 
-@app.get("/single_car")
-@doc.summary("Gets a car ")
-@doc.produces(Car)
-async def get_single_car(request):
-    return json({
+
+@app.get("/garage")
+@doc.summary("Lists cars in a garage")
+@doc.produces(Garage)
+async def get_garage(request):
+    return json([{
                  "make": "Nissan",
                  "model": "370Z",
                  "year": "2006",
-    })
+    }])
 ```
 
 And the result:
