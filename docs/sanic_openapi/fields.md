@@ -345,6 +345,15 @@ async def get_garage(request):
 And the result:
 ![](../_static/images/fields/type_hinting.png)
 
+[TypedDicts](https://www.python.org/dev/peps/pep-0589/) are also supported. In the previous example, `Car` could be defined as:
+
+```python
+class Car(TypedDict):
+    make: str
+    model: str
+    year: int
+```
+
 
 ## Descriptive Field
 

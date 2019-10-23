@@ -161,7 +161,7 @@ def serialize_schema(schema):
     # --------------------------------------------------------------- #
     # Class
     # --------------------------------------------------------------- #
-    if schema_type is type:
+    if issubclass(schema_type, type):
         if issubclass(schema, Field):
             return schema().serialize()
         elif schema is dict:
