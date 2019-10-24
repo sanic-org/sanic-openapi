@@ -10,9 +10,7 @@ class Spec:
             "title": getattr(app.config, "API_TITLE", "API"),
             "description": getattr(app.config, "API_DESCRIPTION", ""),
             "termsOfService": getattr(app.config, "API_TERMS_OF_SERVICE", ""),
-            "contact": {
-                "email": getattr(app.config, "API_CONTACT_EMAIL", None)
-            },
+            "contact": {"email": getattr(app.config, "API_CONTACT_EMAIL", None)},
             "license": {
                 "name": getattr(app.config, "API_LICENSE_NAME", None),
                 "url": getattr(app.config, "API_LICENSE_URL", None),
@@ -28,9 +26,7 @@ class Spec:
         # Authorization
         # --------------------------------------------------------------- #
 
-        self.securityDefinitions = getattr(
-            app.config, "API_SECURITY_DEFINITIONS", None
-        )
+        self.securityDefinitions = getattr(app.config, "API_SECURITY_DEFINITIONS", None)
         self.security = getattr(app.config, "API_SECURITY", None)
 
     def add_definitions(self, definitions):

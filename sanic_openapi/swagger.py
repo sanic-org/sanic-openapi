@@ -223,9 +223,7 @@ def build_spec(app, loop):
         uri_parsed = uri
         for parameter in route.parameters:
             uri_parsed = re.sub(
-                "<" + parameter.name + ".*?>",
-                "{" + parameter.name + "}",
-                uri_parsed
+                "<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed
             )
 
         if methods:
@@ -235,9 +233,11 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec.add_definitions(definitions={
-        obj.object_name: definition for obj, definition in definitions.values()
-    })
+    _spec.add_definitions(
+        definitions={
+            obj.object_name: definition for obj, definition in definitions.values()
+        }
+    )
 
     # --------------------------------------------------------------- #
     # Tags
