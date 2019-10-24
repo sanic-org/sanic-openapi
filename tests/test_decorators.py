@@ -1,5 +1,5 @@
 import pytest
-from sanic.response import json, text
+from sanic.response import text
 
 from sanic_openapi import doc
 from sanic_openapi.doc import RouteField
@@ -167,7 +167,6 @@ def test_response(app, response_args, responses):
     assert swagger_json["paths"]["/"]["post"]["responses"] == responses
 
 
-@pytest.mark.skip(reason="Break tests due to global variables.")
 def test_tag(app):
     @app.get("/")
     @doc.tag("test")
