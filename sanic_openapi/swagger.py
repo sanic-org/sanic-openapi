@@ -260,7 +260,7 @@ def build_spec(app, loop):
 @swagger_blueprint.route("/swagger.json")
 @doc_route(exclude=True)
 def spec(request):
-    return json(swagger_blueprint._spec.__dict__)
+    return json(swagger_blueprint._spec)
 
 
 @swagger_blueprint.route("/swagger-config")
