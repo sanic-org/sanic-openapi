@@ -2,7 +2,7 @@ from sanic import Sanic
 
 
 class Spec:
-    version = "2.0"
+    swagger = "2.0"
 
     def __init__(self, app: Sanic) -> None:
         self.info = {
