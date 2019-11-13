@@ -191,6 +191,8 @@ def serialize_schema(schema):
     else:
         if issubclass(schema_type, Field):
             return schema.serialize()
+        elif schema_type.__name__ == "DeclarativeMeta":
+            return Object(schema).serialize()
         elif schema_type is dict:
             return Dictionary(schema).serialize()
         elif schema_type is list:
