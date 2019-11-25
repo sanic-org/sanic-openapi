@@ -9,6 +9,7 @@ from sanic.views import CompositionView
 from .doc import RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
+from .spec import Spec
 
 swagger_blueprint = Blueprint("swagger", url_prefix="/swagger")
 
@@ -26,9 +27,6 @@ swagger_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
 swagger_blueprint.static("/", dir_path)
 
 
-_spec = {}
-
-
 def get_uri_filter(app):
     """
     Return a filter function that takes a URI and returns whether it should
@@ -41,8 +39,8 @@ def get_uri_filter(app):
              default to keep all URIs that don't end with a `/`.
 
     Returns:
-        `True` if the URI should be *filtered out* from the swagger documentation,
-        and `False` if it should be kept in the documentation.
+        `True` if the URI should be *filtered out* from the swagger
+        documentation, and `False` if it should be kept in the documentation.
     """
     choice = getattr(app.config, "API_URI_FILTER", None)
 
@@ -71,34 +69,7 @@ def remove_nulls(dictionary, deep=True):
 
 @swagger_blueprint.listener("after_server_start")
 def build_spec(app, loop):
-    _spec["swagger"] = "2.0"
-    _spec["info"] = {
-        "version": getattr(app.config, "API_VERSION", "1.0.0"),
-        "title": getattr(app.config, "API_TITLE", "API"),
-        "description": getattr(app.config, "API_DESCRIPTION", ""),
-        "termsOfService": getattr(app.config, "API_TERMS_OF_SERVICE", ""),
-        "contact": {"email": getattr(app.config, "API_CONTACT_EMAIL", None)},
-        "license": {
-            "name": getattr(app.config, "API_LICENSE_NAME", None),
-            "url": getattr(app.config, "API_LICENSE_URL", None),
-        },
-    }
-    _spec["schemes"] = getattr(app.config, "API_SCHEMES", ["http"])
-
-    host = getattr(app.config, "API_HOST", None)
-    if host is not None:
-        _spec["host"] = host
-
-    base_path = getattr(app.config, "API_BASEPATH", None)
-    if base_path is not None:
-        _spec["basePath"] = base_path
-
-    # --------------------------------------------------------------- #
-    # Authorization
-    # --------------------------------------------------------------- #
-
-    _spec["securityDefinitions"] = getattr(app.config, "API_SECURITY_DEFINITIONS", None)
-    _spec["security"] = getattr(app.config, "API_SECURITY", None)
+    _spec = Spec(app=app)
 
     # --------------------------------------------------------------- #
     # Blueprint Tags
@@ -262,9 +233,11 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec["definitions"] = {
-        obj.object_name: definition for obj, definition in definitions.values()
-    }
+    _spec.add_definitions(
+        definitions={
+            obj.object_name: definition for obj, definition in definitions.values()
+        }
+    )
 
     # --------------------------------------------------------------- #
     # Tags
@@ -278,15 +251,16 @@ def build_spec(app, loop):
             continue
         for tag in route_spec.tags:
             tags[tag] = True
-    _spec["tags"] = [{"name": name} for name in tags.keys()]
+    _spec.add_tags(tags=[{"name": name} for name in tags.keys()])
 
-    _spec["paths"] = paths
+    _spec.add_paths(paths)
+    swagger_blueprint._spec = _spec
 
 
 @swagger_blueprint.route("/swagger.json")
 @doc_route(exclude=True)
 def spec(request):
-    return json(_spec)
+    return json(swagger_blueprint._spec)
 
 
 @swagger_blueprint.route("/swagger-config")

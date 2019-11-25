@@ -12,4 +12,3 @@ def app():
 
     # Clean up
     sanic_openapi.swagger.definitions = {}
-    sanic_openapi.swagger._spec = {}
