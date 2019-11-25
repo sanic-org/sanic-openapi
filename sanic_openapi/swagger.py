@@ -213,6 +213,9 @@ def build_spec(app, loop):
                 if "$ref" in route_param:
                     route_param["schema"] = {"$ref": route_param["$ref"]}
                     del route_param["$ref"]
+                    if 'type' in route_param:
+                        route_param["schema"]['type'] = route_param['type']
+                        del route_param['type']
 
                 route_parameters.append(route_param)
 

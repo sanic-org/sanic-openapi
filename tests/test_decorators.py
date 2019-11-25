@@ -95,11 +95,11 @@ class TestSchema:
             {"location": "body", "required": True, "content_type": "application/json"},
             [
                 {
-                    "type": "object",
                     "required": True,
                     "in": "body",
                     "name": "body",
-                    "schema": {"$ref": "#/definitions/TestSchema"},
+                    "schema": {"$ref": "#/definitions/TestSchema",
+                               "type": "object"},
                 }
             ],
         ),
