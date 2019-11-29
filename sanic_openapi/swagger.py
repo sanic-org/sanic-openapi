@@ -218,6 +218,8 @@ def build_blueprint(blueprint) -> None:
 
 
 def add_routes(app, url_prefix, spec, dir_path) -> None:
+    app.static(url_prefix, dir_path)
+
     # Redirect "/swagger" to "/swagger/"
     @app.route("/swagger")
     def index(request):
