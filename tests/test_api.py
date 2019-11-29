@@ -4,7 +4,8 @@ from inspect import isawaitable
 from sanic import Sanic
 from sanic.response import HTTPResponse
 
-from sanic_openapi import api, doc, swagger_blueprint
+from sanic_openapi import api, doc
+from sanic_openapi.swagger import Swagger
 
 
 def test_message_api_response():
@@ -113,7 +114,8 @@ def get_app():
     by `get_benchmark_app()`, so that application can serve as a benchmark in test cases.
     """
     app = Sanic("test_api")
-    app.blueprint(swagger_blueprint)
+    swagger = Swagger()
+    swagger.init_app(app)
 
     @MessageAPI.post(app, "/message")
     def message(request):
@@ -169,7 +171,8 @@ def get_benchmark_app():
     by `get_app()`, so this application can serve as a benchmark in test cases.
     """
     app = Sanic("test_api_benchmark")
-    app.blueprint(swagger_blueprint)
+    swagger = Swagger()
+    swagger.init_app(app)
 
     @app.post("/message")
     @doc.summary("MessageAPI summary.")

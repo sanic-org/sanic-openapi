@@ -45,6 +45,7 @@ def test_swagger_endpoint(app):
     assert response.content_type == "text/html"
 
 
+@pytest.mark.skip('The redirect has been removed')
 def test_swagger_endpoint_redirect(app):
     _, response = app.test_client.get("/swagger")
     assert response.status == 200
