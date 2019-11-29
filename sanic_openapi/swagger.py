@@ -3,7 +3,7 @@ import re
 from itertools import repeat
 from typing import Dict
 
-from sanic import response, Sanic
+from sanic import Sanic, response
 from sanic.views import CompositionView
 
 from .doc import RouteSpec, definitions
@@ -67,9 +67,7 @@ def build_consumer_route_param(consumer) -> Dict:
             **spec,
             "required": consumer.required,
             "in": consumer.location,
-            "name": consumer.field.name
-            if hasattr(consumer.field, "name")
-            else "body",
+            "name": consumer.field.name if hasattr(consumer.field, "name") else "body",
         }
 
     if "$ref" in route_param:
@@ -184,18 +182,14 @@ def build_paths(app: Sanic, url_prefix: str) -> Dict:
 
         methods = {}
         for method, handler in method_handlers:
-            _method = build_method(
-                app=app, handler=handler, method=method, route=route
-            )
+            _method = build_method(app=app, handler=handler, method=method, route=route)
             if _method:
                 methods[method.lower()] = _method
 
         uri_parsed = uri
         for parameter in route.parameters:
             uri_parsed = re.sub(
-                "<" + parameter.name + ".*?>",
-                "{" + parameter.name + "}",
-                uri_parsed
+                "<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed
             )
 
         if methods:
@@ -248,8 +242,7 @@ def add_routes(app, url_prefix, spec, dir_path) -> None:
 
         _spec.add_definitions(
             definitions={
-                obj.object_name: definition for obj, definition
-                in definitions.values()
+                obj.object_name: definition for obj, definition in definitions.values()
             }
         )
 
@@ -260,10 +253,7 @@ def add_routes(app, url_prefix, spec, dir_path) -> None:
         # TODO: figure out how to get descriptions in these
         tags = {}
         for route_spec in route_specs.values():
-            if (
-                route_spec.blueprint and
-                route_spec.blueprint.name in ("swagger")
-            ):
+            if route_spec.blueprint and route_spec.blueprint.name in ("swagger"):
                 # TODO: add static flag in sanic routes
                 continue
             for tag in route_spec.tags:
@@ -291,7 +281,7 @@ def add_routes(app, url_prefix, spec, dir_path) -> None:
 class Swagger:
     def __init__(self, app=None, url_prefix=None, spec=None):
         self.app = app
-        self.url_prefix = url_prefix or '/swagger'
+        self.url_prefix = url_prefix or "/swagger"
         self.spec = spec
         _dir_path = os.path.dirname(os.path.realpath(__file__))
         self.dir_path = os.path.abspath(_dir_path + "/ui")
@@ -299,6 +289,4 @@ class Swagger:
             self.init_app(self.app)
 
     def init_app(self, app) -> None:
-        add_routes(
-            app, self.url_prefix, spec=self.spec, dir_path=self.dir_path
-        )
+        add_routes(app, self.url_prefix, spec=self.spec, dir_path=self.dir_path)
