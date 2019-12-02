@@ -149,7 +149,6 @@ class Object(Field):
 
     def serialize(self):
         return {
-            "type": "object",
             "$ref": "#/definitions/{}".format(self.object_name),
             **super().serialize(),
         }
