@@ -1,5 +1,27 @@
 # Changelog
 
+### 0.6.1 (2020-01-03)
+
+
+### Features
+
+* **examples:** add class based routing demonstration in cars example ([df7724f](https://github.com/chenjr0719/sanic-openapi/commit/df7724fa344a8feefede5168541433e19e969b5c))
+* **examples:** class based routing example ([9137de1](https://github.com/chenjr0719/sanic-openapi/commit/9137de14037778e0588853cb83a1ded2e645845f))
+* fix for class based routing ([de21965](https://github.com/chenjr0719/sanic-openapi/commit/de21965a8e94e1f73efa8bd420a8d39367fa7f26))
+* Provide ASGI compatibility through server event ([a6df84](https://github.com/huge-success/sanic-openapi/pull/130))
+* Add basic support for type hinting-based docs ([ee640f](https://github.com/huge-success/sanic-openapi/pull/129))
+* Basic support for TypedDicts (PEP 589) ([360a03](https://github.com/huge-success/sanic-openapi/pull/134))
+* Support typing.Sequence and typing.List ([f80d19](https://github.com/huge-success/sanic-openapi/pull/136))
+* Remove global variables ([3cdf88](https://github.com/huge-success/sanic-openapi/pull/140))
+* removed field 'type': 'object' from swagger json when using doc.Object() ([60605c](https://github.com/huge-success/sanic-openapi/pull/149))
+
+### Bug Fixes
+
+* Allow empty list with List field ([74fd710](https://github.com/chenjr0719/sanic-openapi/commit/74fd71081a725d58545322dc2105c540de004529))
+* fix example of class based view ([9c0bbd3](https://github.com/chenjr0719/sanic-openapi/commit/9c0bbd3a7e0ec2dfd999d6fbe14c2c1dedf36a29))
+* Ignore routes under swagger blueprint ([ed932cc](https://github.com/chenjr0719/sanic-openapi/commit/ed932cca7286e59d8ac854a5dd0cf314c98ac688))
+* fix typo in setup where sphinx-rtd-theme needed ([2e729e](https://github.com/huge-success/sanic-openapi/pull/139))
+
 ## 0.6.0 (2019-08-02)
 
 ### Features
