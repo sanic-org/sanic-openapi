@@ -5,6 +5,7 @@ class Spec:
     swagger = "2.0"
 
     def __init__(self, app: Sanic) -> None:
+        self.swagger = self.__class__.swagger
         self.info = {
             "version": getattr(app.config, "API_VERSION", "1.0.0"),
             "title": getattr(app.config, "API_TITLE", "API"),
@@ -29,6 +30,10 @@ class Spec:
         self.securityDefinitions = getattr(app.config, "API_SECURITY_DEFINITIONS", None)
         self.security = getattr(app.config, "API_SECURITY", None)
 
+        self.definitions = {}
+        self.tags = []
+        self.paths = {}
+
     def add_definitions(self, definitions):
         self.definitions = definitions
 
@@ -37,3 +42,7 @@ class Spec:
 
     def add_paths(self, paths):
         self.paths = paths
+
+    @property
+    def as_dict(self):
+        return self.__dict__
