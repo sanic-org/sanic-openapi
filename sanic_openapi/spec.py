@@ -2,10 +2,9 @@ from sanic import Sanic
 
 
 class Spec:
-    swagger = "2.0"
-
     def __init__(self, app: Sanic) -> None:
-        self.swagger = self.__class__.swagger
+        self.swagger = "2.0"
+
         self.info = {
             "version": getattr(app.config, "API_VERSION", "1.0.0"),
             "title": getattr(app.config, "API_TITLE", "API"),
