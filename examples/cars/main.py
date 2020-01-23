@@ -1,5 +1,5 @@
 from sanic import Sanic
-from sanic_openapi.swagger import Swagger
+from swagger import swagger
 from blueprints.car import blueprint as car_blueprint
 from blueprints.driver import blueprint as driver_blueprint
 from blueprints.garage import blueprint as garage_blueprint
@@ -8,7 +8,6 @@ from blueprints.repair import blueprint as repair_blueprint
 
 app = Sanic()
 
-swagger = Swagger()
 app.blueprint(car_blueprint)
 app.blueprint(driver_blueprint)
 app.blueprint(garage_blueprint)

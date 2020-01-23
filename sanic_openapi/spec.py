@@ -28,9 +28,14 @@ class Spec:
 
         self.securityDefinitions = getattr(app.config, "API_SECURITY_DEFINITIONS", None)
         self.security = getattr(app.config, "API_SECURITY", None)
+        self.definitions = {}
+        self.tags = {}
+        self.paths = {}
 
     def add_definitions(self, definitions):
-        self.definitions = definitions
+        for key, value in definitions.items():
+            print(key, value)
+            self.definitions[key] = value
 
     def add_tags(self, tags):
         self.tags = tags

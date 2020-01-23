@@ -17,9 +17,9 @@ from sanic_openapi.doc import RouteField
         ({"response": [{400, RouteField(str)}]}, {}),
     ],
 )
-def test_route(app, route_kwargs, route_fields):
+def test_route(app, swagger, route_kwargs, route_fields):
     @app.post("/")
-    @doc.route(**route_kwargs)
+    @swagger.doc.route(**route_kwargs)
     def test(request):
         return text("")
 
@@ -35,9 +35,9 @@ def test_route(app, route_kwargs, route_fields):
 
 
 @pytest.mark.parametrize("exclude", [True, False])
-def test_exclude(app, exclude):
+def test_exclude(app, swagger, exclude):
     @app.get("/")
-    @doc.exclude(exclude)
+    @swagger.doc.exclude(exclude)
     def test(request):
         return text("test")
 
@@ -49,9 +49,9 @@ def test_exclude(app, exclude):
     assert not ("/" in swagger_json["paths"]) == exclude
 
 
-def test_summary(app):
+def test_summary(app, swagger):
     @app.get("/")
-    @doc.summary("Test route")
+    @swagger.doc.summary("Test route")
     def test(request):
         return text("test")
 
@@ -63,9 +63,9 @@ def test_summary(app):
     assert swagger_json["paths"]["/"]["get"]["summary"] == "Test route"
 
 
-def test_description(app):
+def test_description(app, swagger):
     @app.get("/")
-    @doc.description("This is test route")
+    @swagger.doc.description("This is test route")
     def test(request):
         return text("test")
 
@@ -105,9 +105,9 @@ class TestSchema:
         ),
     ],
 )
-def test_consumes(app, consumes_args, consumes_kwargs, parameters):
+def test_consumes(app, swagger, consumes_args, consumes_kwargs, parameters):
     @app.post("/")
-    @doc.consumes(*consumes_args, **consumes_kwargs)
+    @swagger.doc.consumes(*consumes_args, **consumes_kwargs)
     def test(request):
         return text("test")
 
@@ -131,9 +131,9 @@ def test_consumes(app, consumes_args, consumes_kwargs, parameters):
         ),
     ],
 )
-def test_produces(app, produces_args, produces_kwargs, responses):
+def test_produces(app, swagger, produces_args, produces_kwargs, responses):
     @app.post("/")
-    @doc.produces(*produces_args, **produces_kwargs)
+    @swagger.doc.produces(*produces_args, **produces_kwargs)
     def test(request):
         return text("test")
 
@@ -152,9 +152,9 @@ def test_produces(app, produces_args, produces_kwargs, responses):
         ([201, {}], {"201": {"schema": {"type": "object", "properties": {}}}}),
     ],
 )
-def test_response(app, response_args, responses):
+def test_response(app, swagger, response_args, responses):
     @app.post("/")
-    @doc.response(*response_args)
+    @swagger.doc.response(*response_args)
     def test(request):
         return text("test")
 
@@ -167,9 +167,9 @@ def test_response(app, response_args, responses):
     assert swagger_json["paths"]["/"]["post"]["responses"] == responses
 
 
-def test_tag(app):
+def test_tag(app, swagger):
     @app.get("/")
-    @doc.tag("test")
+    @swagger.doc.tag("test")
     def test(request):
         return text("test")
 
@@ -182,9 +182,9 @@ def test_tag(app):
     assert "test" in swagger_json["paths"]["/"]["get"]["tags"]
 
 
-def test_operation(app):
+def test_operation(app, swagger):
     @app.get("/")
-    @doc.operation("This is test operation")
+    @swagger.doc.operation("This is test operation")
     def test(request):
         return text("test")
 

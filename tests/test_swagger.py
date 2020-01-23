@@ -39,30 +39,14 @@ view.add(["GET"], get_handler)
 view.add(["POST", "PUT"], lambda request: text("I am a post/put method"))
 
 
-def test_swagger_endpoint(app):
-    _, response = app.test_client.get("/swagger/")
+def test_swagger_endpoint(app_with_swagger):
+    _, response = app_with_swagger.test_client.get("/swagger/")
     assert response.status == 200
     assert response.content_type == "text/html"
 
 
-@pytest.mark.skip('The redirect has been removed')
-def test_swagger_endpoint_redirect(app):
-    _, response = app.test_client.get("/swagger")
-    assert response.status == 200
-    assert response.content_type == "text/html"
-    assert len(response.history) == 1
-    status = getattr(
-        response.history[0], "status", getattr(response.history[0], "status_code", None)
-    )  # For request-async compatibility
-    assert status == 302
-    assert str(response.history[0].url).endswith("/swagger")
-
-
-@pytest.mark.skip(
-    reason="https://github.com/huge-success/sanic-openapi/pull/111#pullrequestreview-255118509"
-)
-def test_swagger_json(app):
-    _, response = app.test_client.get("/swagger/swagger.json")
+def test_swagger_json(app_with_swagger):
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -74,16 +58,17 @@ def test_swagger_json(app):
 
 
 @pytest.mark.parametrize("method", METHODS)
-def test_document_route(app, method):
-    @app.route("/", methods=[method])
+def test_document_route(app_with_swagger, method):
+    @app_with_swagger.route("/", methods=[method])
     def test(request):
         return text("test")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
+    print(swagger_json['paths']['/'])
     assert swagger_json["paths"] == {
         "/": {
             method: {
@@ -98,7 +83,7 @@ def test_document_route(app, method):
 
 
 @pytest.mark.parametrize("method", METHODS)
-def test_document_blueprint_route(app, method):
+def test_document_blueprint_route(app_with_swagger, method):
 
     bp = Blueprint("test")
 
@@ -106,9 +91,9 @@ def test_document_blueprint_route(app, method):
     def test(request):
         return text("test")
 
-    app.blueprint(bp)
+    app_with_swagger.blueprint(bp)
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -129,13 +114,13 @@ def test_document_blueprint_route(app, method):
     }
 
 
-def test_class_based_view(app):
+def test_class_based_view(app_with_swagger):
     """
     In sanic_openapi/swagger.py#n124, class based view will not document endpoint with options method.
     """
-    app.add_route(SimpleView.as_view(), "/")
+    app_with_swagger.add_route(SimpleView.as_view(), "/")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -146,13 +131,13 @@ def test_class_based_view(app):
     assert sorted(set(methods)) == sorted(set(swagger_json["paths"]["/"].keys()))
 
 
-def test_blueprint_class_based_view(app):
+def test_blueprint_class_based_view(app_with_swagger):
 
     bp = Blueprint("test")
     bp.add_route(SimpleView.as_view(), "/")
-    app.blueprint(bp)
+    app_with_swagger.blueprint(bp)
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -164,10 +149,10 @@ def test_blueprint_class_based_view(app):
     assert {"name": "test"} in swagger_json["tags"]
 
 
-def test_document_compositionview(app):
-    app.add_route(view, "/")
+def test_document_compositionview(app_with_swagger):
+    app_with_swagger.add_route(view, "/")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -176,13 +161,13 @@ def test_document_compositionview(app):
     assert {"name": "test"} in swagger_json["tags"]
 
 
-@pytest.mark.skip(reason="Not support now.")
-def test_document_blueprint_compositionview(app):
+@pytest.mark.xfail(reason="Not support now.")
+def test_document_blueprint_compositionview(app_with_swagger):
 
     bp = Blueprint("test")
     bp.add_route(view, "/")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -190,9 +175,9 @@ def test_document_blueprint_compositionview(app):
     assert set(swagger_json["paths"]["/"].keys()) == set(["get", "post", "put"])
 
 
-def test_swagger_ui_config(app):
+def test_swagger_ui_config(app_with_swagger):
 
-    _, response = app.test_client.get("/swagger/swagger-config")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger-config")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -204,9 +189,9 @@ def test_swagger_ui_config(app):
         "displayRequestDuration": True,
         "docExpansion": "full",
     }
-    app.config.SWAGGER_UI_CONFIGURATION = swagger_ui_configuration
+    app_with_swagger.config.SWAGGER_UI_CONFIGURATION = swagger_ui_configuration
 
-    _, response = app.test_client.get("/swagger/swagger-config")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger-config")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -241,11 +226,11 @@ def test_swagger_ui_config(app):
         },
     ],
 )
-def test_configs(app, configs):
+def test_configs(app_with_swagger, configs):
 
-    app.config.update(configs)
+    app_with_swagger.config.update(configs)
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -264,10 +249,10 @@ def test_configs(app, configs):
     assert info["license"]["url"] == configs["API_LICENSE_URL"]
 
 
-def test_skip_static_file(app):
-    app.static("/static", __file__)
+def test_skip_static_file(app_with_swagger):
+    app_with_swagger.static("/static", __file__)
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -275,12 +260,12 @@ def test_skip_static_file(app):
     assert "/static" not in swagger_json["paths"]
 
 
-def test_uri_parsed(app):
-    @app.get("/<name>")
+def test_uri_parsed(app_with_swagger):
+    @app_with_swagger.get("/<name>")
     def test(request, name):
         return text(name)
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -288,12 +273,12 @@ def test_uri_parsed(app):
     assert "/{name}" in swagger_json["paths"]
 
 
-def test_ignore_options_route(app):
-    @app.options("/")
+def test_ignore_options_route(app_with_swagger):
+    @app_with_swagger.options("/")
     def test(request):
         return text("test")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -301,14 +286,14 @@ def test_ignore_options_route(app):
     assert swagger_json["paths"] == {}
 
 
-def test_route_filter_all(app):
-    app.config.update({"API_URI_FILTER": "all"})
+def test_route_filter_all(app_with_swagger):
+    app_with_swagger.config.update({"API_URI_FILTER": "all"})
 
-    @app.get("/test")
+    @app_with_swagger.get("/test")
     def test(request):
         return text("test")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -317,14 +302,14 @@ def test_route_filter_all(app):
     assert "/test/" in swagger_json["paths"]
 
 
-def test_route_filter_default(app):
-    app.config.update({"API_URI_FILTER": "slash"})
+def test_route_filter_default(app_with_swagger):
+    app_with_swagger.config.update({"API_URI_FILTER": "slash"})
 
-    @app.get("/test")
+    @app_with_swagger.get("/test")
     def test(request):
         return text("test")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
@@ -333,12 +318,12 @@ def test_route_filter_default(app):
     assert "/test/" in swagger_json["paths"]
 
 
-def test_route_filter_slash(app):
-    @app.get("/test")
+def test_route_filter_slash(app_with_swagger):
+    @app_with_swagger.get("/test")
     def test(request):
         return text("test")
 
-    _, response = app.test_client.get("/swagger/swagger.json")
+    _, response = app_with_swagger.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 

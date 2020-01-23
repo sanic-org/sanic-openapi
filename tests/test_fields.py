@@ -54,7 +54,7 @@ from sanic_openapi import doc
     ],
 )
 def test_base_field(
-    app, description, required, name, choices, serialized_field, path_parameters
+    app, swagger, description, required, name, choices, serialized_field, path_parameters
 ):
 
     field = doc.Field(
@@ -63,7 +63,7 @@ def test_base_field(
     assert field.serialize() == serialized_field
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -76,13 +76,13 @@ def test_base_field(
     assert path["parameters"] == path_parameters
 
 
-def test_integer_field(app):
+def test_integer_field(app, swagger):
 
     field = doc.Integer()
     assert field.serialize() == {"type": "integer", "format": "int64"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -101,13 +101,13 @@ def test_integer_field(app):
     }
 
 
-def test_float_field(app):
+def test_float_field(app, swagger):
 
     field = doc.Float()
     assert field.serialize() == {"type": "number", "format": "double"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -126,13 +126,13 @@ def test_float_field(app):
     }
 
 
-def test_string_field(app):
+def test_string_field(app, swagger):
 
     field = doc.String()
     assert field.serialize() == {"type": "string"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -150,13 +150,13 @@ def test_string_field(app):
     }
 
 
-def test_boolean_field(app):
+def test_boolean_field(app, swagger):
 
     field = doc.Boolean()
     assert field.serialize() == {"type": "boolean"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -174,13 +174,13 @@ def test_boolean_field(app):
     }
 
 
-def test_date_field(app):
+def test_date_field(app, swagger):
 
     field = doc.Date()
     assert field.serialize() == {"type": "string", "format": "date"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -199,13 +199,13 @@ def test_date_field(app):
     }
 
 
-def test_datetime_field(app):
+def test_datetime_field(app, swagger):
 
     field = doc.DateTime()
     assert field.serialize() == {"type": "string", "format": "date-time"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -224,13 +224,13 @@ def test_datetime_field(app):
     }
 
 
-def test_file_field(app):
+def test_file_field(app, swagger):
 
     field = doc.File()
     assert field.serialize() == {"type": "file"}
 
     @app.get("/")
-    @doc.consumes(field, location="formData", required=True)
+    @swagger.doc.consumes(field, location="formData", required=True)
     def test(request):
         return text("test")
 
@@ -248,12 +248,12 @@ def test_file_field(app):
     }
 
 
-def test_uuid_field(app):
+def test_uuid_field(app, swagger):
     field = doc.UUID()
     assert field.serialize() == {"type": "string", "format": "uuid"}
 
     @app.get("/<id:uuid>")
-    @doc.response(204, {})
+    @swagger.doc.response(204, {})
     def test(request):
         return HTTPResponse(status=204)
 
@@ -272,8 +272,8 @@ def test_uuid_field(app):
     }
 
     @app.get("/")
-    @doc.consumes(field, location="formData", required=True)
-    @doc.response(204, {})
+    @swagger.doc.consumes(field, location="formData", required=True)
+    @swagger.doc.response(204, {})
     def test(request):
         return HTTPResponse(status=204)
 
@@ -332,7 +332,7 @@ def test_serialize_schema(schema, expected_schema):
     assert serialized_schema == expected_schema
 
 
-def test_jsonbody_field(app):
+def test_jsonbody_field(app, swagger):
     field = doc.JsonBody()
     assert field.serialize() == {
         "name": "body",
@@ -340,7 +340,7 @@ def test_jsonbody_field(app):
     }
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -385,11 +385,11 @@ def test_jsonbody_field(app):
         ),
     ],
 )
-def test_list_field(app, field, serialized_field, path_parameters):
+def test_list_field(app, swagger, field, serialized_field, path_parameters):
     assert field.serialize() == serialized_field
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -402,13 +402,13 @@ def test_list_field(app, field, serialized_field, path_parameters):
     assert path["parameters"][0] == path_parameters
 
 
-def test_object_field(app):
+def test_object_field(app, swagger):
 
     field = doc.Object(TestSchema)
     assert field.serialize() == {"type": "object", "$ref": "#/definitions/TestSchema"}
 
     @app.get("/")
-    @doc.consumes(field, location="body", required=True)
+    @swagger.doc.consumes(field, location="body", required=True)
     def test(request):
         return text("test")
 
@@ -426,6 +426,7 @@ def test_object_field(app):
         "schema": {"$ref": "#/definitions/TestSchema"},
     }
 
+    print(swagger_json["definitions"])
     assert swagger_json["definitions"]["TestSchema"] == {
         "type": "object",
         "properties": {},

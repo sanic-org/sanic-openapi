@@ -179,6 +179,8 @@ class API:
             """
             return kwargs[name] if name in kwargs else getattr(obj, name, default)
 
+        cls.definitions = {}
+        cls.route_specs = doc.RouteSpecs()
         # The _add_decorators() call must precede everything else.
         func = cls._add_decorators(func, get_attribute)
         func = cls._add_base_data(func, get_attribute)
@@ -212,7 +214,7 @@ class API:
                     part.strip() for part in class_doc_parts[1:]
                 )
 
-        return doc.route(
+        return cls.route_specs.route(
             summary=summary if summary != cls.__MISSING else None,
             description=description if description != cls.__MISSING else None,
             exclude=cls._exclude(get_attribute),
@@ -236,11 +238,14 @@ class API:
         # its name to avoid model name conflicts and have a more readable doc.
         if isinstance(value, type):
             value = doc.Object(
-                value, object_name=cls.__name__ + "Consumes", description=value.__doc__
+                value,
+                definitions=cls.definitions,
+                object_name=cls.__name__ + "Consumes",
+                description=value.__doc__,
             )
 
         # Use the same default values as in doc.consumes().
-        return doc.consumes(
+        return cls.route_specs.consumes(
             value,
             content_type=get_attribute(cls, "consumes_content_type", None),
             location=get_attribute(cls, "consumes_location", "query"),
@@ -284,13 +289,16 @@ class API:
                 cls, "produces_description", produces_doc
             )
             value = doc.Object(
-                value, object_name=cls.__name__ + "Produces", description=produces_doc
+                value,
+                definitions=cls.definitions,
+                object_name=cls.__name__ + "Produces",
+                description=produces_doc,
             )
         else:
             produces_description = get_attribute(cls, "produces_description", None)
 
         # User the same default values as in doc.produces().
-        return doc.produces(
+        return cls.route_specs.produces(
             value,
             content_type=get_attribute(cls, "produces_content_type", None),
             description=produces_description,
@@ -312,9 +320,9 @@ class API:
                 response.model.__doc__.strip() if response.model.__doc__ else None
             )
 
-        return doc.response(response.code, response.model, description=description)(
-            func
-        )
+        return cls.route_specs.response(
+            response.code, response.model, description=description
+        )(func)
 
     @classmethod
     def _add_responses(cls, func, get_attribute):
@@ -350,10 +358,10 @@ class API:
         """
         value = get_attribute(cls, "tag", None)
         if isinstance(value, str):
-            func = doc.tag(value)(func)
+            func = cls.route_specs.tag(value)(func)
         elif isinstance(value, (list, tuple)):
             for item in value:
-                func = doc.tag(item)(func)
+                func = cls.route_specs.tag(item)(func)
         return func
 
     @classmethod

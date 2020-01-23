@@ -6,9 +6,7 @@ from typing import Dict
 from sanic import Sanic, response
 from sanic.views import CompositionView
 
-from .doc import RouteSpec, definitions
-from .doc import route as doc_route
-from .doc import route_specs, serialize_schema
+from .doc import RouteSpecs, serialize_schema
 from .spec import Spec
 
 
@@ -77,12 +75,12 @@ def build_consumer_route_param(consumer) -> Dict:
     return route_param
 
 
-def build_method(app: Sanic, handler, method: str, route) -> Dict:
+def build_method(app: Sanic, handler, method: str, route, route_specs: Dict) -> Dict:
     if hasattr(handler, "view_class"):
         view_handler = getattr(handler.view_class, method.lower())
-        route_spec = route_specs.get(view_handler) or RouteSpec()
+        route_spec = route_specs.get(view_handler)
     else:
-        route_spec = route_specs.get(handler) or RouteSpec()
+        route_spec = route_specs.get(handler)
 
     if method == "OPTIONS" or route_spec.exclude:
         return
@@ -149,7 +147,7 @@ def build_method(app: Sanic, handler, method: str, route) -> Dict:
     )
 
 
-def build_paths(app: Sanic, url_prefix: str) -> Dict:
+def build_paths(app: Sanic, url_prefix: str, route_specs: Dict) -> Dict:
     paths = {}
     uri_filter = get_uri_filter(app)
 
@@ -173,8 +171,7 @@ def build_paths(app: Sanic, url_prefix: str) -> Dict:
         # --------------------------------------------------------------- #
 
         # Build list of methods and their handler functions
-        handler_type = type(route.handler)
-        if handler_type is CompositionView:
+        if isinstance(route.handler, CompositionView):
             view = route.handler
             method_handlers = view.handlers.items()
         else:
@@ -182,7 +179,13 @@ def build_paths(app: Sanic, url_prefix: str) -> Dict:
 
         methods = {}
         for method, handler in method_handlers:
-            _method = build_method(app=app, handler=handler, method=method, route=route)
+            _method = build_method(
+                app=app,
+                handler=handler,
+                method=method,
+                route=route,
+                route_specs=route_specs,
+            )
             if _method:
                 methods[method.lower()] = _method
 
@@ -194,11 +197,13 @@ def build_paths(app: Sanic, url_prefix: str) -> Dict:
 
         if methods:
             paths[uri_parsed] = methods
+
     return paths
 
 
-def build_blueprint(blueprint) -> None:
-    if hasattr(blueprint, "routes"):
+def build_blueprint(app, route_specs: Dict) -> None:
+
+    for blueprint in app.blueprints.values():
         for route in blueprint.routes:
             if hasattr(route.handler, "view_class"):
                 # class based view
@@ -206,37 +211,66 @@ def build_blueprint(blueprint) -> None:
                 for http_method in route.methods:
                     _handler = getattr(view, http_method.lower(), None)
                     if _handler:
-                        route_spec = route_specs[_handler]
+                        route_spec = route_specs.get(_handler)
                         route_spec.blueprint = blueprint
                         if not route_spec.tags:
                             route_spec.tags.append(blueprint.name)
             else:
-                route_spec = route_specs[route.handler]
+                route_spec = route_specs.get(route.handler)
                 route_spec.blueprint = blueprint
                 if not route_spec.tags:
                     route_spec.tags.append(blueprint.name)
+        return
+
+    if hasattr(app, "router"):
+        for name, value in app.router.routes_names.items():
+
+            # TODO: Is this correct that the tags get the name of the app
+            if not name:
+                name = app.name
+
+            endpoint, route = value
+            if isinstance(route.handler, CompositionView):
+                # class based view
+                for http_method, _handler in route.handler.handlers.items():
+                    if _handler:
+                        route_spec = route_specs.get(_handler)
+                        route_spec.name = name
+                        if not route_spec.tags:
+                            route_spec.tags.append(name)
+            else:
+                route_spec = route_specs.get(route.handler)
+                route_spec.name = name
 
 
-def add_routes(app, url_prefix, spec, dir_path) -> None:
-    app.static(url_prefix, dir_path)
+def add_routes(
+    app: Sanic,
+    url_prefix: str,
+    spec: Dict,
+    dir_path: str,
+    route_specs: Dict,
+    definitions: Dict,
+) -> None:
 
     # Redirect "/swagger" to "/swagger/"
-    @app.route("/swagger")
-    def index(request):
-        return response.file(dir_path + "/index.html")
+    @app.route(url_prefix, strict_slashes=True)
+    def __index(request):
+        return response.redirect("{}/".format(url_prefix))
+
+    app.static(url_prefix + "/", dir_path + "/index.html", strict_slashes=True)
+    app.static(url_prefix + "/", dir_path)
 
     @app.listener("after_server_start")
-    def build_spec(app, loop):
+    def __build_spec(app, loop):
         _spec = Spec(app=app)
 
         # --------------------------------------------------------------- #
         # Blueprint Tags
         # --------------------------------------------------------------- #
 
-        for blueprint in app.blueprints.values():
-            build_blueprint(blueprint=blueprint)
+        build_blueprint(app=app, route_specs=route_specs)
 
-        paths = build_paths(app=app, url_prefix=url_prefix)
+        paths = build_paths(app=app, url_prefix=url_prefix, route_specs=route_specs)
 
         # --------------------------------------------------------------- #
         # Definitions
@@ -255,10 +289,10 @@ def add_routes(app, url_prefix, spec, dir_path) -> None:
         # TODO: figure out how to get descriptions in these
         tags = {}
         for route_spec in route_specs.values():
-            if route_spec.blueprint and route_spec.blueprint.name in ("swagger"):
-                # TODO: add static flag in sanic routes
-                continue
             for tag in route_spec.tags:
+                # filter out swagger internal routes
+                if tag.startswith("__"):
+                    continue
                 tags[tag] = True
         _spec.add_tags(tags=[{"name": name} for name in tags.keys()])
 
@@ -266,12 +300,19 @@ def add_routes(app, url_prefix, spec, dir_path) -> None:
         app._spec = _spec
 
     @app.route(url_prefix + "/swagger.json")
-    @doc_route(exclude=True)
-    def _spec(request):
+    @route_specs.route(exclude=True)
+    def __spec(request):
+        print(1)
+        for k, v in app._spec.__dict__.items():
+            print('ww')
+            print(k)
+            print(v)
+            print('ee')
+        print(2)
         return response.json(app._spec)
 
     @app.route(url_prefix + "/swagger-config")
-    def config(request):
+    def __config(request):
         options = {}
 
         if hasattr(request.app.config, "SWAGGER_UI_CONFIGURATION"):
@@ -281,14 +322,22 @@ def add_routes(app, url_prefix, spec, dir_path) -> None:
 
 
 class Swagger:
-    def __init__(self, app=None, url_prefix=None, spec=None):
+    def __init__(self, app: Sanic, url_prefix=None, spec=None):
         self.app = app
         self.url_prefix = url_prefix or "/swagger"
-        self.spec = spec
         _dir_path = os.path.dirname(os.path.realpath(__file__))
         self.dir_path = os.path.abspath(_dir_path + "/ui")
-        if self.app:
-            self.init_app(self.app)
+        self.definitions = {}
+        self.spec = spec or Spec(app=app)
+        self.doc = RouteSpecs()
+        self._init()
 
-    def init_app(self, app) -> None:
-        add_routes(app, self.url_prefix, spec=self.spec, dir_path=self.dir_path)
+    def _init(self) -> None:
+        add_routes(
+            app=self.app,
+            url_prefix=self.url_prefix,
+            spec=self.spec,
+            dir_path=self.dir_path,
+            route_specs=self.doc,
+            definitions=self.definitions,
+        )

@@ -4,9 +4,19 @@ from sanic import Sanic
 from sanic_openapi.swagger import Swagger
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
     app = Sanic("test")
-    swagger = Swagger()
-    swagger.init_app(app)
+    yield app
+
+
+@pytest.fixture
+def swagger(app):
+    _swagger = Swagger(app)
+    yield _swagger
+
+
+@pytest.fixture
+def app_with_swagger(app):
+    _swagger = Swagger(app)
     yield app
