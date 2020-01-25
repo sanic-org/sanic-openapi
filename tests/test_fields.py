@@ -319,7 +319,7 @@ class TestSchema:
         (datetime, {"type": "string", "format": "date-time"}),
         (doc.DateTime, {"type": "string", "format": "date-time"}),
         (doc.DateTime(), {"type": "string", "format": "date-time"}),
-        (TestSchema, {"$ref": "#/definitions/TestSchema", "type": "object"}),
+        (TestSchema, {"$ref": "#/definitions/TestSchema"}),
         (dict, {"type": "object", "properties": {}}),
         ({"foo": "bar"}, {"type": "object", "properties": {"foo": {}}}),
         (list, {"type": "array", "items": []}),
