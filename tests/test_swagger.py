@@ -68,7 +68,6 @@ def test_document_route(app_with_swagger, method):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    print(swagger_json['paths']['/'])
     assert swagger_json["paths"] == {
         "/": {
             method: {
@@ -116,7 +115,8 @@ def test_document_blueprint_route(app_with_swagger, method):
 
 def test_class_based_view(app_with_swagger):
     """
-    In sanic_openapi/swagger.py#n124, class based view will not document endpoint with options method.
+    In sanic_openapi/swagger.py#n124, class based view will not document endpoint with
+    options method.
     """
     app_with_swagger.add_route(SimpleView.as_view(), "/")
 

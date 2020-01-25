@@ -3,7 +3,7 @@ from sanic.response import json
 
 from models import Driver, Status
 from data import test_driver, test_success
-from swagger import swagger
+from app import swagger
 
 
 blueprint = Blueprint('Driver', '/driver')

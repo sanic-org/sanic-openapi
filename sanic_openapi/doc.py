@@ -131,9 +131,9 @@ class Object(Field):
         self.object_name = object_name or cls.__name__
         self.definitions = definitions or {}
 
-        register_as = object_name or "{}.{}".format(cls.__module__, cls.__qualname__)
+        register_as = object_name or "{}".format(cls.__qualname__)
         if register_as not in self.definitions:
-            self.definitions[register_as] = (self, self.definition)
+            self.definitions[register_as] = self.definition
 
     @property
     def definition(self):
@@ -248,8 +248,9 @@ class RouteField(object):
 
 
 class RouteSpecs:
-    def __init__(self):
+    def __init__(self, spec: Spec):
         self._specs = defaultdict(RouteSpec)
+        self.spec = spec
 
     def get(self, key):
         return self._specs[key]
@@ -324,6 +325,8 @@ class RouteSpecs:
                     field = RouteField(arg, location, required)
                     self._specs[func].consumes.append(field)
                     self._specs[func].consumes_content_type = [content_type]
+                    if isinstance(arg, Object):
+                        self.spec.add_definitions(arg.definitions)
             return func
 
         return inner

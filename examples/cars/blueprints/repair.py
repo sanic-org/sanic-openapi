@@ -4,7 +4,7 @@ from sanic.response import json
 
 from models import Station
 from data import test_station
-from swagger import swagger
+from app import swagger
 
 
 blueprint = Blueprint('Repair', '/repair')
