@@ -123,7 +123,21 @@ class Swagger:
                     if _handler:
                         route_spec = self.doc.get(_handler)
                         route_spec.name = name
-                        if not route_spec.tags:
+                        if n
+
+@AtomsForPeace
+Sorry for no-response in recent days.
+
+This PR is a remarkable work for this project. I appreciated your contribution.
+I skipped a test due to the global variable issue. Would you mind to enable this test to verify this PR?
+
+sanic-openapi/tests/test_fields.py
+
+Line 405 in 3cdf880
+ @pytest.mark.skip(reason="Failed due to global variables.") 
+
+And because this PR also changes the usage of this project, maybe we can put the __version__ to 0.7.0. What do you think?
+ot route_spec.tags:
                             route_spec.tags.append(name)
             else:
                 route_spec = self.doc.get(route.handler)
@@ -277,7 +291,7 @@ def get_uri_filter(app):
     # Keep URIs that don't end with a /, (special case: "/").
     return lambda uri: len(uri) > 1 and uri.endswith("/")
 
-
+  
 def remove_nulls(dictionary, deep=True):
     """
     Removes all null values from a dictionary.

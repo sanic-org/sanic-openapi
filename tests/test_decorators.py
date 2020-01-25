@@ -95,7 +95,6 @@ class TestSchema:
             {"location": "body", "required": True, "content_type": "application/json"},
             [
                 {
-                    "type": "object",
                     "required": True,
                     "in": "body",
                     "name": "body",
@@ -127,7 +126,7 @@ def test_consumes(app, swagger, consumes_args, consumes_kwargs, parameters):
         (
             [TestSchema],
             {"content_type": "application/json"},
-            {"200": {"schema": {"$ref": "#/definitions/TestSchema", "type": "object"}}},
+            {"200": {"schema": {"$ref": "#/definitions/TestSchema"}}},
         ),
     ],
 )
