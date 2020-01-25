@@ -87,4 +87,3 @@ class Spec:
             "tags": self.tags,
             "paths": self.paths,
         }
-

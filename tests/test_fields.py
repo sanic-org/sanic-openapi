@@ -405,7 +405,7 @@ def test_list_field(app, swagger, field, serialized_field, path_parameters):
 def test_object_field(app, swagger):
 
     field = doc.Object(TestSchema)
-    assert field.serialize() == {"type": "object", "$ref": "#/definitions/TestSchema"}
+    assert field.serialize() == {"$ref": "#/definitions/TestSchema"}
 
     @app.get("/")
     @swagger.doc.consumes(field, location="body", required=True)
@@ -422,7 +422,6 @@ def test_object_field(app, swagger):
         "required": True,
         "in": "body",
         "name": None,
-        "type": "object",
         "schema": {"$ref": "#/definitions/TestSchema"},
     }
 
