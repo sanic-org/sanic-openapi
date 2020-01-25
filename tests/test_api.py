@@ -1,7 +1,7 @@
 import json
 from inspect import isawaitable
-import pytest
 
+import pytest
 from sanic import Sanic
 from sanic.response import HTTPResponse
 

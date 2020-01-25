@@ -2,7 +2,6 @@ from typing import Dict
 
 
 class Spec:
-
     def __init__(self, config) -> None:
         self.config = config
         self.swagger = "2.0"
@@ -73,14 +72,14 @@ class Spec:
     @property
     def as_dict(self) -> Dict:
         return {
-            'swagger': self.swagger,
-            'info': self.info,
-            'schemes': self.schemes,
-            'host': self.host,
-            'basePath': self.basePath,
-            'securityDefinitions': self.securityDefinitions,
-            'security': self.security,
-            'definitions': self.definitions,
-            'tags': self.tags,
-            'paths': self.paths,
+            "swagger": self.swagger,
+            "info": self.info,
+            "schemes": self.schemes,
+            "host": self.host,
+            "basePath": self.basePath,
+            "securityDefinitions": self.securityDefinitions,
+            "security": self.security,
+            "definitions": self.definitions,
+            "tags": self.tags,
+            "paths": self.paths,
         }

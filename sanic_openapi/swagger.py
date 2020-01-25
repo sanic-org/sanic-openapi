@@ -50,8 +50,8 @@ class Swagger:
 
             self.spec.add_definitions(
                 definitions={
-                    obj.object_name: definition for obj, definition
-                    in self.definitions.values()
+                    obj.object_name: definition
+                    for obj, definition in self.definitions.values()
                 }
             )
 
@@ -161,9 +161,7 @@ class Swagger:
             methods = {}
             for method, handler in method_handlers:
                 _method = self.build_method(
-                    handler=handler,
-                    method=method,
-                    route=route,
+                    handler=handler, method=method, route=route,
                 )
                 if _method:
                     methods[method.lower()] = _method
@@ -173,7 +171,7 @@ class Swagger:
                 uri_parsed = re.sub(
                     "<" + parameter.name + ".*?>",
                     "{" + parameter.name + "}",
-                    uri_parsed
+                    uri_parsed,
                 )
 
             if methods:

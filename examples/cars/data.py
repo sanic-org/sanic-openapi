@@ -1,5 +1,6 @@
-from models import Car, Driver, Garage, Manufacturer, Status, Station
 import datetime
+
+from models import Car, Driver, Garage, Manufacturer, Station, Status
 
 test_manufacturer = Manufacturer()
 test_driver = Driver()

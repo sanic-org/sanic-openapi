@@ -1,10 +1,9 @@
 from sanic.blueprints import Blueprint
 from sanic.response import json
 
-from models import Garage, Car, Status
-from data import test_garage, test_success
 from app import swagger
-
+from data import test_garage, test_success
+from models import Car, Garage, Status
 
 blueprint = Blueprint('Garage', '/garage')
 
