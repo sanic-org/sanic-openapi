@@ -59,10 +59,6 @@ class Spec:
     def paths(self):
         return self._paths
 
-        self.definitions = {}
-        self.tags = []
-        self.paths = {}
-
     def add_definitions(self, definitions):
         for key, value in definitions.items():
             self._definitions[key] = value
