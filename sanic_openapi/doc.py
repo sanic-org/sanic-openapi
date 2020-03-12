@@ -132,10 +132,29 @@ class Object(Field):
         register_as = object_name or "{}.{}".format(cls.__module__, cls.__qualname__)
         if register_as not in definitions:
             definitions[register_as] = (self, self.definition)
+        #creating definitions for all parental classes
+        for base in cls.__bases__:
+            if base.__name__ != "object":
+                Object(base)
+                
+    def inheritanceRef(self):
+        """if class has any parents except 'object' class, 
+        return dict with a key 'allOf' and a list with links
+         on parental classes definitions"""
+        refs = []
+        for base in self.cls.__bases__:
+            if base.__name__ != "object":
+                refs.append({'$ref': "#/definitions/{}".format(base.__name__)})
+        if res != []:
+            return {'allOf': refs}
+        else:
+            return {}
 
     @property
     def definition(self):
         return {
+            #inserting allOf with refs if parental classes exists
+            **self.inheritanceRef(),
             "type": "object",
             "properties": {
                 key: serialize_schema(schema)
