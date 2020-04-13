@@ -6,7 +6,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
-from .doc import RouteSpec, definitions
+from .doc import RouteField, RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
 from .spec import Spec
@@ -54,6 +54,24 @@ def get_uri_filter(app):
 
     # Keep URIs that don't end with a /, (special case: "/").
     return lambda uri: len(uri) > 1 and uri.endswith("/")
+
+
+def get_consumer_name(consumer: RouteField):
+    """
+    Get the name of consumer
+
+    :param consumer: RouteField
+    :return:
+    """
+    if hasattr(consumer.field, "name"):
+        if consumer.location == "body":
+            name = "body"
+        else:
+            name = consumer.field.name
+    else:
+        name = "body"
+
+    return name
 
 
 def remove_nulls(dictionary, deep=True):
@@ -176,9 +194,7 @@ def build_spec(app, loop):
                         **spec,
                         "required": consumer.required,
                         "in": consumer.location,
-                        "name": consumer.field.name
-                        if hasattr(consumer.field, "name")
-                        else "body",
+                        "name": get_consumer_name(consumer),
                     }
 
                 if "$ref" in route_param:
