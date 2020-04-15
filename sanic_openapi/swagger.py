@@ -155,9 +155,7 @@ class Swagger:
                 # TODO: add static flag in sanic routes
                 continue
 
-            uri, methods = build_path(
-                self.app.config, uri, route, self.doc
-            )
+            uri, methods = build_path(self.app.config, uri, route, self.doc)
             if methods:
                 paths[uri] = methods
 
@@ -193,9 +191,7 @@ def build_path(app_config, uri, route, doc):
     uri_parsed = uri
     for parameter in route.parameters:
         uri_parsed = re.sub(
-            "<" + parameter.name + ".*?>",
-            "{" + parameter.name + "}",
-            uri_parsed,
+            "<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed,
         )
 
     return uri_parsed, methods
