@@ -21,6 +21,7 @@ class Swagger:
         self.doc = RouteSpecs(spec=self.spec)
         self.paths = {}
         self._init()
+        self.blueprint_info = {}
 
     def _init(self) -> None:
         # Redirect "/swagger" to "/swagger/"
@@ -40,9 +41,9 @@ class Swagger:
             # Blueprint Tags
             # --------------------------------------------------------------- #
 
-            self.build_blueprint()
+            self.build_blueprints()
 
-            self.build_paths()
+            self.paths = self.build_paths()
 
             # --------------------------------------------------------------- #
             # Definitions
@@ -85,29 +86,29 @@ class Swagger:
 
             return response.json(options)
 
-    def build_blueprint(self) -> None:
+    # Blueprints
 
-        for blueprint in self.app.blueprints.values():
+    def build_blueprints(self) -> None:
+
+        all_blueprints = self.app.blueprints
+
+        for blueprint in all_blueprints.values():
             for route in blueprint.routes:
                 if hasattr(route.handler, "view_class"):
-                    # class based view
-                    view = route.handler.view_class
-                    for http_method in route.methods:
-                        _handler = getattr(view, http_method.lower(), None)
-                        if _handler:
-                            route_spec = self.doc.get(_handler)
-                            route_spec.blueprint = blueprint
-                            if not route_spec.tags:
-                                route_spec.tags.append(blueprint.name)
+                    self.handle_blueprint_class(blueprint, route)
                 else:
-                    route_spec = self.doc.get(route.handler)
-                    route_spec.blueprint = blueprint
-                    if not route_spec.tags:
-                        route_spec.tags.append(blueprint.name)
+                    self.blueprint_from_handler(blueprint.name, route.handler)
             return
 
         if hasattr(self.app, "router"):
             self.blueprint_has_router()
+
+    def handle_blueprint_class(self, blueprint, route):
+        # class based view
+        view = route.handler.view_class
+        for http_method in route.methods:
+            handler = getattr(view, http_method.lower(), None)
+            self.blueprint_from_handler(blueprint.name, handler)
 
     def blueprint_has_router(self):
         for name, value in self.app.router.routes_names.items():
@@ -119,17 +120,24 @@ class Swagger:
             endpoint, route = value
             if isinstance(route.handler, CompositionView):
                 # class based view
-                for http_method, _handler in route.handler.handlers.items():
-                    if _handler:
-                        route_spec = self.doc.get(_handler)
-                        route_spec.name = name
-                        if not route_spec.tags:
-                            route_spec.tags.append(name)
+                for http_method, handler in route.handler.handlers.items():
+                    self.blueprint_from_handler(name, handler)
             else:
+                # should this not also get tags by using blueprint_from_handler?
                 route_spec = self.doc.get(route.handler)
                 route_spec.name = name
 
+    def blueprint_from_handler(self, name, handler):
+        if handler:
+            route_spec = self.doc.get(handler)
+            route_spec.name = name
+            if not route_spec.tags:
+                route_spec.tags.append(name)
+
+    # Paths
+
     def build_paths(self) -> Dict:
+        paths = {}
         uri_filter = get_uri_filter(self.app)
 
         for uri, route in self.app.router.routes_all.items():
@@ -147,106 +155,122 @@ class Swagger:
                 # TODO: add static flag in sanic routes
                 continue
 
-            # --------------------------------------------------------------- #
-            # Methods
-            # --------------------------------------------------------------- #
-
-            # Build list of methods and their handler functions
-            if isinstance(route.handler, CompositionView):
-                view = route.handler
-                method_handlers = view.handlers.items()
-            else:
-                method_handlers = zip(route.methods, repeat(route.handler))
-
-            methods = {}
-            for method, handler in method_handlers:
-                _method = self.build_method(
-                    handler=handler, method=method, route=route,
-                )
-                if _method:
-                    methods[method.lower()] = _method
-
-            uri_parsed = uri
-            for parameter in route.parameters:
-                uri_parsed = re.sub(
-                    "<" + parameter.name + ".*?>",
-                    "{" + parameter.name + "}",
-                    uri_parsed,
-                )
-
+            uri, methods = build_path(
+                self.app.config, uri, route, self.doc
+            )
             if methods:
-                self.paths[uri_parsed] = methods
+                paths[uri] = methods
 
-    def build_method(self, handler, method: str, route) -> Dict:
+        return paths
+
+
+def build_path(app_config, uri, route, doc):
+    # --------------------------------------------------------------- #
+    # Methods
+    # --------------------------------------------------------------- #
+
+    # Build list of methods and their handler functions
+    if isinstance(route.handler, CompositionView):
+        view = route.handler
+        method_handlers = view.handlers.items()
+    else:
+        method_handlers = zip(route.methods, repeat(route.handler))
+
+    methods = {}
+    for method, handler in method_handlers:
         if hasattr(handler, "view_class"):
             view_handler = getattr(handler.view_class, method.lower())
-            route_spec = self.doc.get(view_handler)
+            route_spec = doc.get(view_handler)
         else:
-            route_spec = self.doc.get(handler)
+            route_spec = doc.get(handler)
 
-        if method == "OPTIONS" or route_spec.exclude:
-            return
+        _method = build_method(
+            app_config=app_config, route_spec=route_spec, method=method, route=route,
+        )
+        if _method:
+            methods[method.lower()] = _method
 
-        api_consumes_content_types = getattr(
-            self.app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"]
-        )
-        consumes_content_types = (
-            route_spec.consumes_content_type or api_consumes_content_types
-        )
-
-        api_produces_content_types = getattr(
-            self.app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"]
-        )
-        produces_content_types = (
-            route_spec.produces_content_type or api_produces_content_types
+    uri_parsed = uri
+    for parameter in route.parameters:
+        uri_parsed = re.sub(
+            "<" + parameter.name + ".*?>",
+            "{" + parameter.name + "}",
+            uri_parsed,
         )
 
-        # Parameters - Path & Query String
-        route_parameters = []
-        for parameter in route.parameters:
-            route_parameters.append(
-                {
-                    **serialize_schema(parameter.cast),
-                    "required": True,
-                    "in": "path",
-                    "name": parameter.name,
-                }
-            )
+    return uri_parsed, methods
 
-        for consumer in route_spec.consumes:
-            route_param = build_consumer_route_param(consumer=consumer)
-            route_parameters.append(route_param)
 
-        responses = {}
+def build_method(app_config, route_spec, method: str, route) -> Dict:
 
-        if len(route_spec.response) == 0:
-            responses["200"] = {
-                "schema": serialize_schema(route_spec.produces.field)
-                if route_spec.produces
-                else None,
-                "description": route_spec.produces.description
-                if route_spec.produces
-                else None,
-            }
+    if method == "OPTIONS" or route_spec.exclude:
+        return
 
-        for (status_code, routefield) in route_spec.response:
-            responses["{}".format(status_code)] = {
-                "schema": serialize_schema(routefield.field),
-                "description": routefield.description,
-            }
+    api_consumes_content_types = getattr(
+        app_config, "API_CONSUMES_CONTENT_TYPES", ["application/json"]
+    )
+    consumes_content_types = (
+        route_spec.consumes_content_type or api_consumes_content_types
+    )
 
-        return remove_nulls(
+    api_produces_content_types = getattr(
+        app_config, "API_PRODUCES_CONTENT_TYPES", ["application/json"]
+    )
+    produces_content_types = (
+        route_spec.produces_content_type or api_produces_content_types
+    )
+
+    route_parameters = build_parameters(route, route_spec)
+
+    responses = {}
+
+    if len(route_spec.response) == 0:
+        responses["200"] = {
+            "schema": serialize_schema(route_spec.produces.field)
+            if route_spec.produces
+            else None,
+            "description": route_spec.produces.description
+            if route_spec.produces
+            else None,
+        }
+
+    for (status_code, routefield) in route_spec.response:
+        responses["{}".format(status_code)] = {
+            "schema": serialize_schema(routefield.field),
+            "description": routefield.description,
+        }
+
+    return remove_nulls(
+        {
+            "operationId": route_spec.operation or route.name,
+            "summary": route_spec.summary,
+            "description": route_spec.description,
+            "consumes": consumes_content_types,
+            "produces": produces_content_types,
+            "tags": route_spec.tags or None,
+            "parameters": route_parameters,
+            "responses": responses,
+        }
+    )
+
+
+def build_parameters(route, route_spec):
+    # Parameters - Path & Query String
+    route_parameters = []
+    for parameter in route.parameters:
+        route_parameters.append(
             {
-                "operationId": route_spec.operation or route.name,
-                "summary": route_spec.summary,
-                "description": route_spec.description,
-                "consumes": consumes_content_types,
-                "produces": produces_content_types,
-                "tags": route_spec.tags or None,
-                "parameters": route_parameters,
-                "responses": responses,
+                **serialize_schema(parameter.cast),
+                "required": True,
+                "in": "path",
+                "name": parameter.name,
             }
         )
+
+    for consumer in route_spec.consumes:
+        route_param = build_consumer_route_param(consumer=consumer)
+        route_parameters.append(route_param)
+    return route_parameters
 
 
 def get_uri_filter(app):

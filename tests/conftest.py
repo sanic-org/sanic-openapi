@@ -17,6 +17,5 @@ def swagger(app):
 
 
 @pytest.fixture
-def app_with_swagger(app):
-    _swagger = Swagger(app)
+def app_with_swagger(app, swagger):
     yield app

@@ -82,7 +82,7 @@ def test_document_route(app_with_swagger, method):
 
 
 @pytest.mark.parametrize("method", METHODS)
-def test_document_blueprint_route(app_with_swagger, method):
+def test_document_blueprint_route(app_with_swagger, swagger, method):
 
     bp = Blueprint("test")
 
@@ -330,3 +330,51 @@ def test_route_filter_slash(app_with_swagger):
     swagger_json = response.json
     assert "/test" in swagger_json["paths"]
     assert "/test/" not in swagger_json["paths"]
+
+
+def test_build_blueprints_route_handler_in_specs(app_with_swagger, swagger):
+
+    bp = Blueprint("test")
+
+    @bp.route("/")
+    def test(request):
+        return text("test")
+
+    app_with_swagger.blueprint(bp)
+
+    # only the __spec endpoint is registered on the doc
+    assert len(swagger.doc._specs.keys()) == 1
+
+    swagger.build_blueprints()
+
+    # assert that the test route has been adding via build_blueprints
+    assert len(swagger.doc._specs.keys()) == 2
+    assert test in swagger.doc._specs.keys()
+
+
+def test_build_blueprints_adds_name_and_tags(app_with_swagger, swagger):
+
+    bp = Blueprint("test")
+
+    @bp.route("/")
+    def test(request):
+        return text("test")
+
+    app_with_swagger.blueprint(bp)
+
+    swagger.build_blueprints()
+
+    contents = swagger.doc._specs[test]
+
+    assert contents.tags == ["test", ]
+    assert contents.summary is None
+    assert contents.blueprint is None
+    assert contents.consumes == []
+    assert contents.consumes_content_type is None
+    assert contents.description is None
+    assert contents.exclude is None
+    assert contents.name == "test"
+    assert contents.operation is None
+    assert contents.produces is None
+    assert contents.produces_content_type is None
+    assert contents.response == []
