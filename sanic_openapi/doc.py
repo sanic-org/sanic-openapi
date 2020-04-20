@@ -13,8 +13,10 @@ class Field:
         self.required = required
         self.choices = choices
 
-    def serialize(self):
+    def serialize(self, example=None):
         output = {}
+        if example:
+            output["example"] = example
         if self.name:
             output["name"] = self.name
         if self.description:
@@ -27,23 +29,23 @@ class Field:
 
 
 class Integer(Field):
-    def serialize(self):
-        return {"type": "integer", "format": "int64", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "integer", "format": "int64", **super().serialize(example=example)}
 
 
 class Float(Field):
-    def serialize(self):
-        return {"type": "number", "format": "double", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "number", "format": "double", **super().serialize(example=example)}
 
 
 class String(Field):
-    def serialize(self):
-        return {"type": "string", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "string", **super().serialize(example=example)}
 
 
 class Boolean(Field):
-    def serialize(self):
-        return {"type": "boolean", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "boolean", **super().serialize(example=example)}
 
 
 class Tuple(Field):
@@ -51,18 +53,18 @@ class Tuple(Field):
 
 
 class Date(Field):
-    def serialize(self):
-        return {"type": "string", "format": "date", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "string", "format": "date", **super().serialize(example=example)}
 
 
 class DateTime(Field):
-    def serialize(self):
-        return {"type": "string", "format": "date-time", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "string", "format": "date-time", **super().serialize(example=example)}
 
 
 class File(Field):
-    def serialize(self):
-        return {"type": "file", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "file", **super().serialize(example=example)}
 
 
 class Dictionary(Field):
@@ -70,13 +72,13 @@ class Dictionary(Field):
         self.fields = fields or {}
         super().__init__(**kwargs)
 
-    def serialize(self):
+    def serialize(self, example=None):
         return {
             "type": "object",
             "properties": {
                 key: serialize_schema(schema) for key, schema in self.fields.items()
             },
-            **super().serialize(),
+            **super().serialize(example=example),
         }
 
 
@@ -85,7 +87,7 @@ class JsonBody(Field):
         self.fields = fields or {}
         super().__init__(**kwargs, name="body")
 
-    def serialize(self):
+    def serialize(self, example=None):
         return {
             "schema": {
                 "type": "object",
@@ -93,7 +95,7 @@ class JsonBody(Field):
                     key: serialize_schema(schema) for key, schema in self.fields.items()
                 },
             },
-            **super().serialize(),
+            **super().serialize(example=example),
         }
 
 
@@ -104,19 +106,19 @@ class List(Field):
             self.items = [self.items]
         super().__init__(*args, **kwargs)
 
-    def serialize(self):
+    def serialize(self, example=None):
         if len(self.items) > 1:
             items = Tuple(self.items).serialize()
         elif self.items:
             items = serialize_schema(self.items[0])
         else:
             items = []
-        return {"type": "array", "items": items, **super().serialize()}
+        return {"type": "array", "items": items, **super().serialize(example=example)}
 
 
 class UUID(Field):
-    def serialize(self):
-        return {"type": "string", "format": "uuid", **super().serialize()}
+    def serialize(self, example=None):
+        return {"type": "string", "format": "uuid", **super().serialize(example=example)}
 
 
 definitions = {}
@@ -145,17 +147,17 @@ class Object(Field):
                 )
                 if not key.startswith("_")
             },
-            **super().serialize(),
+            **super().serialize(example=example),
         }
 
-    def serialize(self):
+    def serialize(self, example=None):
         return {
             "$ref": "#/definitions/{}".format(self.object_name),
-            **super().serialize(),
+            **super().serialize(example=example),
         }
 
 
-def serialize_schema(schema):
+def serialize_schema(schema, example_value=None):
     schema_type = type(schema)
 
     # --------------------------------------------------------------- #
@@ -163,27 +165,27 @@ def serialize_schema(schema):
     # --------------------------------------------------------------- #
     if issubclass(schema_type, type):
         if issubclass(schema, Field):
-            return schema().serialize()
+            return schema().serialize(example=example_value)
         elif schema is dict:
-            return Dictionary().serialize()
+            return Dictionary().serialize(example=example_value)
         elif schema is list:
-            return List().serialize()
+            return List().serialize(example=example_value)
         elif schema is int:
-            return Integer().serialize()
+            return Integer().serialize(example=example_value)
         elif schema is float:
-            return Float().serialize()
+            return Float().serialize(example=example_value)
         elif schema is str:
-            return String().serialize()
+            return String().serialize(example=example_value)
         elif schema is bool:
-            return Boolean().serialize()
+            return Boolean().serialize(example=example_value)
         elif schema is date:
-            return Date().serialize()
+            return Date().serialize(example=example_value)
         elif schema is datetime:
-            return DateTime().serialize()
+            return DateTime().serialize(example=example_value)
         elif schema is uuid.UUID:
-            return UUID().serialize()
+            return UUID().serialize(example=example_value)
         else:
-            return Object(schema).serialize()
+            return Object(schema).serialize(example=example_value)
 
     # --------------------------------------------------------------- #
     # Object
@@ -198,6 +200,9 @@ def serialize_schema(schema):
         elif getattr(schema, "__origin__", None) in (list, collections.abc.Sequence):
             # Type hinting with either List or Sequence
             return List(list(schema.__args__)).serialize()
+
+        # This triggers setting the example value
+        return serialize_schema(schema_type, schema)
 
     return {}
 
