@@ -425,7 +425,6 @@ def test_object_field(app, swagger):
         "schema": {"$ref": "#/definitions/TestSchema"},
     }
 
-    print(swagger_json["definitions"])
     assert swagger_json["definitions"]["TestSchema"] == {
         "type": "object",
         "properties": {},
