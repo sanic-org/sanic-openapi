@@ -4,8 +4,8 @@ from sanic_openapi import doc
 
 
 class Manufacturer:
-    name = str
-    start_date = date
+    name: str
+    start_date: date
 
 
 class Driver:
@@ -14,23 +14,23 @@ class Driver:
 
 
 class Car:
-    on = bool
-    doors = int
-    color = str
-    make = Manufacturer
-    driver = Driver
-    passengers = [Driver]
+    on: bool
+    doors: int
+    color: str
+    make: Manufacturer
+    driver: Driver
+    passengers: [Driver]
 
 
 class Garage:
-    spaces = int
-    cars = [Car]
+    spaces: int
+    cars: [Car]
 
 
 class Status:
-    success = bool
+    success: bool
 
 
 class Station:
-    location = doc.String("location")
-    contact = doc.Integer("phone number")
+    location: doc.String("location")
+    contact: doc.Integer("phone number")
