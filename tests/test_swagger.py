@@ -4,6 +4,9 @@ from sanic.constants import HTTP_METHODS
 from sanic.response import text
 from sanic.views import CompositionView, HTTPMethodView
 
+from sanic_openapi.swagger import get_uri_filter
+
+
 METHODS = [method.lower() for method in HTTP_METHODS]
 
 
@@ -378,3 +381,46 @@ def test_build_blueprints_adds_name_and_tags(app_with_swagger, swagger):
     assert contents.produces is None
     assert contents.produces_content_type is None
     assert contents.response == []
+
+
+def test_build_paths(app_with_swagger, swagger):
+
+    bp = Blueprint("test")
+
+    @bp.route("/")
+    def test(request):
+        return text("test")
+
+    app_with_swagger.blueprint(bp)
+
+    paths = swagger.build_paths(
+        routes_all=app_with_swagger.router.routes_all,
+        uri_filter=get_uri_filter(app_with_swagger)
+    )
+    contents = swagger.doc._specs[test]
+    assert contents_are_default(contents=contents)
+
+    assert paths.get('/')
+    get_path = paths.get('/').get('get')
+    assert get_path
+    assert get_path['operationId'] == 'test.test'
+    assert get_path['consumes'] == ['application/json']
+    assert get_path['produces'] == ['application/json']
+    assert get_path['parameters'] == []
+    assert get_path['responses'] == {'200': {}}
+
+
+def contents_are_default(contents):
+    assert contents.tags == []
+    assert contents.summary is None
+    assert contents.blueprint is None
+    assert contents.consumes == []
+    assert contents.consumes_content_type is None
+    assert contents.description is None
+    assert contents.exclude is None
+    assert contents.name is None
+    assert contents.operation is None
+    assert contents.produces is None
+    assert contents.produces_content_type is None
+    assert contents.response == []
+    return True
