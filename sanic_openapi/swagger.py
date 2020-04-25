@@ -6,7 +6,8 @@ from typing import Dict
 from sanic import Sanic, response
 from sanic.views import CompositionView
 
-from .doc import RouteSpecs, serialize_schema
+from .doc import serialize_schema
+from .route_specs import RouteSpecs
 from .spec import Spec
 
 
@@ -16,7 +17,6 @@ class Swagger:
         self.url_prefix = url_prefix or "/swagger"
         _dir_path = os.path.dirname(os.path.realpath(__file__))
         self.dir_path = os.path.abspath(_dir_path + "/ui")
-        self.definitions = {}
         self.spec = spec or Spec(config=app.config)
         self.doc = RouteSpecs(spec=self.spec)
         self.paths = {}
@@ -43,18 +43,14 @@ class Swagger:
 
             self.build_blueprints()
 
-            self.paths = self.build_paths()
+            self.paths = self.build_paths(
+                routes_all=self.app.router.routes_all,
+                uri_filter=get_uri_filter(self.app)
+            )
 
             # --------------------------------------------------------------- #
             # Definitions
             # --------------------------------------------------------------- #
-
-            self.spec.add_definitions(
-                definitions={
-                    obj.object_name: definition
-                    for obj, definition in self.definitions.values()
-                }
-            )
 
             # --------------------------------------------------------------- #
             # Tags
@@ -136,11 +132,10 @@ class Swagger:
 
     # Paths
 
-    def build_paths(self) -> Dict:
+    def build_paths(self, routes_all, uri_filter) -> Dict:
         paths = {}
-        uri_filter = get_uri_filter(self.app)
 
-        for uri, route in self.app.router.routes_all.items():
+        for uri, route in routes_all.items():
 
             # Ignore routes under swagger blueprint
             if route.uri.startswith(self.url_prefix):
