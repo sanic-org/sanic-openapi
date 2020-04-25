@@ -2,7 +2,7 @@ import pytest
 from sanic.response import text
 
 from sanic_openapi import doc
-from sanic_openapi.doc import RouteField
+from sanic_openapi.route_specs import RouteField
 
 
 @pytest.mark.parametrize(
@@ -162,7 +162,6 @@ def test_response(app, swagger, response_args, responses):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    print(swagger_json["paths"]["/"]["post"]["responses"])
     assert swagger_json["paths"]["/"]["post"]["responses"] == responses
 
 
