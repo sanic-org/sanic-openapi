@@ -1,4 +1,16 @@
-from typing import Dict
+from typing import Dict, get_type_hints
+from itertools import chain
+
+from sanic_openapi.doc import (
+    serialize_schema, Field, Object, String, UUID, List, JsonBody, Dictionary, File,
+    DateTime, Date, Boolean, Tuple, Float, Integer
+)
+
+
+SIMPLE_TYPES = (
+    Field, String, UUID, List, JsonBody, Dictionary, File, DateTime, Date, Boolean,
+    Tuple, Float, Integer
+)
 
 
 class Spec:
@@ -59,9 +71,45 @@ class Spec:
     def paths(self):
         return self._paths
 
+    def _build_definition(self, definition):
+        for key, schema in chain(
+            {key: getattr(definition, key) for key in dir(definition)}.items(),
+            get_type_hints(definition).items(),
+        ):
+            if key.startswith("_"):
+                continue
+            if isinstance(schema, (list, tuple)):
+                for s in schema:
+                    if get_type_hints(s):
+                        self._build_definition(s)
+
+            elif isinstance(schema, SIMPLE_TYPES):
+                pass
+
+            elif get_type_hints(schema):
+                self._build_definition(schema)
+
+            self._definitions.setdefault(definition.__name__, {
+                "type": "object",
+                "properties": {},
+            })
+            self._definitions[definition.__name__]["properties"][key] = serialize_schema(schema)
+
     def add_definitions(self, definitions):
-        for key, value in definitions.items():
-            self._definitions[key] = value
+        if isinstance(definitions, list):
+            for definition in definitions:
+                self._build_definition(definition)
+        elif isinstance(definitions, type):
+            self._build_definition(definitions)
+        elif isinstance(definitions, Object):
+            self._definitions = {**self.definitions, **definitions.definitions}
+        elif isinstance(definitions, SIMPLE_TYPES):
+            if definitions.name:
+                self._definitions[definitions.name] = definitions.serialize()
+        elif isinstance(definitions, dict):
+            self._definitions = {**self.definitions, **definitions}
+        else:
+            raise NotImplementedError
 
     def add_tags(self, tags):
         self._tags = tags
