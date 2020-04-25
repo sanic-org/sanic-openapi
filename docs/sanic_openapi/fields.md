@@ -306,6 +306,39 @@ async def test(request):
 And the result:
 ![](../_static/images/fields/object.png)
 
+Inheritance is also supported.
+
+```python
+from sanic import Sanic
+from sanic.response import json
+
+from sanic_openapi import doc, swagger_blueprint
+
+app = Sanic()
+app.blueprint(swagger_blueprint)
+
+
+class User:
+    username = doc.String("The name of your user account.")
+    password = doc.String("The password of your user account.")
+
+
+class UserInfo(User):
+    first_name = doc.String("The first name of user.")
+    last_name = doc.String("The last name of user.")
+
+
+@app.get("/test")
+@doc.produces(UserInfo)
+async def test(request):
+    return json({})
+
+app.run(host="0.0.0.0", debug=True)
+
+```
+
+And the result:
+![](../_static/images/fields/object_inheritance.png)
 
 ## [PEP484](https://www.python.org/dev/peps/pep-0484/)'s type hinting
 
