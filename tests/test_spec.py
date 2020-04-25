@@ -1,6 +1,5 @@
 from datetime import date
 
-
 from sanic_openapi.spec import Spec
 
 

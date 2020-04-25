@@ -203,3 +203,20 @@ def serialize_schema(schema):
             return List(list(schema.__args__)).serialize()
 
     return {}
+
+
+SIMPLE_TYPES = (
+    Field,
+    String,
+    UUID,
+    List,
+    JsonBody,
+    Dictionary,
+    File,
+    DateTime,
+    Date,
+    Boolean,
+    Tuple,
+    Float,
+    Integer,
+)

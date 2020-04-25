@@ -2,8 +2,8 @@ from functools import partial
 from typing import Any, NamedTuple, Optional
 
 from . import doc
-from .spec import Spec
 from .route_specs import RouteSpecs
+from .spec import Spec
 
 
 class Response(

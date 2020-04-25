@@ -6,7 +6,6 @@ from sanic.views import CompositionView, HTTPMethodView
 
 from sanic_openapi.swagger import get_uri_filter
 
-
 METHODS = [method.lower() for method in HTTP_METHODS]
 
 

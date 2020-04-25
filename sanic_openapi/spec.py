@@ -1,40 +1,7 @@
-from typing import Dict, get_type_hints
 from itertools import chain
+from typing import Dict, get_type_hints
 
-from sanic_openapi.doc import (
-    serialize_schema,
-    Field,
-    Object,
-    String,
-    UUID,
-    List,
-    JsonBody,
-    Dictionary,
-    File,
-    DateTime,
-    Date,
-    Boolean,
-    Tuple,
-    Float,
-    Integer,
-)
-
-
-SIMPLE_TYPES = (
-    Field,
-    String,
-    UUID,
-    List,
-    JsonBody,
-    Dictionary,
-    File,
-    DateTime,
-    Date,
-    Boolean,
-    Tuple,
-    Float,
-    Integer,
-)
+from sanic_openapi.doc import SIMPLE_TYPES, Object, serialize_schema
 
 
 class Spec:
