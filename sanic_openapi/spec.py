@@ -2,14 +2,38 @@ from typing import Dict, get_type_hints
 from itertools import chain
 
 from sanic_openapi.doc import (
-    serialize_schema, Field, Object, String, UUID, List, JsonBody, Dictionary, File,
-    DateTime, Date, Boolean, Tuple, Float, Integer
+    serialize_schema,
+    Field,
+    Object,
+    String,
+    UUID,
+    List,
+    JsonBody,
+    Dictionary,
+    File,
+    DateTime,
+    Date,
+    Boolean,
+    Tuple,
+    Float,
+    Integer,
 )
 
 
 SIMPLE_TYPES = (
-    Field, String, UUID, List, JsonBody, Dictionary, File, DateTime, Date, Boolean,
-    Tuple, Float, Integer
+    Field,
+    String,
+    UUID,
+    List,
+    JsonBody,
+    Dictionary,
+    File,
+    DateTime,
+    Date,
+    Boolean,
+    Tuple,
+    Float,
+    Integer,
 )
 
 
@@ -89,11 +113,12 @@ class Spec:
             elif get_type_hints(schema):
                 self._build_definition(schema)
 
-            self._definitions.setdefault(definition.__name__, {
-                "type": "object",
-                "properties": {},
-            })
-            self._definitions[definition.__name__]["properties"][key] = serialize_schema(schema)
+            self._definitions.setdefault(
+                definition.__name__, {"type": "object", "properties": {}}
+            )
+            self._definitions[definition.__name__]["properties"][
+                key
+            ] = serialize_schema(schema)
 
     def add_definitions(self, definitions):
         if isinstance(definitions, list):

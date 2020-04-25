@@ -45,7 +45,7 @@ class Swagger:
 
             self.paths = self.build_paths(
                 routes_all=self.app.router.routes_all,
-                uri_filter=get_uri_filter(self.app)
+                uri_filter=get_uri_filter(self.app),
             )
 
             # --------------------------------------------------------------- #
