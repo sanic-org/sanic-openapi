@@ -3,6 +3,7 @@ from typing import Any, NamedTuple, Optional
 
 from . import doc
 from .spec import Spec
+from .route_specs import RouteSpecs
 
 
 class Response(
@@ -183,7 +184,7 @@ class API:
         cls.definitions = {}
         # TODO: add test for setting config here
         cls.spec = Spec(config=kwargs.get("config"))
-        cls.route_specs = doc.RouteSpecs(spec=cls.spec)
+        cls.route_specs = RouteSpecs(spec=cls.spec)
         # The _add_decorators() call must precede everything else.
         func = cls._add_decorators(func, get_attribute)
         func = cls._add_base_data(func, get_attribute)
