@@ -6,7 +6,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
-from .doc import definitions, RouteSpec
+from .doc import RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
 from .spec import Spec
