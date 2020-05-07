@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
+import pytest
 from sanic.response import HTTPResponse, text
 
-import pytest
 from sanic_openapi import doc
 
 
