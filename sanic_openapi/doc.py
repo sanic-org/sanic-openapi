@@ -140,7 +140,8 @@ class Object(Field):
             "properties": {
                 key: serialize_schema(schema)
                 for key, schema in chain(
-                    self.cls.__dict__.items(), typing.get_type_hints(self.cls).items()
+                    {key: getattr(self.cls, key) for key in dir(self.cls)}.items(),
+                    typing.get_type_hints(self.cls).items(),
                 )
                 if not key.startswith("_")
             },
