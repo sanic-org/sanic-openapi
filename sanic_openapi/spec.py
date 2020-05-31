@@ -98,8 +98,6 @@ class Spec:
         elif isinstance(definitions, SIMPLE_TYPES):
             if definitions.name:
                 self._definitions[definitions.name] = definitions.serialize()
-        elif isinstance(definitions, dict):
-            self._definitions = {**self.definitions, **definitions}
         else:
             raise NotImplementedError
 
