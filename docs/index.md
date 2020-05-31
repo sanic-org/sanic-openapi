@@ -28,10 +28,10 @@ Here is an example to use Sanic-OpenAPI:
 ```python
 from sanic import Sanic
 from sanic.response import json
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 
 @app.route("/")
