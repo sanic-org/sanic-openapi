@@ -19,9 +19,9 @@ pip install sanic-openapi
 Add Swagger UI with the OpenAPI spec:
 
 ```python
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
-app.blueprint(swagger_blueprint)
+Swagger(app)
 ```
 
 You'll now have a Swagger UI at the URL `/swagger/` and an OpenAPI 2.0 spec at `/swagger/swagger.json`.
@@ -30,14 +30,13 @@ Your routes will be automatically categorized by their blueprints.
 ## Example
 
 Here is an example to use Sanic-OpenAPI:
-
 ```python
 from sanic import Sanic
 from sanic.response import json
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 
 @app.route("/")
