@@ -98,8 +98,6 @@ class Spec:
         elif isinstance(definitions, SIMPLE_TYPES):
             if definitions.name:
                 self._definitions[definitions.name] = definitions.serialize()
-        else:
-            raise NotImplementedError
 
     def add_tags(self, tags):
         self._tags = tags
