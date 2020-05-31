@@ -26,14 +26,14 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.consumes(doc.Integer(name="num"), location="query")
+@swagger.doc.consumes(doc.Integer(name="num"), location="query")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -50,14 +50,14 @@ Using the `float` or `doc.Float` is quite similar with `doc.integer`:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.consumes(doc.Float(name="num"), location="query")
+@swagger.doc.consumes(doc.Float(name="num"), location="query")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -74,14 +74,14 @@ The `doc.String` might be the most common filed in API documents. You can use it
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.consumes(doc.String(name="name"), location="query")
+@swagger.doc.consumes(doc.String(name="name"), location="query")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -100,14 +100,14 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.consumes(doc.Boolean(name="all"), location="query")
+@swagger.doc.consumes(doc.Boolean(name="all"), location="query")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -130,14 +130,14 @@ from datetime import datetime
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.produces({"date": doc.Date()})
+@swagger.doc.produces({"date": doc.Date()})
 async def test(request):
     return json({"date": datetime.utcnow().date().isoformat()})
 
@@ -156,14 +156,14 @@ from datetime import datetime
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.produces({"datetime": doc.DateTime()})
+@swagger.doc.produces({"datetime": doc.DateTime()})
 async def test(request):
     return json({"datetime": datetime.utcnow().isoformat()})
 
@@ -181,17 +181,17 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.post("/test")
-@doc.consumes(
+@swagger.doc.consumes(
     doc.File(name="file"), location="formData", content_type="multipart/form-data"
 )
-@doc.produces({"size": doc.Integer(), "type": doc.String()})
+@swagger.doc.produces({"size": doc.Integer(), "type": doc.String()})
 async def test(request):
     file = request.files.get("file")
     size = len(file.body)
@@ -214,14 +214,14 @@ To document you request or response body, the `doc.JsonBody` is the best choice.
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.post("/test")
-@doc.consumes(
+@swagger.doc.consumes(
     doc.JsonBody(
         {
             "useranme": doc.String("The name of your user account."),
@@ -252,10 +252,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class User:
@@ -264,7 +264,7 @@ class User:
 
 
 @app.get("/test")
-@doc.produces(doc.List(User))
+@swagger.doc.produces(doc.List(User))
 async def test(request):
     return json([])
 
@@ -284,11 +284,10 @@ In Sanic-OpenAPI, you can document your data as a Python `class` and it wil be c
 ```python
 from sanic import Sanic
 from sanic.response import json
-
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class User:
@@ -297,7 +296,7 @@ class User:
 
 
 @app.get("/test")
-@doc.produces(User)
+@swagger.doc.produces(User)
 async def test(request):
     return json({})
 
@@ -312,10 +311,10 @@ Inheritance is also supported.
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class User:
@@ -329,7 +328,7 @@ class UserInfo(User):
 
 
 @app.get("/test")
-@doc.produces(UserInfo)
+@swagger.doc.produces(UserInfo)
 async def test(request):
     return json({})
 
@@ -349,10 +348,10 @@ from typing import List
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class Car:
@@ -365,8 +364,8 @@ class Garage:
 
 
 @app.get("/garage")
-@doc.summary("Lists cars in a garage")
-@doc.produces(Garage)
+@swagger.doc.summary("Lists cars in a garage")
+@swagger.doc.produces(Garage)
 async def get_garage(request):
     return json([{
                  "make": "Nissan",
@@ -396,10 +395,10 @@ As the object example, you can use python class to document your request or resp
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class Car:
@@ -412,7 +411,7 @@ class Garage:
     cars = doc.List(Car, description="All cars in the garage")
 
 @app.get("/test")
-@doc.produces(Garage)
+@swagger.doc.produces(Garage)
 async def test(request):
     return json({})
 
