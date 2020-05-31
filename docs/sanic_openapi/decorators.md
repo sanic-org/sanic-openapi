@@ -10,10 +10,10 @@ When you don't want to document some route in Swagger, you can use `exclude(True
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
@@ -22,7 +22,7 @@ async def test(request):
 
 
 @app.get("/config")
-@doc.exclude(True)
+@swagger.doc.exclude(True)
 async def get_config(request):
     return json(request.app.config)
 
@@ -39,14 +39,14 @@ You can add a short summary to your route by using `summary()` decorator. It is 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.summary("Test route")
+@swagger.doc.summary("Test route")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -63,14 +63,14 @@ Not only short summary, but also long description of your API route can be addre
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.description('This is a test route with detail description.')
+@swagger.doc.description('This is a test route with detail description.')
 async def test(request):
     return json({"Hello": "World"})
 ```
@@ -86,14 +86,14 @@ If you want to group your API routes, you can use `tag()` decorator to accomplis
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.tag("test")
+@swagger.doc.tag("test")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -113,14 +113,14 @@ The `operation()` decorator would be useful when your routes have duplicate name
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.operation('test1')
+@swagger.doc.operation('test1')
 async def test(request):
     return json({"Hello": "World"})
 
@@ -140,14 +140,14 @@ To document the parameter in query string, you can use `location="query"` in `co
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.consumes(doc.String(name="filter"), location="query")
+@swagger.doc.consumes(doc.String(name="filter"), location="query")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -166,14 +166,14 @@ For doucument parameters in header, you can set `location="header"` with simple 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.consumes(doc.String(name="X-API-VERSION"), location="header", required=True)
+@swagger.doc.consumes(doc.String(name="X-API-VERSION"), location="header", required=True)
 async def test(request):
     return json({"Hello": "World"})
 
@@ -190,22 +190,22 @@ In most cases, your APIs might contains lots of parameter in your request body. 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class User:
-    name = str
+    name: str
 
 
 class Test:
-    user = doc.Object(User)
+    user: doc.Object(User)
 
 
 @app.get("/test")
-@doc.consumes(Test, location="body")
+@swagger.doc.consumes(Test, location="body")
 async def test(request):
     return json({"Hello": "World"})
 
@@ -222,17 +222,17 @@ The `produces()` decorator is used to document the default response(with status 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 class Test:
-    Hello = doc.String(description='World')
+    Hello: doc.String(description='World')
 
 @app.get("/test")
-@doc.produces(Test)
+@swagger.doc.produces(Test)
 async def test(request):
     return json({"Hello": "World"})
 
@@ -246,17 +246,17 @@ As you can see in this example, you can also use Python class in `produces()` de
 To document responses not with status `200`, you can use `response()` decorator. For example:
 
 ```python
-ffrom sanic import Sanic
+from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+swagger = Swagger(app)
 
 
 @app.get("/test")
-@doc.response(401, {"message": str}, description="Unauthorized")
+@swagger.doc.response(401, {"message": str}, description="Unauthorized")
 async def test(request):
     return json({"Hello": "World"})
 
