@@ -1,18 +1,16 @@
-from sanic import Sanic
 from sanic.response import json
 
+
+from app import app, swagger
 from blueprint import blueprint
-from sanic_openapi import doc, swagger_blueprint
 
-app = Sanic()
 
-app.blueprint(swagger_blueprint)
 app.blueprint(blueprint)
 
 
 @app.post("/plain", strict_slashes=True)
-@doc.summary("Creates a user")
-@doc.consumes({"user": {"name": str}}, location="body")
+@swagger.doc.summary("Creates a user")
+@swagger.doc.consumes({"user": {"name": str}}, location="body")
 async def create_user(request):
     return json({})
 
