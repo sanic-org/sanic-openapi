@@ -26,10 +26,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 
 @app.route("/")
@@ -55,10 +55,10 @@ You can aldo document routes under any `Blueprint` like this:
 from sanic import Blueprint, Sanic
 from sanic.response import json
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 bp = Blueprint("bp", url_prefix="/bp")
 
@@ -89,10 +89,10 @@ from sanic import Sanic
 from sanic.response import text
 from sanic.views import HTTPMethodView
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 
 class SimpleView(HTTPMethodView):
@@ -134,10 +134,10 @@ from sanic import Blueprint, Sanic
 from sanic.response import text
 from sanic.views import HTTPMethodView
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 bp = Blueprint("bp", url_prefix="/bp")
 
@@ -183,10 +183,10 @@ from sanic import Sanic
 from sanic.response import text
 from sanic.views import CompositionView
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import Swagger
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+Swagger(app)
 
 
 def get_handler(request):
