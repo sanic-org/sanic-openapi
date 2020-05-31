@@ -41,10 +41,10 @@ By default, Swagger will use exactly the same host which served itself as the AP
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_BASEPATH"] = "/api"
 
     ```
@@ -61,10 +61,10 @@ By default, Swagger will use exactly the same host which served itself as the AP
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_SCHEMES"] = ["https"]
 
     ```
@@ -86,10 +86,10 @@ For more detail of those additional information, please check the [document](htt
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_VERSION"] = "0.1.0"
 
     ```
@@ -106,10 +106,10 @@ For more detail of those additional information, please check the [document](htt
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_TITLE"] = "Sanci-OpenAPI"
 
     ```
@@ -126,10 +126,10 @@ For more detail of those additional information, please check the [document](htt
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_DESCRIPTION"] = "An example Swagger from Sanic-OpenAPI"
 
     ```
@@ -146,10 +146,10 @@ For more detail of those additional information, please check the [document](htt
 
   ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_TERMS_OF_SERVICE"] = "https://github.com/huge-success/sanic-openapi/blob/master/README.md"
 
   ```
@@ -166,10 +166,10 @@ For more detail of those additional information, please check the [document](htt
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_CONTACT_EMAIL"] = "foo@bar.com"
 
     ```
@@ -186,10 +186,10 @@ For more detail of those additional information, please check the [document](htt
 
     python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_LICENSE_NAME"] = "MIT"
 
     
@@ -206,10 +206,10 @@ For more detail of those additional information, please check the [document](htt
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_LICENSE_URL"] = "https://github.com/huge-success/sanic-openapi/blob/master/LICENSE"
 
     ```
@@ -229,10 +229,10 @@ If your API have to access with authentication, Swagger can provide related conf
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_SECURITY"] = [{"BasicAuth": []}]
     app.config["API_SECURITY_DEFINITIONS"] = {"BasicAuth": {"type": "basic"}}
 
@@ -257,10 +257,10 @@ If your API have to access with authentication, Swagger can provide related conf
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_SECURITY"] = [{"ApiKeyAuth": []}]
     app.config["API_SECURITY_DEFINITIONS"] = {
         "ApiKeyAuth": {"type": "apiKey", "in": "header", "name": "X-API-KEY"}
@@ -284,10 +284,10 @@ If your API have to access with authentication, Swagger can provide related conf
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_SECURITY"] = [{"ApiKeyAuth": []}]
     app.config["API_SECURITY_DEFINITIONS"] = {
         "ApiKeyAuth": {"type": "apiKey", "in": "query", "name": "api_key"}
@@ -312,10 +312,10 @@ If your API have to access with authentication, Swagger can provide related conf
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_SECURITY"] = [{"OAuth2": []}]
     app.config["API_SECURITY_DEFINITIONS"] = {
         "OAuth2": {
@@ -347,10 +347,10 @@ By default, Sanic registers URIs both with and without a trailing `/`. You may s
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
 
 
     @app.get("/test")
@@ -370,10 +370,10 @@ By default, Sanic registers URIs both with and without a trailing `/`. You may s
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_URI_FILTER"] = "slash"
 
 
@@ -394,10 +394,10 @@ By default, Sanic registers URIs both with and without a trailing `/`. You may s
     from sanic import Sanic
     from sanic.response import json
 
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_URI_FILTER"] = "all"
 
 
