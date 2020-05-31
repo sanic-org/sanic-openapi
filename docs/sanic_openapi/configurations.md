@@ -21,10 +21,10 @@ By default, Swagger will use exactly the same host which served itself as the AP
 
     ```python
     from sanic import Sanic
-    from sanic_openapi import swagger_blueprint
+    from sanic_openapi import Swagger
 
     app = Sanic()
-    app.blueprint(swagger_blueprint)
+    Swagger(app)
     app.config["API_HOST"] = "petstore.swagger.io"
 
     ```
