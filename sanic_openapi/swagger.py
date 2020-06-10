@@ -9,7 +9,7 @@ from sanic.views import CompositionView
 from .doc import RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
-from .spec import Spec
+from .swagger2.spec import Spec as Swagger2Spec
 
 swagger_blueprint = Blueprint("swagger", url_prefix="/swagger")
 
@@ -69,7 +69,7 @@ def remove_nulls(dictionary, deep=True):
 
 @swagger_blueprint.listener("after_server_start")
 def build_spec(app, loop):
-    _spec = Spec(app=app)
+    _spec = Swagger2Spec(app=app)
 
     # --------------------------------------------------------------- #
     # Blueprint Tags
