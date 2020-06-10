@@ -103,7 +103,7 @@ def test_documentation():
     pprint.pprint(benchmark_response.json)
     assert app_response.status == benchmark_response.status == 200
     assert app_response.json == benchmark_response.json
-    raise NotImplementedError
+
 
 def get_app():
     """
@@ -169,7 +169,7 @@ def get_benchmark_app():
     by `get_app()`, so this application can serve as a benchmark in test cases.
     """
     app = Sanic("test_api_benchmark")
-    app.blueprint(swagger_blueprint)
+    app.blueprint(oas3_blueprint)
 
     @app.post("/message")
     @doc.summary("MessageAPI summary.")

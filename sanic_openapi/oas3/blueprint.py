@@ -5,34 +5,8 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 from os.path import dirname, realpath, abspath
-from .builders import ComponentsBuilder, OperationsBuilder, SpecificationBuilder
 from ..doc import route as doc_route
-from yaml import safe_dump as yaml_dump
 from . import operations, specification
-
-
-def blueprint_factory_bis():
-    blueprint = Blueprint("openapi", url_prefix="/openapi")
-    dir_path = dirname(dirname(realpath(__file__)))
-    dir_path = abspath(dir_path + "/ui")
-    blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
-    blueprint.static("/", dir_path)
-
-    @blueprint.route("", strict_slashes=True)
-    def index(request):
-        return redirect("{}/".format(blueprint.url_prefix))
-
-    @blueprint.route("/openapi.json")
-    @doc_route(exclude=True)
-    def spec(request):
-        return json({"robi": "polli"})
-
-    @blueprint.route("/openapi.yaml")
-    @doc_route(exclude=True)
-    def spec(request):
-        return yaml_dump({"robi": "polli"}, indent=2)
-
-    return blueprint
 
 
 def blueprint_factory():
