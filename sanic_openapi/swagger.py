@@ -170,13 +170,15 @@ def build_spec(app, loop):
                             "required": consumer.required,
                             "in": consumer.location,
                             "name": name,
+                            "description": consumer.description,
                         }
                 else:
                     route_param = {
                         **spec,
                         "required": consumer.required,
                         "in": consumer.location,
-                        "name": consumer.field.name
+                        "name": consumer.field.name,
+                        "description": consumer.field.description
                         if not isinstance(consumer.field, type)
                         and hasattr(consumer.field, "name")
                         else "body",

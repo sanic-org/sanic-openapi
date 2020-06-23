@@ -302,11 +302,11 @@ def description(text):
     return inner
 
 
-def consumes(*args, content_type=None, location="query", required=False):
+def consumes(*args, content_type=None, location="query", required=False, description=None):
     def inner(func):
         if args:
             for arg in args:
-                field = RouteField(arg, location, required)
+                field = RouteField(arg, location, required, description=description)
                 route_specs[func].consumes.append(field)
                 route_specs[func].consumes_content_type = [content_type]
         return func
