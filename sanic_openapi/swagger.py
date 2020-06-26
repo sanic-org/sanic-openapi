@@ -129,6 +129,13 @@ def build_spec(app, loop):
             if hasattr(_handler, "view_class"):
                 view_handler = getattr(_handler.view_class, _method.lower())
                 route_spec = route_specs.get(view_handler) or RouteSpec()
+            elif hasattr(_handler, "__self__"):
+                route_spec = (
+                    route_specs.get(
+                        getattr(_handler.__self__.__class__, _handler.__name__)
+                    )
+                    or RouteSpec()
+                )
             else:
                 route_spec = route_specs.get(_handler) or RouteSpec()
 
