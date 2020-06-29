@@ -177,8 +177,7 @@ def build_spec(app, loop):
                         **spec,
                         "required": consumer.required,
                         "in": consumer.location,
-                        "name": consumer.field.name,
-                        "description": consumer.field.description
+                        "name": consumer.field.name
                         if not isinstance(consumer.field, type)
                         and hasattr(consumer.field, "name")
                         else "body",
