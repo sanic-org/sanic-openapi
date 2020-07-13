@@ -17,5 +17,5 @@ And, you can run this example by:
 python main.py
 ```
 
-Now, check <http://localhost:8000> and you should see the swagger like:
+Now, check <http://localhost:8000/swagger> and you should see the swagger like:
 ![](./swagger.png)
