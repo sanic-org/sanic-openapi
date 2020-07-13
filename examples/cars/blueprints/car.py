@@ -36,5 +36,5 @@ def car_put(request, car_id):
 @blueprint.delete("/<car_id:int>", strict_slashes=True)
 @doc.summary("Deletes a car")
 @doc.produces(Status)
-def car_put(request, car_id):
+def car_delete(request, car_id):
     return json(test_success)
