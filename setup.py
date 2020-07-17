@@ -13,7 +13,7 @@ dev_requires = ["black==19.3b0", "flake8==3.7.7", "isort==4.3.19"]
 
 doc_requires = ["recommonmark==0.5.0", "sphinx==2.1.2", "sphinx-rtd-theme==0.4.3"]
 
-test_requires = [
++ = [
     "coverage==4.5.3",
     "pytest==4.6.2",
     "pytest-cov==2.7.1",

@@ -7,11 +7,12 @@ from sanic_openapi import doc
 
 
 @pytest.mark.parametrize(
-    "description, required, name, choices, serialized_field, path_parameters",
+    "description, required, name, choices, example, serialized_field, path_parameters",
     [
-        (None, None, None, None, {}, [{"required": True, "in": "body", "name": None}]),
+        (None, None, None, None, None, {}, [{"required": True, "in": "body", "name": None}]),
         (
             "The test field",
+            None,
             None,
             None,
             None,
@@ -30,6 +31,7 @@ from sanic_openapi import doc
             False,
             None,
             None,
+            None,
             {"required": False},
             [
                 {"required": True, "in": "body", "name": None}
@@ -40,6 +42,7 @@ from sanic_openapi import doc
             None,
             "test",
             None,
+            None,
             {"name": "test"},
             [{"required": True, "in": "body", "name": "test"}],
         ),
@@ -48,17 +51,27 @@ from sanic_openapi import doc
             None,
             None,
             ["A", "B", "C"],
+            None,
             {"enum": ["A", "B", "C"]},
             [{"enum": ["A", "B", "C"], "required": True, "in": "body", "name": None}],
+        ),
+        (
+            None,
+            None,
+            "test",
+            None,
+            "test value",
+            {"name": "test", "example": "test value"},
+            [{"required": True, "in": "body", "name": "test", "example":"test value"}],
         ),
     ],
 )
 def test_base_field(
-    app, description, required, name, choices, serialized_field, path_parameters
+    app, description, required, name, choices, example, serialized_field, path_parameters
 ):
 
     field = doc.Field(
-        description=description, required=required, name=name, choices=choices
+        description=description, required=required, name=name, choices=choices, example=example
     )
     assert field.serialize() == serialized_field
 

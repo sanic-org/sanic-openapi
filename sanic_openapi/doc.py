@@ -7,11 +7,12 @@ from itertools import chain
 
 
 class Field:
-    def __init__(self, description=None, required=None, name=None, choices=None):
+    def __init__(self, description=None, required=None, name=None, choices=None, example=None):
         self.name = name
         self.description = description
         self.required = required
         self.choices = choices
+        self.example = example
 
     def serialize(self):
         output = {}
@@ -23,6 +24,8 @@ class Field:
             output["required"] = self.required
         if self.choices is not None:
             output["enum"] = self.choices
+        if self.example is not None:
+            output["example"] = self.example
         return output
 
 

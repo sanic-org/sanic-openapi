@@ -18,6 +18,15 @@ async def create_user(request):
     return json({})
 
 
+
+@app.post("/update", strict_slashes=True)
+@doc.summary("updates a user")
+@doc.consumes({"user": {"name": doc.String(description="name", example="example_user")}}, location="body")
+async def create_user(request):
+    return json({})
+
+
+
 app.config.API_VERSION = 'pre-alpha'
 app.config.API_TITLE = 'Class Based View Demonstration API'
 app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
