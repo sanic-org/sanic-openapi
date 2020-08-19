@@ -151,17 +151,9 @@ def build_spec(app, loop):
 
             # Parameters - Path & Query String
             route_parameters = []
-            for parameter in route.parameters:
-                route_parameters.append(
-                    {
-                        **serialize_schema(parameter.cast),
-                        "required": True,
-                        "in": "path",
-                        "name": parameter.name,
-                    }
-                )
 
             for consumer in route_spec.consumes:
+                route_param = {}
                 spec = serialize_schema(consumer.field)
                 if "properties" in spec:
                     for name, prop_spec in spec["properties"].items():
@@ -184,6 +176,9 @@ def build_spec(app, loop):
                 if "$ref" in route_param:
                     route_param["schema"] = {"$ref": route_param["$ref"]}
                     del route_param["$ref"]
+
+                if route_param.get("in") == "path":
+                    route_param["required"] = True
 
                 route_parameters.append(route_param)
 
