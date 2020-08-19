@@ -253,6 +253,7 @@ def test_uuid_field(app):
     assert field.serialize() == {"type": "string", "format": "uuid"}
 
     @app.get("/<id:uuid>")
+    @doc.consumes(field, location='path')
     @doc.response(204, {})
     def test(request):
         return HTTPResponse(status=204)
@@ -265,7 +266,7 @@ def test_uuid_field(app):
     path = swagger_json["paths"]["/{id}"]["get"]
     assert path["parameters"][0] == {
         "in": "path",
-        "name": "id",
+        "name": None,
         "type": "string",
         "format": "uuid",
         "required": True,
