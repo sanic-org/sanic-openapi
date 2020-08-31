@@ -265,4 +265,4 @@ async def test(request):
 And the responses will be:
 ![](../_static/images/decorators/response.png)
 
-Please note that when you use `response()` decorator, the default response(with status 200) will not be document by default.
+Please note that when you use `response()` and `produces()` decorators together, the `response()` decorator with status 200 will have no effect.
