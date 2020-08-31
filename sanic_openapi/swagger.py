@@ -198,13 +198,10 @@ def build_spec(app, loop):
             if route_spec.produces:
                 responses["200"] = {
                     "schema": serialize_schema(route_spec.produces.field),
-                    "description": route_spec.produces.description
+                    "description": route_spec.produces.description,
                 }
             elif not responses:
-                responses["200"] = {
-                    "schema": None,
-                    "description": None,
-                }
+                responses["200"] = {"schema": None, "description": None}
 
             endpoint = remove_nulls(
                 {

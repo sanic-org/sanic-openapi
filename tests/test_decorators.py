@@ -172,13 +172,13 @@ def test_response(app, response_args, responses):
         ([], {}, [], {"200": {}}),
         ([doc.String], {}, [200, {}], {"200": {"schema": {"type": "string"}}}),
         (
-                [TestSchema],
-                {"content_type": "application/json"},
-                [201, {}],
-                {
-                    "200": {"schema": {"$ref": "#/definitions/TestSchema"}},
-                    "201": {"schema": {"type": "object", "properties": {}}}
-                },
+            [TestSchema],
+            {"content_type": "application/json"},
+            [201, {}],
+            {
+                "200": {"schema": {"$ref": "#/definitions/TestSchema"}},
+                "201": {"schema": {"type": "object", "properties": {}}},
+            },
         ),
     ],
 )
