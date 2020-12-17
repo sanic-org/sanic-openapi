@@ -73,9 +73,7 @@ class Dictionary(Field):
     def serialize(self):
         return {
             "type": "object",
-            "properties": {
-                key: serialize_schema(schema) for key, schema in self.fields.items()
-            },
+            "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
             **super().serialize(),
         }
 
@@ -89,9 +87,7 @@ class JsonBody(Field):
         return {
             "schema": {
                 "type": "object",
-                "properties": {
-                    key: serialize_schema(schema) for key, schema in self.fields.items()
-                },
+                "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
             },
             **super().serialize(),
         }
