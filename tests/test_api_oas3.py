@@ -4,7 +4,7 @@ from inspect import isawaitable
 from sanic import Sanic
 from sanic.response import HTTPResponse
 
-from sanic_openapi import api, doc, swagger_blueprint, oas3_blueprint
+from sanic_openapi import api, doc, oas3_blueprint, swagger_blueprint
 
 
 def test_message_api_response():

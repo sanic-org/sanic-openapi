@@ -3,7 +3,8 @@ This module appends documentation to operations and components created in the bl
 
 """
 from typing import Any
-from . import operations, components
+
+from . import components, operations
 
 
 def operation(name: str):
@@ -64,9 +65,7 @@ def body(content: Any, **kwargs):
 
 def parameter(name: str, schema: Any, location: str = "query", **kwargs):
     def inner(func):
-        operations[func].parameter(
-            name, components.maybe_ref(schema), location, **kwargs
-        )
+        operations[func].parameter(name, components.maybe_ref(schema), location, **kwargs)
         return func
 
     return inner
@@ -74,9 +73,7 @@ def parameter(name: str, schema: Any, location: str = "query", **kwargs):
 
 def response(status, content: Any = None, description: str = None, **kwargs):
     def inner(func):
-        operations[func].response(
-            status, components.maybe_ref(content), description, **kwargs
-        )
+        operations[func].response(status, components.maybe_ref(content), description, **kwargs)
         return func
 
     return inner

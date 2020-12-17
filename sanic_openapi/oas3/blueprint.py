@@ -1,10 +1,11 @@
 import re
-
 from itertools import repeat
+from os.path import abspath, dirname, realpath
+
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
-from os.path import dirname, realpath, abspath
+
 from ..doc import route as doc_route
 from . import operations, specification
 

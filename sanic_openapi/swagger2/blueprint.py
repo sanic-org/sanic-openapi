@@ -59,12 +59,13 @@ def blueprint_factory():
         Removes all null values from a dictionary.
         """
         return {
-            k: remove_nulls(v, deep) if deep and type(v) is dict else v for k, v in dictionary.items() if v is not None
+            k: remove_nulls(v, deep) if deep and type(v) is dict else v
+            for k, v in dictionary.items()
+            if v is not None
         }
 
     @swagger_blueprint.listener("after_server_start")
     def build_spec(app, loop):
-
         # --------------------------------------------------------------- #
         # Blueprint Tags
         # --------------------------------------------------------------- #
@@ -211,7 +212,9 @@ def blueprint_factory():
         # --------------------------------------------------------------- #
         # Definitions
         # --------------------------------------------------------------- #
+
         _spec = Swagger2Spec(app=app)
+
         _spec.add_definitions(definitions={obj.object_name: definition for obj, definition in definitions.values()})
 
         # --------------------------------------------------------------- #

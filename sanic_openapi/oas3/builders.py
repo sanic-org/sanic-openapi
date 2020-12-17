@@ -1,5 +1,28 @@
 from collections import defaultdict
-from .definitions import *
+
+from .definitions import (
+    Any,
+    Components,
+    Contact,
+    Dict,
+    Example,
+    ExternalDocumentation,
+    Header,
+    Info,
+    License,
+    List,
+    OpenAPI,
+    Operation,
+    Parameter,
+    PathItem,
+    Reference,
+    RequestBody,
+    Response,
+    Schema,
+    SecurityScheme,
+    Server,
+    Tag,
+)
 
 
 class ComponentsBuilder:
@@ -141,9 +164,7 @@ class SpecificationBuilder:
     def url(self, value: str):
         self._url = value
 
-    def describe(
-        self, title: str, version: str, description: str = None, terms: str = None
-    ):
+    def describe(self, title: str, version: str, description: str = None, terms: str = None):
         self._title = title
         self._version = version
         self._description = description
@@ -173,9 +194,7 @@ class SpecificationBuilder:
         tags = self._build_tags()
         servers = [Server(url=self._url)]
 
-        return OpenAPI(
-            info, paths, tags=tags, components=self._components.build(), servers=servers
-        )
+        return OpenAPI(info, paths, tags=tags, components=self._components.build(), servers=servers)
 
     def _build_info(self) -> Info:
         kwargs = {

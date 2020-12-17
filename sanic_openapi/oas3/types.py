@@ -1,7 +1,6 @@
 import json
-
-from datetime import date, time, datetime
-from typing import List, Dict, Any, get_type_hints
+from datetime import date, datetime, time
+from typing import Any, Dict, List, get_type_hints
 
 
 class Definition:
@@ -15,11 +14,7 @@ class Definition:
         return self.__fields
 
     def guard(self, fields):
-        return {
-            k: v
-            for k, v in fields.items()
-            if k in _properties(self).keys() or k.startswith("x-")
-        }
+        return {k: v for k, v in fields.items() if k in _properties(self).keys() or k.startswith("x-")}
 
     def serialize(self):
         return _serialize(self.fields)
@@ -106,9 +101,7 @@ class Schema(Definition):
         elif _type == dict:
             return Object({k: Schema.make(v) for k, v in value.items()}, **kwargs)
         else:
-            return Object(
-                {k: Schema.make(v) for k, v in _properties(value).items()}, **kwargs
-            )
+            return Object({k: Schema.make(v) for k, v in _properties(value).items()}, **kwargs)
 
 
 class Boolean(Schema):

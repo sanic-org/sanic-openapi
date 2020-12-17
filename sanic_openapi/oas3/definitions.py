@@ -1,7 +1,8 @@
 """
 Classes defined from the OpenAPI 3.0 specifications.
 """
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from .types import Definition, Schema
 
 
