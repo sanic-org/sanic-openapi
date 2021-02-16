@@ -308,7 +308,7 @@ def consumes(*args, content_type=None, location="query", required=False):
             for arg in args:
                 field = RouteField(arg, location, required)
                 route_specs[func].consumes.append(field)
-                route_specs[func].consumes_content_type = [content_type]
+            route_specs[func].consumes_content_type = [content_type]
         return func
 
     return inner
