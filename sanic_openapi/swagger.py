@@ -1,4 +1,5 @@
 import os
+import inspect
 import re
 from itertools import repeat
 
@@ -6,6 +7,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
+from .autodoc import YamlStyleParametersParser
 from .doc import RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
@@ -66,7 +68,6 @@ def remove_nulls(dictionary, deep=True):
 @swagger_blueprint.listener("after_server_start")
 def build_spec(app, loop):
     _spec = Spec(app=app)
-
     # --------------------------------------------------------------- #
     # Blueprint Tags
     # --------------------------------------------------------------- #
@@ -123,10 +124,9 @@ def build_spec(app, loop):
         methods = {}
         for _method, _handler in method_handlers:
             if hasattr(_handler, "view_class"):
-                view_handler = getattr(_handler.view_class, _method.lower())
-                route_spec = route_specs.get(view_handler) or RouteSpec()
-            else:
-                route_spec = route_specs.get(_handler) or RouteSpec()
+                _handler = getattr(_handler.view_class, _method.lower())
+
+            route_spec = route_specs.get(_handler) or RouteSpec()
 
             if _method == "OPTIONS" or route_spec.exclude:
                 continue
@@ -189,6 +189,18 @@ def build_spec(app, loop):
                     "description": routefield.description,
                 }
 
+            y = YamlStyleParametersParser(inspect.getdoc(_handler))
+            autodoc_endpoint = y.to_openAPI_2()
+
+            # if the user has manualy added a description or summary via
+            # the decorator, then use theirs
+
+            if route_spec.summary:
+                autodoc_endpoint["summary"] = route_spec.summary
+
+            if route_spec.description:
+                autodoc_endpoint["description"] = route_spec.description
+
             endpoint = remove_nulls(
                 {
                     "operationId": route_spec.operation or route.name,
@@ -201,6 +213,9 @@ def build_spec(app, loop):
                     "responses": responses,
                 }
             )
+
+            # otherwise, update with anything parsed from the docstrings yaml
+            endpoint.update(autodoc_endpoint)
 
             methods[_method.lower()] = endpoint
 
