@@ -1,8 +1,7 @@
-from .builders import ComponentsBuilder, OperationsBuilder, SpecificationBuilder
+from collections import defaultdict
 
-#
-# Static datastores for spec.
-#
-components = ComponentsBuilder()
-operations = OperationsBuilder()
-specification = SpecificationBuilder(components)
+from .builders import OperationBuilder
+
+# Static datastore for spec.
+
+operations = defaultdict(OperationBuilder)

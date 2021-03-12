@@ -1,17 +1,37 @@
+"""
+Classes defined from the OpenAPI 3.0 specifications.
+
+sanic-openapi2 equivalent  = doc.String, etc
+"""
 import json
 from datetime import date, datetime, time
 from typing import Any, Dict, List, get_type_hints
 
 
+def _serialize(value) -> Any:
+    if isinstance(value, Definition):
+        return value.serialize()
+
+    if isinstance(value, dict):
+        return {k: _serialize(v) for k, v in value.items()}
+
+    if isinstance(value, list):
+        return [_serialize(v) for v in value]
+
+    return value
+
+
+def _properties(value: object) -> Dict:
+    fields = {k: v for k, v in value.__dict__.items() if not k.startswith("_")}
+
+    return {**get_type_hints(value.__class__), **fields}
+
+
 class Definition:
-    __fields: dict
+    fields: dict
 
     def __init__(self, **kwargs):
-        self.__fields = self.guard(kwargs)
-
-    @property
-    def fields(self):
-        return self.__fields
+        self.fields = self.guard(kwargs)
 
     def guard(self, fields):
         return {k: v for k, v in fields.items() if k in _properties(self).keys() or k.startswith("x-")}
@@ -186,22 +206,3 @@ class Array(Schema):
 
     def __init__(self, items: Schema, **kwargs):
         super().__init__(type="array", items=items, **kwargs)
-
-
-def _serialize(value) -> Any:
-    if isinstance(value, Definition):
-        return value.serialize()
-
-    if isinstance(value, dict):
-        return {k: _serialize(v) for k, v in value.items()}
-
-    if isinstance(value, list):
-        return [_serialize(v) for v in value]
-
-    return value
-
-
-def _properties(value: object) -> Dict:
-    fields = {x: v for x, v in value.__dict__.items() if not x.startswith("_")}
-
-    return {**get_type_hints(value.__class__), **fields}

@@ -1,5 +1,7 @@
 """
 Classes defined from the OpenAPI 3.0 specifications.
+
+sanic-openapi2 equivalent  = doc.RouteField
 """
 from typing import Any, Dict, List
 
@@ -12,32 +14,6 @@ class Reference(Schema):
 
     def guard(self, fields: Dict[str, Any]):
         return fields
-
-
-class Contact(Definition):
-    name: str
-    url: str
-    email: str
-
-
-class License(Definition):
-    name: str
-    url: str
-
-    def __init__(self, name: str, **kwargs):
-        super().__init__(name=name, **kwargs)
-
-
-class Info(Definition):
-    title: str
-    description: str
-    termsOfService: str
-    contact: Contact
-    license: License
-    version: str
-
-    def __init__(self, title: str, version: str, **kwargs):
-        super().__init__(title=title, version=version, **kwargs)
 
 
 class Example(Definition):
@@ -168,7 +144,6 @@ class Operation(Definition):
     parameters: List[Parameter]
     responses: Dict[str, Response]
     security: Dict[str, List[str]]
-    callbacks: List[str]  # TODO
     deprecated: bool
 
 
@@ -212,24 +187,6 @@ class SecurityScheme(Definition):
         return SecurityScheme(_type, **params, **kwargs)
 
 
-class ServerVariable:
-    default: str
-    description: str
-    enum: List[str]
-
-    def __init__(self, default: str, **kwargs):
-        super().__init__(default=default, **kwargs)
-
-
-class Server(Definition):
-    url: str
-    description: str
-    variables: Dict[str, ServerVariable]
-
-    def __init__(self, url: str, description: str = None, variables: dict = None):
-        super().__init__(url=url, description=description, variables=variables or [])
-
-
 class Tag(Definition):
     name: str
     description: str
@@ -247,19 +204,3 @@ class Components(Definition):
     requestBodies: Dict[str, RequestBody]
     headers: Dict[str, Header]
     securitySchemes: Dict[str, SecurityScheme]
-    links: Dict[str, Schema]  # TODO
-    callbacks: Dict[str, Schema]  # TODO
-
-
-class OpenAPI(Definition):
-    openapi: str
-    info: Info
-    servers: List[Server]
-    paths: Dict[str, PathItem]
-    components: Components
-    security: Dict[str, SecurityScheme]
-    tags: List[Tag]
-    externalDocs: ExternalDocumentation
-
-    def __init__(self, info: Info, paths: Dict[str, PathItem], **kwargs):
-        super().__init__(openapi="3.0.0", info=info, paths=paths, **kwargs)

@@ -7,7 +7,9 @@ from sanic.response import json, redirect
 from sanic.views import CompositionView
 
 from ..doc import route as doc_route
-from . import operations, specification
+from . import operations
+from .definitions import PathItem, Tag
+from .spec import Spec as Swagger3Spec
 
 
 def blueprint_factory():
@@ -31,46 +33,12 @@ def blueprint_factory():
 
         return json(options)
 
-    @blueprint.route("/swagger.json")
-    @doc_route(exclude=True)
-    def spec(request):
-        openapi = specification.build().serialize()
-        return json(openapi)
-
     @blueprint.listener("before_server_start")
     def build_spec(app, loop):
         # --------------------------------------------------------------- #
         # Globals
         # --------------------------------------------------------------- #
-        specification.describe(
-            getattr(app.config, "API_TITLE", "API"),
-            getattr(app.config, "API_VERSION", "1.0.0"),
-            getattr(app.config, "API_DESCRIPTION", None),
-            getattr(app.config, "API_TERMS_OF_SERVICE", None),
-        )
-
-        specification.license(
-            getattr(app.config, "API_LICENSE_NAME", None),
-            getattr(app.config, "API_LICENSE_URL", None),
-        )
-
-        specification.contact(
-            getattr(app.config, "API_CONTACT_NAME", None),
-            getattr(app.config, "API_CONTACT_URL", None),
-            getattr(app.config, "API_CONTACT_EMAIL", None),
-        )
-
-        for scheme in getattr(app.config, "API_SCHEMES", ["http"]):
-            host = getattr(app.config, "API_HOST", "localhost")
-            if not host:
-                continue
-
-            basePath = getattr(app.config, "API_BASEPATH", "")
-            if basePath is None:
-                continue
-
-            specification.url(f"{scheme}://{host}/{basePath}")
-
+        _spec = Swagger3Spec(app=app)
         # --------------------------------------------------------------- #
         # Blueprints
         # --------------------------------------------------------------- #
@@ -82,7 +50,7 @@ def blueprint_factory():
                 if _route.handler not in operations:
                     continue
 
-                operation = operations.get(_route.handler)
+                operation = operations[_route.handler]
 
                 if not operation.tags:
                     operation.tag(_blueprint.name)
@@ -119,6 +87,26 @@ def blueprint_factory():
                 for _parameter in _route.parameters:
                     operation.parameter(_parameter.name, _parameter.cast, "path")
 
-                specification.operation(uri, method, operation)
+                for _tag in operation.tags:
+                    if _tag not in _spec._tags.keys():
+                        _spec._tags[_tag] = Tag(_tag)
+
+                _spec._paths[uri][method.lower()] = operation
+
+        _spec.tags = [_spec._tags[k] for k in _spec._tags]
+
+        paths = {}
+
+        for path, operation in _spec._paths.items():
+            paths[path] = PathItem(**{k: v.build() for k, v in operation.items()})
+
+        _spec.paths = paths
+
+        blueprint._spec = _spec
+
+    @blueprint.route("/swagger.json")
+    @doc_route(exclude=True)
+    def spec(request):
+        return json(blueprint._spec.as_dict)
 
     return blueprint
