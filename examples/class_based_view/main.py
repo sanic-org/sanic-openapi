@@ -1,9 +1,8 @@
-from sanic_openapi import doc
-from sanic_openapi import swagger_blueprint
+from blueprint import blueprint
 from sanic import Sanic
 from sanic.response import json
 
-from blueprint import blueprint
+from sanic_openapi import doc, swagger_blueprint
 
 app = Sanic()
 

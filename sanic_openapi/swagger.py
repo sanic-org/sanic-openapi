@@ -60,11 +60,7 @@ def remove_nulls(dictionary, deep=True):
     """
     Removes all null values from a dictionary.
     """
-    return {
-        k: remove_nulls(v, deep) if deep and type(v) is dict else v
-        for k, v in dictionary.items()
-        if v is not None
-    }
+    return {k: remove_nulls(v, deep) if deep and type(v) is dict else v for k, v in dictionary.items() if v is not None}
 
 
 @swagger_blueprint.listener("after_server_start")
@@ -135,19 +131,11 @@ def build_spec(app, loop):
             if _method == "OPTIONS" or route_spec.exclude:
                 continue
 
-            api_consumes_content_types = getattr(
-                app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"]
-            )
-            consumes_content_types = (
-                route_spec.consumes_content_type or api_consumes_content_types
-            )
+            api_consumes_content_types = getattr(app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"])
+            consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
 
-            api_produces_content_types = getattr(
-                app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"]
-            )
-            produces_content_types = (
-                route_spec.produces_content_type or api_produces_content_types
-            )
+            api_produces_content_types = getattr(app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"])
+            produces_content_types = route_spec.produces_content_type or api_produces_content_types
 
             # Parameters - Path & Query String
             route_parameters = []
@@ -177,8 +165,7 @@ def build_spec(app, loop):
                         "required": consumer.required,
                         "in": consumer.location,
                         "name": consumer.field.name
-                        if not isinstance(consumer.field, type)
-                        and hasattr(consumer.field, "name")
+                        if not isinstance(consumer.field, type) and hasattr(consumer.field, "name")
                         else "body",
                     }
 
@@ -192,12 +179,8 @@ def build_spec(app, loop):
 
             if len(route_spec.response) == 0:
                 responses["200"] = {
-                    "schema": serialize_schema(route_spec.produces.field)
-                    if route_spec.produces
-                    else None,
-                    "description": route_spec.produces.description
-                    if route_spec.produces
-                    else None,
+                    "schema": serialize_schema(route_spec.produces.field) if route_spec.produces else None,
+                    "description": route_spec.produces.description if route_spec.produces else None,
                 }
 
             for (status_code, routefield) in route_spec.response:
@@ -223,9 +206,7 @@ def build_spec(app, loop):
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub(
-                "<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed
-            )
+            uri_parsed = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed)
 
         if methods:
             paths[uri_parsed] = methods
@@ -234,11 +215,7 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec.add_definitions(
-        definitions={
-            obj.object_name: definition for obj, definition in definitions.values()
-        }
-    )
+    _spec.add_definitions(definitions={obj.object_name: definition for obj, definition in definitions.values()})
 
     # --------------------------------------------------------------- #
     # Tags

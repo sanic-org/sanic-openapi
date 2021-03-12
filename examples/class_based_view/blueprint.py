@@ -1,7 +1,8 @@
 from sanic.blueprints import Blueprint
-from sanic.views import HTTPMethodView
-from sanic_openapi import doc
 from sanic.response import json
+from sanic.views import HTTPMethodView
+
+from sanic_openapi import doc
 
 blueprint = Blueprint('Class-based View', url_prefix='/class-based-view')
 

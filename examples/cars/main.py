@@ -1,10 +1,11 @@
-from sanic import Sanic
-from sanic_openapi import swagger_blueprint
 from blueprints.car import blueprint as car_blueprint
 from blueprints.driver import blueprint as driver_blueprint
 from blueprints.garage import blueprint as garage_blueprint
 from blueprints.manufacturer import blueprint as manufacturer_blueprint
 from blueprints.repair import blueprint as repair_blueprint
+from sanic import Sanic
+
+from sanic_openapi import swagger_blueprint
 
 app = Sanic()
 

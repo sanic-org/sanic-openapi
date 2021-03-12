@@ -1,4 +1,5 @@
 import json
+import itertools
 from inspect import isawaitable
 
 from sanic import Sanic
@@ -105,6 +106,9 @@ def test_documentation():
     assert app_response.json == benchmark_response.json
 
 
+app_ID = itertools.count()
+
+
 def get_app():
     """
     Creates a Sanic application whose routes are documented using the `api` module.
@@ -112,7 +116,7 @@ def get_app():
     The routes and their documentation must be kept in sync with the application created
     by `get_benchmark_app()`, so that application can serve as a benchmark in test cases.
     """
-    app = Sanic("test_api")
+    app = Sanic("test_api_{}".format(next(app_ID)))
     app.blueprint(swagger_blueprint)
 
     @MessageAPI.post(app, "/message")
@@ -161,6 +165,9 @@ def get_app():
     return app
 
 
+benchmark_app_ID = itertools.count()
+
+
 def get_benchmark_app():
     """
     Creates a Sanic application whose routes are documented using the lower level `doc` module.
@@ -168,7 +175,7 @@ def get_benchmark_app():
     The routes and their documentation must be kept in sync with the application created
     by `get_app()`, so this application can serve as a benchmark in test cases.
     """
-    app = Sanic("test_api_benchmark")
+    app = Sanic("test_api_benchmark_{}".format(next(benchmark_app_ID)))
     app.blueprint(swagger_blueprint)
 
     @app.post("/message")
