@@ -141,7 +141,9 @@ class Object(Field):
                 key: serialize_schema(schema)
                 for key, schema in chain(
                     {
-                        key: getattr(self.cls, key, None) for key in dir(self.cls)
+                        key: getattr(self.cls, key)
+                        for key in dir(self.cls)
+                        if not key.startswith("_")
                     }.items(),
                     typing.get_type_hints(self.cls).items(),
                 )
