@@ -162,7 +162,6 @@ def build_spec(app, loop):
                 )
 
             for consumer in route_spec.consumes:
-                route_param = {}
                 spec = serialize_schema(consumer.field)
                 if "properties" in spec:
                     for name, prop_spec in spec["properties"].items():
