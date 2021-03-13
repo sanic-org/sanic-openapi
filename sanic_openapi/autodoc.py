@@ -4,7 +4,7 @@ import warnings
 import yaml
 
 
-class OpenAPIDocstringParser(object):
+class OpenAPIDocstringParser:
     def __init__(self, docstring):
         """
         Args:
