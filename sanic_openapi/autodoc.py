@@ -5,7 +5,7 @@ import yaml
 
 
 class OpenAPIDocstringParser:
-    def __init__(self, docstring):
+    def __init__(self, docstring: str):
         """
         Args:
             docstring (str): docstring of function to be parsed
@@ -14,14 +14,14 @@ class OpenAPIDocstringParser:
             docstring = ""
         self.docstring = inspect.cleandoc(docstring)
 
-    def to_openAPI_2(self):
+    def to_openAPI_2(self) -> dict:
         """
         Returns:
             json style dict: dict to be read for the path by swagger 2.0 UI
         """
         raise NotImplementedError()
 
-    def to_openAPI_3(self):
+    def to_openAPI_3(self) -> dict:
         """
         Returns:
             json style dict: dict to be read for the path by swagger 3.0.0 UI
@@ -30,7 +30,7 @@ class OpenAPIDocstringParser:
 
 
 class YamlStyleParametersParser(OpenAPIDocstringParser):
-    def _parse_no_yaml(self, doc):
+    def _parse_no_yaml(self, doc: str) -> dict:
         """
         Args:
             doc (str): section of doc before yaml, or full section of doc
@@ -61,7 +61,7 @@ class YamlStyleParametersParser(OpenAPIDocstringParser):
                 # use html tag to preserve linebreaks
                 return {"summary": summary, "description": "<br>".join(lines)}
 
-    def _parse_yaml(self, doc):
+    def _parse_yaml(self, doc: str) -> dict:
         """
         Args:
             doc (str): section of doc detected as openapi yaml
@@ -76,7 +76,7 @@ class YamlStyleParametersParser(OpenAPIDocstringParser):
             warnings.warn("error parsing openAPI yaml, ignoring it. ({})".format(e))
             return {}
 
-    def _parse_all(self):
+    def _parse_all(self) -> dict:
         if "openapi:\n" not in self.docstring:
             return self._parse_no_yaml(self.docstring)
 
@@ -86,8 +86,8 @@ class YamlStyleParametersParser(OpenAPIDocstringParser):
         conf.update(self._parse_yaml(yamldoc))
         return conf
 
-    def to_openAPI_2(self):
+    def to_openAPI_2(self) -> dict:
         return self._parse_all()
 
-    def to_openAPI_3(self):
+    def to_openAPI_3(self) -> dict:
         return self._parse_all()
