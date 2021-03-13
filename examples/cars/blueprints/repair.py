@@ -1,11 +1,12 @@
-from sanic.views import HTTPMethodView
 from sanic.blueprints import Blueprint
 from sanic.response import json
+from sanic.views import HTTPMethodView
+
 from sanic_openapi import doc
 
 blueprint = Blueprint('Repair', '/repair')
-from models import Station
 from data import test_station
+from models import Station
 
 
 class RepairStation(HTTPMethodView):

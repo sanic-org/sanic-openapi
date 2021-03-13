@@ -1,5 +1,16 @@
 # Changelog
 
+### 0.6.2 (2020-06-01)
+
+### Features
+
+* Model inheritance ([0aa81c](https://github.com/huge-success/sanic-openapi/commit/0aa81c83754767c78444c3d01d548305858d8a22))
+
+### Bug Fixes
+
+* TypeError when Spec obj is not JSON serializable ([fe29d0](https://github.com/huge-success/sanic-openapi/commit/fe29d07ccb0e02ec0be6496e971946269b2d7907))
+* Attribute name "name" conflict in consumes body ([67aaf3](https://github.com/huge-success/sanic-openapi/commit/67aaf34eca5e339c349ef65bd0392cb8a97f184e))
+
 ### 0.6.1 (2020-01-03)
 
 
