@@ -249,11 +249,11 @@ def test_file_field(app):
 
 
 def test_uuid_field(app):
-    field = doc.UUID()
-    assert field.serialize() == {"type": "string", "format": "uuid"}
+    field = doc.UUID(name="id")
+    assert field.serialize() == {"type": "string", "format": "uuid", "name": "id"}
 
     @app.get("/<id:uuid>")
-    @doc.consumes(field, location='path')
+    @doc.consumes(field, location="path")
     @doc.response(204, {})
     def test(request):
         return HTTPResponse(status=204)
@@ -266,7 +266,7 @@ def test_uuid_field(app):
     path = swagger_json["paths"]["/{id}"]["get"]
     assert path["parameters"][0] == {
         "in": "path",
-        "name": None,
+        "name": "id",
         "type": "string",
         "format": "uuid",
         "required": True,
@@ -286,7 +286,7 @@ def test_uuid_field(app):
     path = swagger_json["paths"]["/"]["get"]
     assert path["parameters"][0] == {
         "in": "formData",
-        "name": None,
+        "name": "id",
         "type": "string",
         "format": "uuid",
         "required": True,
