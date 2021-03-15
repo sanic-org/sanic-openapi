@@ -22,7 +22,16 @@ def blueprint_factory():
     def index(request):
         return redirect("{}/".format(blueprint.url_prefix))
 
-    @blueprint.route("/openapi.json")
+    @blueprint.route("/swagger-config")
+    def config(request):
+        options = {}
+
+        if hasattr(request.app.config, "SWAGGER_UI_CONFIGURATION"):
+            options = getattr(request.app.config, "SWAGGER_UI_CONFIGURATION")
+
+        return json(options)
+
+    @blueprint.route("/swagger.json")
     @doc_route(exclude=True)
     def spec(request):
         openapi = specification.build().serialize()
@@ -78,27 +87,6 @@ def blueprint_factory():
                 if not operation.tags:
                     operation.tag(_blueprint.name)
 
-        return
-
-    return blueprint
-
-    def _(app, loop):
-        # --------------------------------------------------------------- #
-        # Blueprints
-        # --------------------------------------------------------------- #
-        for _blueprint in app.blueprints.values():
-            if not hasattr(_blueprint, "routes"):
-                continue
-
-            for _route in _blueprint.routes:
-                if _route.handler not in operations:
-                    continue
-
-                operation = operations.get(_route.handler)
-
-                if not operation.tags:
-                    operation.tag(_blueprint.name)
-
         # --------------------------------------------------------------- #
         # Operations
         # --------------------------------------------------------------- #
@@ -133,4 +121,4 @@ def blueprint_factory():
 
                 specification.operation(uri, method, operation)
 
-        return blueprint
+    return blueprint
