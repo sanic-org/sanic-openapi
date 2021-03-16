@@ -173,6 +173,13 @@ def build_spec(app, loop):
                     route_param["schema"] = {"$ref": route_param["$ref"]}
                     del route_param["$ref"]
 
+                if route_param["in"] == "path":
+                    route_param["required"] = True
+                    for i, parameter in enumerate(route_parameters):
+                        if parameter["name"] == route_param["name"]:
+                            route_parameters.pop(i)
+                            break
+
                 route_parameters.append(route_param)
 
             responses = {}
