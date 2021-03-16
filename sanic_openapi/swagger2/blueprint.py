@@ -1,4 +1,5 @@
 import os
+import inspect
 import re
 from itertools import repeat
 
@@ -6,6 +7,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
+from ..autodoc import YamlStyleParametersParser
 from ..doc import RouteSpec, definitions
 from ..doc import route as doc_route
 from ..doc import route_specs, serialize_schema
@@ -38,6 +40,7 @@ def blueprint_factory():
 
     @swagger_blueprint.listener("after_server_start")
     def build_spec(app, loop):
+
         # --------------------------------------------------------------- #
         # Blueprint Tags
         # --------------------------------------------------------------- #
@@ -144,6 +147,13 @@ def blueprint_factory():
                         route_param["schema"] = {"$ref": route_param["$ref"]}
                         del route_param["$ref"]
 
+                    if route_param["in"] == "path":
+                        route_param["required"] = True
+                        for i, parameter in enumerate(route_parameters):
+                            if parameter["name"] == route_param["name"]:
+                                route_parameters.pop(i)
+                                break
+
                     route_parameters.append(route_param)
 
                 responses = {}
@@ -160,6 +170,18 @@ def blueprint_factory():
                         "description": routefield.description,
                     }
 
+                y = YamlStyleParametersParser(inspect.getdoc(_handler))
+                autodoc_endpoint = y.to_openAPI_2()
+
+                # if the user has manualy added a description or summary via
+                # the decorator, then use theirs
+
+                if route_spec.summary:
+                    autodoc_endpoint["summary"] = route_spec.summary
+
+                if route_spec.description:
+                    autodoc_endpoint["description"] = route_spec.description
+
                 endpoint = remove_nulls(
                     {
                         "operationId": route_spec.operation or route.name,
@@ -172,6 +194,9 @@ def blueprint_factory():
                         "responses": responses,
                     }
                 )
+
+                # otherwise, update with anything parsed from the docstrings yaml
+                endpoint.update(autodoc_endpoint)
 
                 methods[_method.lower()] = endpoint
 

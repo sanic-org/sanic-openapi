@@ -116,7 +116,7 @@ def get_app():
     The routes and their documentation must be kept in sync with the application created
     by `get_benchmark_app()`, so that application can serve as a benchmark in test cases.
     """
-    app = Sanic("test_api_{}".format(next(app_ID)))
+    app = Sanic("test_api_oas3_{}".format(next(app_ID)))
     app.blueprint(oas3_blueprint)
 
     @MessageAPI.post(app, "/message")
@@ -175,7 +175,7 @@ def get_benchmark_app():
     The routes and their documentation must be kept in sync with the application created
     by `get_app()`, so this application can serve as a benchmark in test cases.
     """
-    app = Sanic("test_api_benchmark_{}".format(next(benchmark_app_ID)))
+    app = Sanic("test_api_benchmark_oas3_{}".format(next(benchmark_app_ID)))
     app.blueprint(oas3_blueprint)
 
     @app.post("/message")
