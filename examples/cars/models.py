@@ -1,4 +1,5 @@
 from datetime import date
+
 from sanic_openapi import doc
 
 
