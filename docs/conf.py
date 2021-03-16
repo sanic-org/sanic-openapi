@@ -13,7 +13,6 @@
 import os
 import sys
 
-
 docs_directory = os.path.dirname(os.path.abspath(__file__))
 root_directory = os.path.dirname(docs_directory)
 sys.path.insert(0, root_directory)

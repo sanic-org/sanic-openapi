@@ -106,3 +106,8 @@ If you want to make a Pull Request, here are some suggestions:
 1. Check other pull requests first, make sure your contributions are not duplicate to others.
 2. Run all tests at your machine, make sure your contributions are works and does not break anything.
 3. Document and example will be very appreciated.
+
+
+## Release Process
+
+We will have two scheduled releases in January and July to make sure we can support all the LTS versions of Sanic. And if there is any other release request for new features or fixes, please open a new issue, we can consider accepting this request.
