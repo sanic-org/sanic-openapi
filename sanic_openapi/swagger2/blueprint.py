@@ -9,6 +9,7 @@ from sanic.views import CompositionView
 from ..doc import RouteSpec, definitions
 from ..doc import route as doc_route
 from ..doc import route_specs, serialize_schema
+from ..utils import get_uri_filter, remove_nulls
 from .spec import Spec as Swagger2Spec
 
 
@@ -18,51 +19,22 @@ def blueprint_factory():
     dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     dir_path = os.path.abspath(dir_path + "/ui")
 
+    swagger_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
+    swagger_blueprint.static("/", dir_path)
+
     # Redirect "/swagger" to "/swagger/"
     @swagger_blueprint.route("", strict_slashes=True)
     def index(request):
         return redirect("{}/".format(swagger_blueprint.url_prefix))
 
-    swagger_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
-    swagger_blueprint.static("/", dir_path)
+    @swagger_blueprint.route("/swagger.json")
+    @doc_route(exclude=True)
+    def spec(request):
+        return json(swagger_blueprint._spec.as_dict)
 
-    def get_uri_filter(app):
-        """
-        Return a filter function that takes a URI and returns whether it should
-        be filter out from the swagger documentation or not.
-
-        Arguments:
-            app: The application to take `config.API_URI_FILTER` from. Possible
-                 values for this config option are: `slash` (to keep URIs that
-                 end with a `/`), `all` (to keep all URIs). All other values
-                 default to keep all URIs that don't end with a `/`.
-
-        Returns:
-            `True` if the URI should be *filtered out* from the swagger
-            documentation, and `False` if it should be kept in the documentation.
-        """
-        choice = getattr(app.config, "API_URI_FILTER", None)
-
-        if choice == "slash":
-            # Keep URIs that end with a /.
-            return lambda uri: not uri.endswith("/")
-
-        if choice == "all":
-            # Keep all URIs.
-            return lambda uri: False
-
-        # Keep URIs that don't end with a /, (special case: "/").
-        return lambda uri: len(uri) > 1 and uri.endswith("/")
-
-    def remove_nulls(dictionary, deep=True):
-        """
-        Removes all null values from a dictionary.
-        """
-        return {
-            k: remove_nulls(v, deep) if deep and type(v) is dict else v
-            for k, v in dictionary.items()
-            if v is not None
-        }
+    @swagger_blueprint.route("/swagger-config")
+    def config(request):
+        return json(getattr(request.app.config, "SWAGGER_UI_CONFIGURATION", {}))
 
     @swagger_blueprint.listener("after_server_start")
     def build_spec(app, loop):
@@ -71,23 +43,24 @@ def blueprint_factory():
         # --------------------------------------------------------------- #
 
         for blueprint in app.blueprints.values():
-            if hasattr(blueprint, "routes"):
-                for route in blueprint.routes:
-                    if hasattr(route.handler, "view_class"):
-                        # class based view
-                        view = route.handler.view_class
-                        for http_method in route.methods:
-                            _handler = getattr(view, http_method.lower(), None)
-                            if _handler:
-                                route_spec = route_specs[_handler]
-                                route_spec.blueprint = blueprint
-                                if not route_spec.tags:
-                                    route_spec.tags.append(blueprint.name)
-                    else:
-                        route_spec = route_specs[route.handler]
-                        route_spec.blueprint = blueprint
-                        if not route_spec.tags:
-                            route_spec.tags.append(blueprint.name)
+            if not hasattr(blueprint, "routes"):
+                continue
+
+            for route in blueprint.routes:
+                if hasattr(route.handler, "view_class"):
+                    # class based view
+                    for http_method in route.methods:
+                        _handler = getattr(route.handler.view_class, http_method.lower(), None)
+                        if _handler:
+                            route_spec = route_specs[_handler]
+                            route_spec.blueprint = blueprint
+                            if not route_spec.tags:
+                                route_spec.tags.append(blueprint.name)
+                else:
+                    route_spec = route_specs[route.handler]
+                    route_spec.blueprint = blueprint
+                    if not route_spec.tags:
+                        route_spec.tags.append(blueprint.name)
 
         paths = {}
         uri_filter = get_uri_filter(app)
@@ -233,19 +206,5 @@ def blueprint_factory():
 
         _spec.add_paths(paths)
         swagger_blueprint._spec = _spec
-
-    @swagger_blueprint.route("/swagger.json")
-    @doc_route(exclude=True)
-    def spec(request):
-        return json(swagger_blueprint._spec.as_dict)
-
-    @swagger_blueprint.route("/swagger-config")
-    def config(request):
-        options = {}
-
-        if hasattr(request.app.config, "SWAGGER_UI_CONFIGURATION"):
-            options = getattr(request.app.config, "SWAGGER_UI_CONFIGURATION")
-
-        return json(options)
 
     return swagger_blueprint

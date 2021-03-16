@@ -1,10 +1,11 @@
 import json
+import itertools
 from inspect import isawaitable
 
 from sanic import Sanic
 from sanic.response import HTTPResponse
 
-from sanic_openapi import api, doc, oas3_blueprint, swagger_blueprint
+from sanic_openapi import api, doc, oas3_blueprint
 
 
 def test_message_api_response():
@@ -89,20 +90,23 @@ def test_excluded_routes():
 
 def test_documentation():
     """
-    Compares the `openapi.json` files that are returned by the app and the benchmark.
+    Compares the `swagger.json` files that are returned by the app and the benchmark.
     """
     import pprint
 
     app = get_app()
     benchmark = get_benchmark_app()
 
-    _, app_response = app.test_client.get("/openapi/openapi.json")
-    _, benchmark_response = benchmark.test_client.get("/openapi/openapi.json")
+    _, app_response = app.test_client.get("/swagger/swagger.json")
+    _, benchmark_response = benchmark.test_client.get("/swagger/swagger.json")
 
     pprint.pprint(app_response.json)
     pprint.pprint(benchmark_response.json)
     assert app_response.status == benchmark_response.status == 200
     assert app_response.json == benchmark_response.json
+
+
+app_ID = itertools.count()
 
 
 def get_app():
@@ -112,7 +116,7 @@ def get_app():
     The routes and their documentation must be kept in sync with the application created
     by `get_benchmark_app()`, so that application can serve as a benchmark in test cases.
     """
-    app = Sanic("test_api")
+    app = Sanic("test_api_{}".format(next(app_ID)))
     app.blueprint(oas3_blueprint)
 
     @MessageAPI.post(app, "/message")
@@ -161,6 +165,9 @@ def get_app():
     return app
 
 
+benchmark_app_ID = itertools.count()
+
+
 def get_benchmark_app():
     """
     Creates a Sanic application whose routes are documented using the lower level `doc` module.
@@ -168,7 +175,7 @@ def get_benchmark_app():
     The routes and their documentation must be kept in sync with the application created
     by `get_app()`, so this application can serve as a benchmark in test cases.
     """
-    app = Sanic("test_api_benchmark")
+    app = Sanic("test_api_benchmark_{}".format(next(benchmark_app_ID)))
     app.blueprint(oas3_blueprint)
 
     @app.post("/message")

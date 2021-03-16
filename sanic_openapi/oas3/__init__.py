@@ -1,8 +1,9 @@
-from .builders import ComponentsBuilder, OperationsBuilder, SpecificationBuilder
+from collections import defaultdict
 
-#
-# Static datastores for spec.
-#
-components = ComponentsBuilder()
-operations = OperationsBuilder()
-specification = SpecificationBuilder(components)
+from .builders import OperationBuilder, SpecificationBuilder
+
+# Static datastores, which get added to via the oas3.openapi decorators,
+# and then read from in the blueprint generation
+
+operations = defaultdict(OperationBuilder)
+specification = SpecificationBuilder()

@@ -1,13 +1,16 @@
+"""
+Builders for the oas3 object types
+
+These are completely internal, so can be refactored if desired without concern
+for breaking user experience
+"""
 from collections import defaultdict
 
 from .definitions import (
     Any,
-    Components,
     Contact,
     Dict,
-    Example,
     ExternalDocumentation,
-    Header,
     Info,
     License,
     List,
@@ -15,66 +18,11 @@ from .definitions import (
     Operation,
     Parameter,
     PathItem,
-    Reference,
     RequestBody,
     Response,
-    Schema,
-    SecurityScheme,
     Server,
     Tag,
 )
-
-
-class ComponentsBuilder:
-    _headers: Dict[str, Header]
-    _examples: Dict[str, Example]
-    _parameters: Dict[str, Parameter]
-    _responses: Dict[str, Response]
-    _requestBodies: Dict[str, RequestBody]
-    _schemas: Dict[str, Schema]
-    _security: Dict[str, SecurityScheme]
-
-    def __init__(self):
-        self._headers = {}
-        self._examples = {}
-        self._parameters = {}
-        self._responses = {}
-        self._requestBodies = {}
-        self._schemas = {}
-        self._security = {}
-
-    def maybe_ref(self, content: Any, section: str = "schema"):
-        if type(content) != type:
-            return content
-
-        if section == "schema" and content.__name__ in self._schemas.keys():
-            return Reference("#/components/schemas/%s" % content.__name__)
-
-        return content
-
-    def header(self, name: str, value: Header):
-        self._headers[name] = value
-
-    def example(self, name: str, value: Schema):
-        self._schemas[name] = value
-
-    def parameter(self, name: str, value: Parameter):
-        self._parameters[name] = value
-
-    def response(self, name: str, value: Response):
-        self._responses[name] = value
-
-    def body(self, name: str, value: RequestBody):
-        self._requestBodies[name] = value
-
-    def schema(self, name: str, value: Schema):
-        self._schemas[name] = value
-
-    def security(self, name: str, value: SecurityScheme):
-        self._security[name] = value
-
-    def build(self):
-        return Components(schemas=self._schemas, securitySchemes=self._security)
 
 
 class OperationBuilder:
@@ -139,11 +87,6 @@ class OperationBuilder:
         return Operation(**self.__dict__)
 
 
-class OperationsBuilder(defaultdict):
-    def __init__(self):
-        super().__init__(OperationBuilder)
-
-
 class SpecificationBuilder:
     _url: str
     _title: str
@@ -154,10 +97,12 @@ class SpecificationBuilder:
     _license: License
     _paths: Dict[str, Dict[str, OperationBuilder]]
     _tags: Dict[str, Tag]
-    _components: ComponentsBuilder
+    # _components: ComponentsBuilder
+    # deliberately not included
+    #   -- doesnt fit in well with the auto-generated style of sanic-openapi
+    #      but could be put here down the line if desired...
 
-    def __init__(self, components: ComponentsBuilder):
-        self._components = components
+    def __init__(self):
         self._paths = defaultdict(dict)
         self._tags = {}
 
@@ -192,9 +137,13 @@ class SpecificationBuilder:
         info = self._build_info()
         paths = self._build_paths()
         tags = self._build_tags()
-        servers = [Server(url=self._url)]
 
-        return OpenAPI(info, paths, tags=tags, components=self._components.build(), servers=servers)
+        if getattr(self, "_url", None) is not None:
+            servers = [Server(url=self._url)]
+        else:
+            servers = []
+
+        return OpenAPI(info, paths, tags=tags, servers=servers)
 
     def _build_info(self) -> Info:
         kwargs = {

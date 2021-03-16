@@ -1,5 +1,8 @@
 """
 Classes defined from the OpenAPI 3.0 specifications.
+
+I.e., the objects described https://swagger.io/docs/specification
+
 """
 from typing import Any, Dict, List
 
@@ -145,7 +148,7 @@ class Parameter(Definition):
     def fields(self):
         values = super().fields
 
-        if 'location' in values:
+        if "location" in values:
             values["in"] = values.pop("location")
 
         return values
@@ -240,6 +243,9 @@ class Tag(Definition):
 
 
 class Components(Definition):
+    # This class is not being used in sanic-openapi right now, but the
+    # definition is kept here to keep in close accordance with the openapi
+    # spec, in case it is desired to be added later.
     schemas: Dict[str, Schema]
     responses: Dict[str, Response]
     parameters: Dict[str, Parameter]

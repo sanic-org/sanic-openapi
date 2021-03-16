@@ -7,37 +7,34 @@ from sanic.response import json, redirect
 from sanic.views import CompositionView
 
 from ..doc import route as doc_route
+from ..utils import get_uri_filter
 from . import operations, specification
 
 
 def blueprint_factory():
-    blueprint = Blueprint("openapi", url_prefix="/openapi")
+    oas3_blueprint = Blueprint("openapi", url_prefix="/swagger")
 
     dir_path = dirname(dirname(realpath(__file__)))
     dir_path = abspath(dir_path + "/ui")
-    blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
-    blueprint.static("/", dir_path)
 
-    @blueprint.route("", strict_slashes=True)
+    oas3_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
+    oas3_blueprint.static("/", dir_path)
+
+    # Redirect "/swagger" to "/swagger/"
+    @oas3_blueprint.route("", strict_slashes=True)
     def index(request):
-        return redirect("{}/".format(blueprint.url_prefix))
+        return redirect("{}/".format(oas3_blueprint.url_prefix))
 
-    @blueprint.route("/swagger-config")
-    def config(request):
-        options = {}
-
-        if hasattr(request.app.config, "SWAGGER_UI_CONFIGURATION"):
-            options = getattr(request.app.config, "SWAGGER_UI_CONFIGURATION")
-
-        return json(options)
-
-    @blueprint.route("/swagger.json")
+    @oas3_blueprint.route("/swagger.json")
     @doc_route(exclude=True)
     def spec(request):
-        openapi = specification.build().serialize()
-        return json(openapi)
+        return json(specification.build().serialize())
 
-    @blueprint.listener("before_server_start")
+    @oas3_blueprint.route("/swagger-config")
+    def config(request):
+        return json(getattr(request.app.config, "SWAGGER_UI_CONFIGURATION", {}))
+
+    @oas3_blueprint.listener("before_server_start")
     def build_spec(app, loop):
         # --------------------------------------------------------------- #
         # Globals
@@ -61,12 +58,9 @@ def blueprint_factory():
         )
 
         for scheme in getattr(app.config, "API_SCHEMES", ["http"]):
-            host = getattr(app.config, "API_HOST", "localhost")
-            if not host:
-                continue
-
+            host = getattr(app.config, "API_HOST", None)
             basePath = getattr(app.config, "API_BASEPATH", "")
-            if basePath is None:
+            if host is None or basePath is None:
                 continue
 
             specification.url(f"{scheme}://{host}/{basePath}")
@@ -79,20 +73,43 @@ def blueprint_factory():
                 continue
 
             for _route in _blueprint.routes:
-                if _route.handler not in operations:
-                    continue
+                if hasattr(_route.handler, "view_class"):
+                    # class based view
+                    for http_method in _route.methods:
+                        _handler = getattr(_route.handler.view_class, http_method.lower(), None)
+                        if _handler:
+                            operation = operations[_route.handler]
+                            if not operation.tags:
+                                operation.tag(_blueprint.name)
+                else:
+                    operation = operations[_route.handler]
+                    # operation.blueprint = _blueprint
+                    # is this necc ?
+                    if not operation.tags:
+                        operation.tag(_blueprint.name)
 
-                operation = operations.get(_route.handler)
-
-                if not operation.tags:
-                    operation.tag(_blueprint.name)
+        uri_filter = get_uri_filter(app)
 
         # --------------------------------------------------------------- #
         # Operations
         # --------------------------------------------------------------- #
         for _uri, _route in app.router.routes_all.items():
-            if "<file_uri" in _uri:
+
+            # Ignore routes under swagger blueprint
+            if _route.uri.startswith(oas3_blueprint.url_prefix):
                 continue
+
+            # Apply the URI filter
+            if uri_filter(_uri):
+                continue
+
+            # route.name will be None when using class based view
+            if _route.name and "static" in _route.name:
+                continue
+
+            # --------------------------------------------------------------- #
+            # Methods
+            # --------------------------------------------------------------- #
 
             handler_type = type(_route.handler)
 
@@ -108,7 +125,8 @@ def blueprint_factory():
                 uri = re.sub("<" + segment.name + ".*?>", "{" + segment.name + "}", uri)
 
             for method, _handler in method_handlers:
-                if _handler not in operations:
+
+                if method == "OPTIONS":
                     continue
 
                 operation = operations[_handler]
@@ -121,4 +139,4 @@ def blueprint_factory():
 
                 specification.operation(uri, method, operation)
 
-    return blueprint
+    return oas3_blueprint

@@ -1,10 +1,11 @@
 """
-This module appends documentation to operations and components created in the blueprints.
+This module provides decorators which append
+documentation to operations and components created in the blueprints.
 
 """
 from typing import Any
 
-from . import components, operations
+from . import operations
 
 
 def operation(name: str):
@@ -57,7 +58,7 @@ def deprecated():
 
 def body(content: Any, **kwargs):
     def inner(func):
-        operations[func].body(components.maybe_ref(content), **kwargs)
+        operations[func].body(content, **kwargs)
         return func
 
     return inner
@@ -65,7 +66,7 @@ def body(content: Any, **kwargs):
 
 def parameter(name: str, schema: Any, location: str = "query", **kwargs):
     def inner(func):
-        operations[func].parameter(name, components.maybe_ref(schema), location, **kwargs)
+        operations[func].parameter(name, schema, location, **kwargs)
         return func
 
     return inner
@@ -73,7 +74,7 @@ def parameter(name: str, schema: Any, location: str = "query", **kwargs):
 
 def response(status, content: Any = None, description: str = None, **kwargs):
     def inner(func):
-        operations[func].response(status, components.maybe_ref(content), description, **kwargs)
+        operations[func].response(status, content, description, **kwargs)
         return func
 
     return inner
