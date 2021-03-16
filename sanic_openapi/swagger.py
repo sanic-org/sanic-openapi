@@ -1,4 +1,5 @@
 import os
+import inspect
 import re
 from itertools import repeat
 
@@ -6,6 +7,7 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 from sanic.views import CompositionView
 
+from .autodoc import YamlStyleParametersParser
 from .doc import RouteSpec, definitions
 from .doc import route as doc_route
 from .doc import route_specs, serialize_schema
@@ -60,17 +62,12 @@ def remove_nulls(dictionary, deep=True):
     """
     Removes all null values from a dictionary.
     """
-    return {
-        k: remove_nulls(v, deep) if deep and type(v) is dict else v
-        for k, v in dictionary.items()
-        if v is not None
-    }
+    return {k: remove_nulls(v, deep) if deep and type(v) is dict else v for k, v in dictionary.items() if v is not None}
 
 
 @swagger_blueprint.listener("after_server_start")
 def build_spec(app, loop):
     _spec = Spec(app=app)
-
     # --------------------------------------------------------------- #
     # Blueprint Tags
     # --------------------------------------------------------------- #
@@ -127,27 +124,18 @@ def build_spec(app, loop):
         methods = {}
         for _method, _handler in method_handlers:
             if hasattr(_handler, "view_class"):
-                view_handler = getattr(_handler.view_class, _method.lower())
-                route_spec = route_specs.get(view_handler) or RouteSpec()
-            else:
-                route_spec = route_specs.get(_handler) or RouteSpec()
+                _handler = getattr(_handler.view_class, _method.lower())
+
+            route_spec = route_specs.get(_handler) or RouteSpec()
 
             if _method == "OPTIONS" or route_spec.exclude:
                 continue
 
-            api_consumes_content_types = getattr(
-                app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"]
-            )
-            consumes_content_types = (
-                route_spec.consumes_content_type or api_consumes_content_types
-            )
+            api_consumes_content_types = getattr(app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"])
+            consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
 
-            api_produces_content_types = getattr(
-                app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"]
-            )
-            produces_content_types = (
-                route_spec.produces_content_type or api_produces_content_types
-            )
+            api_produces_content_types = getattr(app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"])
+            produces_content_types = route_spec.produces_content_type or api_produces_content_types
 
             # Parameters - Path & Query String
             route_parameters = []
@@ -177,8 +165,7 @@ def build_spec(app, loop):
                         "required": consumer.required,
                         "in": consumer.location,
                         "name": consumer.field.name
-                        if not isinstance(consumer.field, type)
-                        and hasattr(consumer.field, "name")
+                        if not isinstance(consumer.field, type) and hasattr(consumer.field, "name")
                         else "body",
                     }
 
@@ -186,18 +173,21 @@ def build_spec(app, loop):
                     route_param["schema"] = {"$ref": route_param["$ref"]}
                     del route_param["$ref"]
 
+                if route_param["in"] == "path":
+                    route_param["required"] = True
+                    for i, parameter in enumerate(route_parameters):
+                        if parameter["name"] == route_param["name"]:
+                            route_parameters.pop(i)
+                            break
+
                 route_parameters.append(route_param)
 
             responses = {}
 
             if len(route_spec.response) == 0:
                 responses["200"] = {
-                    "schema": serialize_schema(route_spec.produces.field)
-                    if route_spec.produces
-                    else None,
-                    "description": route_spec.produces.description
-                    if route_spec.produces
-                    else None,
+                    "schema": serialize_schema(route_spec.produces.field) if route_spec.produces else None,
+                    "description": route_spec.produces.description if route_spec.produces else None,
                 }
 
             for (status_code, routefield) in route_spec.response:
@@ -205,6 +195,18 @@ def build_spec(app, loop):
                     "schema": serialize_schema(routefield.field),
                     "description": routefield.description,
                 }
+
+            y = YamlStyleParametersParser(inspect.getdoc(_handler))
+            autodoc_endpoint = y.to_openAPI_2()
+
+            # if the user has manualy added a description or summary via
+            # the decorator, then use theirs
+
+            if route_spec.summary:
+                autodoc_endpoint["summary"] = route_spec.summary
+
+            if route_spec.description:
+                autodoc_endpoint["description"] = route_spec.description
 
             endpoint = remove_nulls(
                 {
@@ -219,13 +221,14 @@ def build_spec(app, loop):
                 }
             )
 
+            # otherwise, update with anything parsed from the docstrings yaml
+            endpoint.update(autodoc_endpoint)
+
             methods[_method.lower()] = endpoint
 
         uri_parsed = uri
         for parameter in route.parameters:
-            uri_parsed = re.sub(
-                "<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed
-            )
+            uri_parsed = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed)
 
         if methods:
             paths[uri_parsed] = methods
@@ -234,11 +237,7 @@ def build_spec(app, loop):
     # Definitions
     # --------------------------------------------------------------- #
 
-    _spec.add_definitions(
-        definitions={
-            obj.object_name: definition for obj, definition in definitions.values()
-        }
-    )
+    _spec.add_definitions(definitions={obj.object_name: definition for obj, definition in definitions.values()})
 
     # --------------------------------------------------------------- #
     # Tags

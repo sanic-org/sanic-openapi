@@ -73,9 +73,7 @@ class Dictionary(Field):
     def serialize(self):
         return {
             "type": "object",
-            "properties": {
-                key: serialize_schema(schema) for key, schema in self.fields.items()
-            },
+            "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
             **super().serialize(),
         }
 
@@ -89,9 +87,7 @@ class JsonBody(Field):
         return {
             "schema": {
                 "type": "object",
-                "properties": {
-                    key: serialize_schema(schema) for key, schema in self.fields.items()
-                },
+                "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
             },
             **super().serialize(),
         }
@@ -140,7 +136,11 @@ class Object(Field):
             "properties": {
                 key: serialize_schema(schema)
                 for key, schema in chain(
-                    {key: getattr(self.cls, key) for key in dir(self.cls)}.items(),
+                    {
+                        key: getattr(self.cls, key)
+                        for key in dir(self.cls)
+                        if not key.startswith("_")
+                    }.items(),
                     typing.get_type_hints(self.cls).items(),
                 )
                 if not key.startswith("_")
@@ -308,7 +308,7 @@ def consumes(*args, content_type=None, location="query", required=False):
             for arg in args:
                 field = RouteField(arg, location, required)
                 route_specs[func].consumes.append(field)
-                route_specs[func].consumes_content_type = [content_type]
+            route_specs[func].consumes_content_type = [content_type]
         return func
 
     return inner
