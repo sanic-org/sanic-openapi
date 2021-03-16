@@ -1,0 +1,9 @@
+from collections import defaultdict
+
+from .builders import OperationBuilder, SpecificationBuilder
+
+# Static datastores, which get added to via the oas3.openapi decorators,
+# and then read from in the blueprint generation
+
+operations = defaultdict(OperationBuilder)
+specification = SpecificationBuilder()
