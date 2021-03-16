@@ -184,17 +184,19 @@ def build_spec(app, loop):
 
             responses = {}
 
-            if len(route_spec.response) == 0:
-                responses["200"] = {
-                    "schema": serialize_schema(route_spec.produces.field) if route_spec.produces else None,
-                    "description": route_spec.produces.description if route_spec.produces else None,
-                }
-
             for (status_code, routefield) in route_spec.response:
                 responses["{}".format(status_code)] = {
                     "schema": serialize_schema(routefield.field),
                     "description": routefield.description,
                 }
+
+            if route_spec.produces:
+                responses["200"] = {
+                    "schema": serialize_schema(route_spec.produces.field),
+                    "description": route_spec.produces.description,
+                }
+            elif not responses:
+                responses["200"] = {"schema": None, "description": None}
 
             y = YamlStyleParametersParser(inspect.getdoc(_handler))
             autodoc_endpoint = y.to_openAPI_2()

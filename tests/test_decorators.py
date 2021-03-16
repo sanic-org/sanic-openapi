@@ -166,6 +166,38 @@ def test_response(app, response_args, responses):
     assert swagger_json["paths"]["/"]["post"]["responses"] == responses
 
 
+@pytest.mark.parametrize(
+    "produces_args, produces_kwargs, response_args, responses",
+    [
+        ([], {}, [], {"200": {}}),
+        ([doc.String], {}, [200, {}], {"200": {"schema": {"type": "string"}}}),
+        (
+            [TestSchema],
+            {"content_type": "application/json"},
+            [201, {}],
+            {
+                "200": {"schema": {"$ref": "#/definitions/TestSchema"}},
+                "201": {"schema": {"type": "object", "properties": {}}},
+            },
+        ),
+    ],
+)
+def test_produces_and_response(app, produces_args, produces_kwargs, response_args, responses):
+    @app.post("/")
+    @doc.produces(*produces_args, **produces_kwargs)
+    @doc.response(*response_args)
+    def test(request):
+        return text("test")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    print(swagger_json["paths"]["/"]["post"]["responses"])
+    assert swagger_json["paths"]["/"]["post"]["responses"] == responses
+
+
 def test_tag(app):
     @app.get("/")
     @doc.tag("test")
