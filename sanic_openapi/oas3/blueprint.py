@@ -48,7 +48,7 @@ def blueprint_factory():
                     for http_method in route.methods:
                         _handler = getattr(route.handler.view_class, http_method.lower(), None)
                         if _handler:
-                            operation = operations[route.handler]
+                            operation = operations[_handler]
                             if not operation.tags:
                                 operation.tag(blueprint.name)
                 else:
