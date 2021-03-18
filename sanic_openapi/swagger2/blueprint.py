@@ -9,7 +9,6 @@ from sanic.views import CompositionView
 
 from ..autodoc import YamlStyleParametersParser
 from ..doc import RouteSpec, definitions
-from ..doc import route as doc_route
 from ..doc import route_specs, serialize_schema
 from ..utils import get_uri_filter, remove_nulls
 from .spec import Spec as Swagger2Spec
@@ -30,7 +29,6 @@ def blueprint_factory():
         return redirect("{}/".format(swagger_blueprint.url_prefix))
 
     @swagger_blueprint.route("/swagger.json")
-    @doc_route(exclude=True)
     def spec(request):
         return json(swagger_blueprint._spec.as_dict)
 
@@ -40,7 +38,6 @@ def blueprint_factory():
 
     @swagger_blueprint.listener("after_server_start")
     def build_spec(app, loop):
-
         # --------------------------------------------------------------- #
         # Blueprint Tags
         # --------------------------------------------------------------- #
@@ -80,7 +77,6 @@ def blueprint_factory():
 
             # route.name will be None when using class based view
             if route.name and "static" in route.name:
-                # TODO: add static flag in sanic routes
                 continue
 
             # --------------------------------------------------------------- #
@@ -221,7 +217,6 @@ def blueprint_factory():
         # Tags
         # --------------------------------------------------------------- #
 
-        # TODO: figure out how to get descriptions in these
         tags = {}
         for route_spec in route_specs.values():
             if route_spec.blueprint and route_spec.blueprint.name in ("swagger"):
