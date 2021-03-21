@@ -160,6 +160,15 @@ class API:
         Arguments:
             func: The decorated request handler function.
         """
+        import warnings
+
+        warnings.warn(
+            "sanic_openapi.api.API has been marked as deprecated, and may be removed"
+            " in 0.6.4. \n If you are using this class, please leave"
+            " an issue in https://github.com/sanic-org/sanic-openapi/issues",
+            UserWarning,
+        )
+
         if func is None:
             return partial(cls, **kwargs)
 
