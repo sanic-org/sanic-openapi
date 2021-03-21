@@ -49,7 +49,6 @@ class Schema(Definition):
     def make(value, **kwargs):
         if isinstance(value, Schema):
             return value
-
         if value == bool:
             return Boolean(**kwargs)
         elif value == int:
@@ -185,7 +184,7 @@ class Array(Schema):
     uniqueItems: False
 
     def __init__(self, items: Schema, **kwargs):
-        super().__init__(type="array", items=items, **kwargs)
+        super().__init__(type="array", items=Schema.make(items), **kwargs)
 
 
 def _serialize(value) -> Any:

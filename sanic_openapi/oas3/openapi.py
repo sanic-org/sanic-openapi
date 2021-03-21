@@ -7,6 +7,8 @@ from typing import Any
 
 from . import operations
 
+from .types import Array, Boolean, Integer, Long, Float, Double, String, Byte, Binary, Date, Time, DateTime, Password, Email, Object
+
 
 def operation(name: str):
     def inner(func):
