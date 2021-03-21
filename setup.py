@@ -7,7 +7,7 @@ import re
 
 from setuptools import setup
 
-install_requires = ["sanic>=18.12.0", "pyyaml>=5.4.1"]
+install_requires = ["sanic>=18.12.0", "pyyaml>=3.0.0"]
 
 dev_requires = ["black==19.3b0", "flake8==3.7.7", "isort==4.3.19"]
 

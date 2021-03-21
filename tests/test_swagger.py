@@ -90,7 +90,7 @@ def test_document_route(app, method):
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
                 "parameters": [],
-                "responses": {"200": {}},
+                "responses": {'200': {'description': 'OK'}},
             }
         }
     }
@@ -122,7 +122,7 @@ def test_document_blueprint_route(app, method):
                 "produces": ["application/json"],
                 "tags": ["test"],
                 "parameters": [],
-                "responses": {"200": {}},
+                "responses": {'200': {'description': 'OK'}},
             }
         }
     }

@@ -1,7 +1,7 @@
-import os
 import inspect
 import re
 from itertools import repeat
+from os.path import abspath, dirname, realpath
 
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
@@ -9,7 +9,6 @@ from sanic.views import CompositionView
 
 from ..autodoc import YamlStyleParametersParser
 from ..doc import RouteSpec, definitions
-from ..doc import route as doc_route
 from ..doc import route_specs, serialize_schema
 from ..utils import get_uri_filter, remove_nulls
 from .spec import Spec as Swagger2Spec
@@ -18,8 +17,8 @@ from .spec import Spec as Swagger2Spec
 def blueprint_factory():
     swagger_blueprint = Blueprint("swagger", url_prefix="/swagger")
 
-    dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    dir_path = os.path.abspath(dir_path + "/ui")
+    dir_path = dirname(dirname(realpath(__file__)))
+    dir_path = abspath(dir_path + "/ui")
 
     swagger_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
     swagger_blueprint.static("/", dir_path)
@@ -30,7 +29,6 @@ def blueprint_factory():
         return redirect("{}/".format(swagger_blueprint.url_prefix))
 
     @swagger_blueprint.route("/swagger.json")
-    @doc_route(exclude=True)
     def spec(request):
         return json(swagger_blueprint._spec.as_dict)
 
@@ -40,7 +38,6 @@ def blueprint_factory():
 
     @swagger_blueprint.listener("after_server_start")
     def build_spec(app, loop):
-
         # --------------------------------------------------------------- #
         # Blueprint Tags
         # --------------------------------------------------------------- #
@@ -80,7 +77,6 @@ def blueprint_factory():
 
             # route.name will be None when using class based view
             if route.name and "static" in route.name:
-                # TODO: add static flag in sanic routes
                 continue
 
             # --------------------------------------------------------------- #
@@ -170,7 +166,7 @@ def blueprint_factory():
                         "description": route_spec.produces.description,
                     }
                 elif not responses:
-                    responses["200"] = {"schema": None, "description": None}
+                    responses["200"] = {"description": "OK"}
 
                 y = YamlStyleParametersParser(inspect.getdoc(_handler))
                 autodoc_endpoint = y.to_openAPI_2()
@@ -221,7 +217,6 @@ def blueprint_factory():
         # Tags
         # --------------------------------------------------------------- #
 
-        # TODO: figure out how to get descriptions in these
         tags = {}
         for route_spec in route_specs.values():
             if route_spec.blueprint and route_spec.blueprint.name in ("swagger"):
