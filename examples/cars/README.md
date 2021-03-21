@@ -1,6 +1,6 @@
 ## Cars
 
-[Source](https://github.com/huge-success/sanic-openapi/tree/master/examples/cars)
+[Source](https://github.com/sanic-org/sanic-openapi/tree/master/examples/cars)
 
 This example shows how to use Sanic-OpenAPI with Sanic's Blueprint and model all the data into Sanic-OpenAPI's fields.
 
