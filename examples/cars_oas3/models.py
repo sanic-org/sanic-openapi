@@ -19,7 +19,7 @@ class Car:
     color = str
     make = Manufacturer
     driver = Driver
-    passengers = openapi.Array(Driver, required=True)
+    passengers = openapi.Array(Driver, required=["name", "birthday"])
 
 
 class Garage:

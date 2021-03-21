@@ -24,6 +24,8 @@ from .definitions import (
     Tag,
 )
 
+from ..utils import remove_nulls, remove_nulls_from_kwargs
+
 
 class OperationBuilder:
     summary: str
@@ -84,7 +86,12 @@ class OperationBuilder:
         self.security.append(gates)
 
     def build(self):
-        return Operation(**self.__dict__)
+        operation_dict = self.__dict__.copy()
+        if not self.responses:
+            # todo -- look into more consistent default response format
+            operation_dict['responses']['default'] = {"description": "OK"}
+
+        return Operation(**operation_dict)
 
 
 class SpecificationBuilder:
@@ -105,6 +112,7 @@ class SpecificationBuilder:
     def __init__(self):
         self._paths = defaultdict(dict)
         self._tags = {}
+        self._license = None
 
     def url(self, value: str):
         self._url = value
@@ -119,10 +127,12 @@ class SpecificationBuilder:
         self._tags[name] = Tag(name, **kwargs)
 
     def contact(self, name: str = None, url: str = None, email: str = None):
-        self._contact = Contact(name=name, url=url, email=email)
+        kwargs = remove_nulls_from_kwargs(name=name, url=url, email=email)
+        self._contact = Contact(**kwargs)
 
     def license(self, name: str = None, url: str = None):
-        self._license = License(name, url=url)
+        if name is not None:
+            self._license = License(name, url=url)
 
     def operation(self, path: str, method: str, operation: OperationBuilder):
         for _tag in operation.tags:
@@ -146,12 +156,12 @@ class SpecificationBuilder:
         return OpenAPI(info, paths, tags=tags, servers=servers)
 
     def _build_info(self) -> Info:
-        kwargs = {
+        kwargs = remove_nulls({
             "description": self._description,
             "termsOfService": self._terms,
             "license": self._license,
             "contact": self._contact,
-        }
+        }, deep=False)
 
         return Info(self._title, self._version, **kwargs)
 

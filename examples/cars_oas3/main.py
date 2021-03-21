@@ -19,7 +19,7 @@ app.blueprint(oas3_blueprint)
 
 app.config.API_VERSION = '1.0.0'
 app.config.API_TITLE = 'Car API'
-app.config.API_TERMS_OF_SERVICE = 'Use with caution!'
+app.config.API_TERMS_OF_SERVICE = 'http://example.org/TOS'
 app.config.API_CONTACT_EMAIL = 'channelcat@gmail.com'
 app.config.API_DESCRIPTION = 'Cars API example'
 
