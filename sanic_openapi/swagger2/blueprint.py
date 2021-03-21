@@ -1,15 +1,12 @@
 import inspect
-import re
-from itertools import repeat
 from os.path import abspath, dirname, realpath
 
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
-from sanic.views import CompositionView
 
 from ..autodoc import YamlStyleParametersParser
 from ..doc import RouteSpec, definitions, route_specs, serialize_schema
-from ..utils import get_uri_filter, remove_nulls
+from ..utils import remove_nulls, get_blueprinted_routes, get_all_routes
 from .spec import Spec as Swagger2Spec
 
 
@@ -41,59 +38,22 @@ def blueprint_factory():
         # Blueprint Tags
         # --------------------------------------------------------------- #
 
-        for blueprint in app.blueprints.values():
-            if not hasattr(blueprint, "routes"):
-                continue
-
-            for route in blueprint.routes:
-                if hasattr(route.handler, "view_class"):
-                    # class based view
-                    for http_method in route.methods:
-                        _handler = getattr(route.handler.view_class, http_method.lower(), None)
-                        if _handler:
-                            route_spec = route_specs[_handler]
-                            route_spec.blueprint = blueprint
-                            if not route_spec.tags:
-                                route_spec.tags.append(blueprint.name)
-                else:
-                    route_spec = route_specs[route.handler]
-                    route_spec.blueprint = blueprint
-                    if not route_spec.tags:
-                        route_spec.tags.append(blueprint.name)
+        for blueprint_name, handler in get_blueprinted_routes(app):
+            route_spec = route_specs[handler]
+            route_spec.blueprint = blueprint_name
+            if not route_spec.tags:
+                route_spec.tags.append(blueprint_name)
 
         paths = {}
-        uri_filter = get_uri_filter(app)
 
-        for uri, route in app.router.routes_all.items():
-
-            # Ignore routes under swagger blueprint
-            if route.uri.startswith(swagger_blueprint.url_prefix):
-                continue
-
-            # Apply the URI filter
-            if uri_filter(uri):
-                continue
-
-            # route.name will be None when using class based view
-            if route.name and "static" in route.name:
-                continue
+        for uri, route_name, route_parameters, method_handlers in get_all_routes(app, swagger_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods
             # --------------------------------------------------------------- #
 
-            # Build list of methods and their handler functions
-            handler_type = type(route.handler)
-            if handler_type is CompositionView:
-                view = route.handler
-                method_handlers = view.handlers.items()
-            else:
-                method_handlers = zip(route.methods, repeat(route.handler))
-
             methods = {}
             for _method, _handler in method_handlers:
-                if hasattr(_handler, "view_class"):
-                    _handler = getattr(_handler.view_class, _method.lower())
 
                 route_spec = route_specs.get(_handler) or RouteSpec()
 
@@ -108,7 +68,7 @@ def blueprint_factory():
 
                 # Parameters - Path & Query String
                 route_parameters = []
-                for parameter in route.parameters:
+                for parameter in route_parameters:
                     route_parameters.append(
                         {
                             **serialize_schema(parameter.cast),
@@ -181,7 +141,7 @@ def blueprint_factory():
 
                 endpoint = remove_nulls(
                     {
-                        "operationId": route_spec.operation or route.name,
+                        "operationId": route_spec.operation or route_name,
                         "summary": route_spec.summary,
                         "description": route_spec.description,
                         "consumes": consumes_content_types,
@@ -197,12 +157,8 @@ def blueprint_factory():
 
                 methods[_method.lower()] = endpoint
 
-            uri_parsed = uri
-            for parameter in route.parameters:
-                uri_parsed = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri_parsed)
-
             if methods:
-                paths[uri_parsed] = methods
+                paths[uri] = methods
 
         # --------------------------------------------------------------- #
         # Definitions
@@ -216,14 +172,12 @@ def blueprint_factory():
         # Tags
         # --------------------------------------------------------------- #
 
-        tags = {}
+        tags = set()
         for route_spec in route_specs.values():
-            if route_spec.blueprint and route_spec.blueprint.name in ("swagger"):
-                # TODO: add static flag in sanic routes
-                continue
-            for tag in route_spec.tags:
-                tags[tag] = True
-        _spec.add_tags(tags=[{"name": name} for name in tags.keys()])
+            if route_spec.blueprint != "swagger":
+                tags.update(route_spec.tags)
+
+        _spec.add_tags(tags=[{"name": name} for name in tags])
 
         _spec.add_paths(paths)
         swagger_blueprint._spec = _spec

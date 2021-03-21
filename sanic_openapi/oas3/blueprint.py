@@ -1,12 +1,9 @@
-import re
-from itertools import repeat
 from os.path import abspath, dirname, realpath
 
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
-from sanic.views import CompositionView
 
-from ..utils import get_uri_filter
+from ..utils import get_blueprinted_routes, get_all_routes
 from . import operations, specification
 
 
@@ -38,60 +35,21 @@ def blueprint_factory():
         # Blueprint Tags
         # --------------------------------------------------------------- #
 
-        for blueprint in app.blueprints.values():
-            if not hasattr(blueprint, "routes"):
-                continue
-
-            for route in blueprint.routes:
-                if hasattr(route.handler, "view_class"):
-                    # class based view
-                    for http_method in route.methods:
-                        _handler = getattr(route.handler.view_class, http_method.lower(), None)
-                        if _handler:
-                            operation = operations[_handler]
-                            if not operation.tags:
-                                operation.tag(blueprint.name)
-                else:
-                    operation = operations[route.handler]
-                    # operation.blueprint = _blueprint  # is this necc?
-                    if not operation.tags:
-                        operation.tag(blueprint.name)
-
-        uri_filter = get_uri_filter(app)
+        for blueprint_name, handler in get_blueprinted_routes(app):
+            operation = operations[handler]
+            if not operation.tags:
+                operation.tag(blueprint_name)
 
         # --------------------------------------------------------------- #
         # Operations
         # --------------------------------------------------------------- #
-        for uri, route in app.router.routes_all.items():
-
-            # Ignore routes under swagger blueprint
-            if route.uri.startswith(oas3_blueprint.url_prefix):
-                continue
-
-            # Apply the URI filter
-            if uri_filter(uri):
-                continue
-
-            # route.name will be None when using class based view
-            if route.name and "static" in route.name:
-                continue
+        for uri, route_name, route_parameters, method_handlers in get_all_routes(app, oas3_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods
             # --------------------------------------------------------------- #
 
-            # Build list of methods and their handler functions
-            handler_type = type(route.handler)
-            if handler_type is CompositionView:
-                view = route.handler
-                method_handlers = view.handlers.items()
-            else:
-                method_handlers = zip(route.methods, repeat(route.handler))
-
             uri = uri if uri == "/" else uri.rstrip("/")
-
-            for segment in route.parameters:
-                uri = re.sub("<" + segment.name + ".*?>", "{" + segment.name + "}", uri)
 
             for method, _handler in method_handlers:
 
@@ -105,7 +63,7 @@ def blueprint_factory():
                 # if not hasattr(operation, "operationId"):
                 #     operation.operationId = "%s_%s" % (method.lower(), route.name)
 
-                for _parameter in route.parameters:
+                for _parameter in route_parameters:
                     operation.parameter(_parameter.name, _parameter.cast, "path")
 
                 specification.operation(uri, method, operation)
