@@ -18,7 +18,7 @@ pip install sanic-openapi
 Or, use master banch from GitHub with latest features:
 
 ```shell
-pip install git+https://github.com/huge-success/sanic-openapi.git
+pip install git+https://github.com/sanic-org/sanic-openapi.git
 ```
 
 ## Getting Started
