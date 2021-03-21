@@ -8,8 +8,7 @@ from sanic.response import json, redirect
 from sanic.views import CompositionView
 
 from ..autodoc import YamlStyleParametersParser
-from ..doc import RouteSpec, definitions
-from ..doc import route_specs, serialize_schema
+from ..doc import RouteSpec, definitions, route_specs, serialize_schema
 from ..utils import get_uri_filter, remove_nulls
 from .spec import Spec as Swagger2Spec
 

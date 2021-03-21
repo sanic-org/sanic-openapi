@@ -6,6 +6,7 @@ for breaking user experience
 """
 from collections import defaultdict
 
+from ..utils import remove_nulls, remove_nulls_from_kwargs
 from .definitions import (
     Any,
     Contact,
@@ -23,8 +24,6 @@ from .definitions import (
     Server,
     Tag,
 )
-
-from ..utils import remove_nulls, remove_nulls_from_kwargs
 
 
 class OperationBuilder:
@@ -89,7 +88,7 @@ class OperationBuilder:
         operation_dict = self.__dict__.copy()
         if not self.responses:
             # todo -- look into more consistent default response format
-            operation_dict['responses']['default'] = {"description": "OK"}
+            operation_dict["responses"]["default"] = {"description": "OK"}
 
         return Operation(**operation_dict)
 
@@ -156,12 +155,15 @@ class SpecificationBuilder:
         return OpenAPI(info, paths, tags=tags, servers=servers)
 
     def _build_info(self) -> Info:
-        kwargs = remove_nulls({
-            "description": self._description,
-            "termsOfService": self._terms,
-            "license": self._license,
-            "contact": self._contact,
-        }, deep=False)
+        kwargs = remove_nulls(
+            {
+                "description": self._description,
+                "termsOfService": self._terms,
+                "license": self._license,
+                "contact": self._contact,
+            },
+            deep=False,
+        )
 
         return Info(self._title, self._version, **kwargs)
 
