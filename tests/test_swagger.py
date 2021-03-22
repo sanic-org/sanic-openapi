@@ -58,7 +58,7 @@ def test_swagger_endpoint_redirect(app):
 
 
 @pytest.mark.skip(
-    reason="https://github.com/huge-success/sanic-openapi/pull/111#pullrequestreview-255118509"
+    reason="https://github.com/sanic-org/sanic-openapi/pull/111#pullrequestreview-255118509"
 )
 def test_swagger_json(app):
     _, response = app.test_client.get("/swagger/swagger.json")
@@ -90,7 +90,7 @@ def test_document_route(app, method):
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
                 "parameters": [],
-                "responses": {"200": {}},
+                "responses": {'200': {'description': 'OK'}},
             }
         }
     }
@@ -122,7 +122,7 @@ def test_document_blueprint_route(app, method):
                 "produces": ["application/json"],
                 "tags": ["test"],
                 "parameters": [],
-                "responses": {"200": {}},
+                "responses": {'200': {'description': 'OK'}},
             }
         }
     }

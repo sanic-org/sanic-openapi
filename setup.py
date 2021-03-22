@@ -7,7 +7,7 @@ import re
 
 from setuptools import setup
 
-install_requires = ["sanic>=18.12.0", "pyyaml>=5.4.1"]
+install_requires = ["sanic>=18.12.0", "pyyaml>=3.0.0"]
 
 dev_requires = ["black==19.3b0", "flake8==3.7.7", "isort==4.3.19"]
 
@@ -38,7 +38,7 @@ with open(os.path.join(project_root, "README.md"), "r") as f:
 setup(
     name="sanic-openapi",
     version=version,
-    url="http://github.com/channelcat/sanic-openapi/",
+    url="http://github.com/sanic-org/sanic-openapi/",
     license="MIT",
     author="Sanic Community",
     description="Easily document your Sanic API with a UI.",
@@ -54,11 +54,11 @@ setup(
         "doc": doc_requires,
     },
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )

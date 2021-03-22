@@ -3,6 +3,9 @@ from typing import Any, NamedTuple, Optional
 
 from . import doc
 
+# The classes defined in this file are deprecated, and will be removed
+# An appropriate warning is raised below
+
 
 class Response(NamedTuple("Response", [("code", int), ("model", Any), ("description", Optional[str])])):
     """

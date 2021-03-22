@@ -1,3 +1,8 @@
+import re
+
+from sanic.views import CompositionView
+
+
 def get_uri_filter(app):
     """
     Return a filter function that takes a URI and returns whether it should
@@ -32,3 +37,55 @@ def remove_nulls(dictionary, deep=True):
     Removes all null values from a dictionary.
     """
     return {k: remove_nulls(v, deep) if deep and type(v) is dict else v for k, v in dictionary.items() if v is not None}
+
+
+def remove_nulls_from_kwargs(**kwargs):
+    return remove_nulls(kwargs, deep=False)
+
+
+def get_blueprinted_routes(app):
+    for blueprint in app.blueprints.values():
+        if not hasattr(blueprint, "routes"):
+            continue
+
+        for route in blueprint.routes:
+            if hasattr(route.handler, "view_class"):
+                # class based view
+                for http_method in route.methods:
+                    _handler = getattr(route.handler.view_class, http_method.lower(), None)
+                    if _handler:
+                        yield (blueprint.name, _handler)
+            else:
+                yield (blueprint.name, route.handler)
+
+
+def get_all_routes(app, skip_prefix):
+    uri_filter = get_uri_filter(app)
+    for uri, route in app.router.routes_all.items():
+        # Ignore routes under swagger blueprint
+        if route.uri.startswith(skip_prefix):
+            continue
+
+        # Apply the URI filter
+        if uri_filter(uri):
+            continue
+
+        # route.name will be None when using class based view
+        if route.name and "static" in route.name:
+            continue
+
+        # create dict httpMethod -> handler
+        # e.g.  {"GET" -> lambda request: response}
+
+        if type(route.handler) is CompositionView:
+            method_handlers = route.handler.handlers
+
+        elif hasattr(route.handler, "view_class"):
+            method_handlers = {method: getattr(route.handler.view_class, method.lower()) for method in route.methods}
+        else:
+            method_handlers = {method: route.handler for method in route.methods}
+
+        for parameter in route.parameters:
+            uri = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri)
+
+        yield uri, route.name, route.parameters, method_handlers.items()

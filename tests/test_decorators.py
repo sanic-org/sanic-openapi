@@ -121,7 +121,7 @@ def test_consumes(app, consumes_args, consumes_kwargs, parameters):
 @pytest.mark.parametrize(
     "produces_args, produces_kwargs, responses",
     [
-        ([], {}, {"200": {}}),
+        ([], {}, {'200': {'description': 'OK'}}),
         ([doc.String], {}, {"200": {"schema": {"type": "string"}}}),
         (
             [TestSchema],
@@ -147,7 +147,7 @@ def test_produces(app, produces_args, produces_kwargs, responses):
 @pytest.mark.parametrize(
     "response_args, responses",
     [
-        ([], {"200": {}}),
+        ([], {'200': {'description': 'OK'}}),
         ([201, {}], {"201": {"schema": {"type": "object", "properties": {}}}}),
     ],
 )
@@ -169,7 +169,7 @@ def test_response(app, response_args, responses):
 @pytest.mark.parametrize(
     "produces_args, produces_kwargs, response_args, responses",
     [
-        ([], {}, [], {"200": {}}),
+        ([], {}, [], {'200': {'description': 'OK'}}),
         ([doc.String], {}, [200, {}], {"200": {"schema": {"type": "string"}}}),
         (
             [TestSchema],

@@ -10,12 +10,15 @@ class Spec:
             "title": getattr(app.config, "API_TITLE", "API"),
             "description": getattr(app.config, "API_DESCRIPTION", ""),
             "termsOfService": getattr(app.config, "API_TERMS_OF_SERVICE", ""),
-            "contact": {"email": getattr(app.config, "API_CONTACT_EMAIL", None)},
             "license": {
-                "name": getattr(app.config, "API_LICENSE_NAME", None),
-                "url": getattr(app.config, "API_LICENSE_URL", None),
+                "name": getattr(app.config, "API_LICENSE_NAME", ""),
+                "url": getattr(app.config, "API_LICENSE_URL", ""),
             },
         }
+
+        if hasattr(app.config, "API_CONTACT_EMAIL"):
+            self.info["contact"] = {"email": app.config.API_CONTACT_EMAIL}
+
         self.schemes = getattr(app.config, "API_SCHEMES", ["http"])
 
         self.host = getattr(app.config, "API_HOST", None)
@@ -26,8 +29,11 @@ class Spec:
         # Authorization
         # --------------------------------------------------------------- #
 
-        self.securityDefinitions = getattr(app.config, "API_SECURITY_DEFINITIONS", None)
-        self.security = getattr(app.config, "API_SECURITY", None)
+        if hasattr(app.config, "API_SECURITY_DEFINITIONS"):
+            self.securityDefinitions = app.config.API_SECURITY_DEFINITIONS
+
+        if hasattr(app.config, "API_SECURITY"):
+            self.security = app.config.API_SECURITY
 
         self.definitions = {}
         self.tags = []

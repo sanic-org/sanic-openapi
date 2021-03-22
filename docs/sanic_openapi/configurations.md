@@ -150,7 +150,7 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(swagger_blueprint)
-    app.config["API_TERMS_OF_SERVICE"] = "https://github.com/huge-success/sanic-openapi/blob/master/README.md"
+    app.config["API_TERMS_OF_SERVICE"] = "https://github.com/sanic-org/sanic-openapi/blob/master/README.md"
 
   ```
 
@@ -210,7 +210,7 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(swagger_blueprint)
-    app.config["API_LICENSE_URL"] = "https://github.com/huge-success/sanic-openapi/blob/master/LICENSE"
+    app.config["API_LICENSE_URL"] = "https://github.com/sanic-org/sanic-openapi/blob/master/LICENSE"
 
     ```
 

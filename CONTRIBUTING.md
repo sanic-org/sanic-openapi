@@ -64,7 +64,7 @@ Please make sure your contribution supports `Sanic 18.12` and `Python 3.5` **UNL
 
 Some discussion of compatibility:
 
-* [What position of this project](https://github.com/huge-success/sanic-openapi/issues/103#issuecomment-499463005)
+* [What position of this project](https://github.com/sanic-org/sanic-openapi/issues/103#issuecomment-499463005)
 * [Background story](https://community.sanicframework.org/t/should-we-bump-the-minimum-python-required-version-to-3-6/238/6?u=ahopkins)
 
 ## Swagger UI

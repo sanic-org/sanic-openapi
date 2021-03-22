@@ -4,7 +4,7 @@ from sanic.response import json
 
 from sanic_openapi import doc, swagger_blueprint
 
-app = Sanic()
+app = Sanic("Class Based View example")
 
 app.blueprint(swagger_blueprint)
 app.blueprint(blueprint)
