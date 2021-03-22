@@ -1,8 +1,7 @@
 import pytest
-from sanic.response import text
 
+from sanic.response import text
 from sanic_openapi import doc
-from sanic_openapi.doc import RouteField
 
 
 @pytest.mark.parametrize(
@@ -10,11 +9,11 @@ from sanic_openapi.doc import RouteField
     [
         ({"summary": "test"}, {"summary": "test"}),
         ({"description": "test"}, {"description": "test"}),
-        ({"consumes": [RouteField(str)]}, {}),
-        ({"produces": RouteField(str)}, {}),
+        ({"consumes": [doc.RouteField(str)]}, {}),
+        ({"produces": doc.RouteField(str)}, {}),
         ({"consumes_content_type": ["text/html"]}, {"consumes": ["text/html"]}),
         ({"produces_content_type": ["text/html"]}, {"produces": ["text/html"]}),
-        ({"response": [{400, RouteField(str)}]}, {}),
+        ({"response": [{400, doc.RouteField(str)}]}, {}),
     ],
 )
 def test_route(app, route_kwargs, route_fields):

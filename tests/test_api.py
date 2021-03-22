@@ -5,8 +5,8 @@ from inspect import isawaitable
 from sanic import Sanic
 from sanic.response import HTTPResponse
 
-from sanic_openapi import api, doc, swagger_blueprint
-
+from sanic_openapi import doc, openapi2_blueprint
+from sanic_openapi.openapi2 import api
 
 def test_message_api_response():
     """
@@ -117,7 +117,7 @@ def get_app():
     by `get_benchmark_app()`, so that application can serve as a benchmark in test cases.
     """
     app = Sanic("test_api_{}".format(next(app_ID)))
-    app.blueprint(swagger_blueprint)
+    app.blueprint(openapi2_blueprint)
 
     @MessageAPI.post(app, "/message")
     def message(request):
@@ -176,7 +176,7 @@ def get_benchmark_app():
     by `get_app()`, so this application can serve as a benchmark in test cases.
     """
     app = Sanic("test_api_benchmark_{}".format(next(benchmark_app_ID)))
-    app.blueprint(swagger_blueprint)
+    app.blueprint(openapi2_blueprint)
 
     @app.post("/message")
     @doc.summary("MessageAPI summary.")
