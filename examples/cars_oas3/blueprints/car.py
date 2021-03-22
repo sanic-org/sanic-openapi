@@ -7,10 +7,6 @@ from sanic_openapi import openapi
 
 blueprint = Blueprint('Car', '/car')
 
-class ApiKey:
-    name="api_key"
-    location="header"
-
 
 @blueprint.get("/", strict_slashes=True)
 @openapi.summary("Fetches all cars")
@@ -34,7 +30,7 @@ def car_get(request, car_id):
     description="Body description",
     required=True,
 )
-@openapi.secured("apiKey", ApiKey)
+@openapi.parameter("AUTHORIZATION", str, location="header")
 @openapi.response(200, {"application/json" : Car})
 def car_put(request, car_id):
     return json(test_car)

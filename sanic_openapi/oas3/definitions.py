@@ -204,8 +204,7 @@ class SecurityScheme(Definition):
     def fields(self):
         values = super().fields
 
-        if "location" in values:
-            values["in"] = values.pop("location")
+        values["in"] = values.pop("location")
 
         return values
 
