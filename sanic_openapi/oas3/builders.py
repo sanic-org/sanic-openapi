@@ -21,6 +21,7 @@ from .definitions import (
     PathItem,
     RequestBody,
     Response,
+    SecurityScheme,
     Server,
     Tag,
 )
@@ -75,14 +76,8 @@ class OperationBuilder:
         self.responses[status] = Response.make(content, description, **kwargs)
 
     def secured(self, *args, **kwargs):
-        items = {**{v: [] for v in args}, **kwargs}
-        gates = {}
-
-        for name, params in items.items():
-            gate = name.__name__ if isinstance(name, type) else name
-            gates[gate] = params
-
-        self.security.append(gates)
+        items = SecurityScheme.make(*args, **kwargs)
+        self.security.append(items)
 
     def build(self):
         operation_dict = self.__dict__.copy()
