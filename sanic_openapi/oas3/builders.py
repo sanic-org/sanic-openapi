@@ -100,8 +100,6 @@ class SpecificationBuilder:
     _tags: Dict[str, Tag]
     # _components: ComponentsBuilder
     # deliberately not included
-    #   -- doesnt fit in well with the auto-generated style of sanic-openapi
-    #      but could be put here down the line if desired...
 
     def __init__(self):
         self._paths = defaultdict(dict)

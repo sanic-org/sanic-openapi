@@ -100,8 +100,10 @@ def blueprint_factory():
 
                 operation = operations[_handler]
 
-                if not hasattr(operation, "operationId"):
-                    operation.operationId = "%s_%s" % (method.lower(), route.name)
+                # operation ID must be unique, and it isnt currently used for
+                # anything in UI, so dont add something meaningless
+                # if not hasattr(operation, "operationId"):
+                #     operation.operationId = "%s_%s" % (method.lower(), route.name)
 
                 for _parameter in route.parameters:
                     operation.parameter(_parameter.name, _parameter.cast, "path")
