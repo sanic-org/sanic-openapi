@@ -81,12 +81,9 @@ def get_all_routes(app, skip_prefix):
             method_handlers = route.handler.handlers
 
         elif hasattr(route.handler, "view_class"):
-            method_handlers = {
-                method: getattr(route.handler.view_class, method.lower())
-                for method in route.methods}
+            method_handlers = {method: getattr(route.handler.view_class, method.lower()) for method in route.methods}
         else:
-            method_handlers = {method: route.handler
-                               for method in route.methods}
+            method_handlers = {method: route.handler for method in route.methods}
 
         for parameter in route.parameters:
             uri = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri)

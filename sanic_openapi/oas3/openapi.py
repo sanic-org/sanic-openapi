@@ -100,7 +100,8 @@ def response(status, content: Any = None, description: str = None, **kwargs):
 def secured(*args, **kwargs):
     raise NotImplementedError(
         "SecuritySchemas are not yet implemented in sanic-openapi 0.6.3, "
-        "hopefully they should be ready for the next release.")
+        "hopefully they should be ready for the next release."
+    )
 
     def inner(func):
         operations[func].secured(*args, **kwargs)

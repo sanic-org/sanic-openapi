@@ -6,7 +6,7 @@ from sanic.response import json, redirect
 
 from ..autodoc import YamlStyleParametersParser
 from ..doc import RouteSpec, definitions, route_specs, serialize_schema
-from ..utils import remove_nulls, get_blueprinted_routes, get_all_routes
+from ..utils import get_all_routes, get_blueprinted_routes, remove_nulls
 from .spec import Spec as Swagger2Spec
 
 
