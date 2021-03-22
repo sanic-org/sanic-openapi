@@ -49,8 +49,26 @@ def get_blueprinted_routes(app):
             continue
 
         for route in blueprint.routes:
+            if not hasattr(route, "handler"):
+                # in sanic 21.3, "route" is now something different:
+                #   an instance of sanic_routing.route.Route
+                # can't typecheck because code needs to be compatible
+                # with older sanic versions, but "handler" does not exist
+                # on sanic>=21.3 route
+                #
+                # the good news - now class based views are already handled
+                for method_handlers in route.handlers.values():
+                    for handler in method_handlers.values():
+                        if len(handler):
+                            # handler is a list of functions
+                            # can be size zero for some reason, not sure when
+                            # that occurs ...
+                            yield (blueprint.name, handler[0])
+                continue
+
             if hasattr(route.handler, "view_class"):
-                # class based view
+                # before sanic 21.3, route.handler could be a number of
+                # different things, so have to type check
                 for http_method in route.methods:
                     _handler = getattr(route.handler.view_class, http_method.lower(), None)
                     if _handler:
@@ -62,6 +80,43 @@ def get_blueprinted_routes(app):
 def get_all_routes(app, skip_prefix):
     uri_filter = get_uri_filter(app)
     for uri, route in app.router.routes_all.items():
+
+        if not hasattr(route, "handler"):
+            # new sanic 21.3 style route...
+
+            # prior to sanic 21.3 routes came in both forms 
+            # (e.g. /test and /test/ )
+
+            # after sanic 21.3 routes come in one form, with an attribute "strict"
+            # so we simulate that ourselves:
+
+            if route.strict:
+                uris = ['/' + '/'.join(uri)]
+            else:
+                uris = ['/' + '/'.join(uri), '/' + '/'.join(uri) + '/']
+
+            for uri in uris:
+                if uri_filter(uri):
+                    continue
+
+                if route.raw_path.startswith(skip_prefix.lstrip('/')):
+                    continue
+
+                if route.name and "static" in route.name:
+                    continue
+
+                for parameter in route.params.values():
+                    uri = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri)
+
+                for method_handlers in route.handlers.values():
+
+                    # same check as before, to handle case when list is of size 1
+                    method_handlers = {k: v[0] for k, v in method_handlers.items() if len(v)}
+
+                    yield (uri, route.name, route.params.values(), method_handlers.items())
+
+            continue
+
         # Ignore routes under swagger blueprint
         if route.uri.startswith(skip_prefix):
             continue
@@ -81,9 +136,12 @@ def get_all_routes(app, skip_prefix):
             method_handlers = route.handler.handlers
 
         elif hasattr(route.handler, "view_class"):
-            method_handlers = {method: getattr(route.handler.view_class, method.lower()) for method in route.methods}
+            method_handlers = {
+                method: getattr(route.handler.view_class, method.lower())
+                for method in route.methods}
         else:
-            method_handlers = {method: route.handler for method in route.methods}
+            method_handlers = {method: route.handler
+                               for method in route.methods}
 
         for parameter in route.parameters:
             uri = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri)

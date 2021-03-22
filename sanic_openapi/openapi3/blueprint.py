@@ -6,6 +6,13 @@ from sanic.response import json, redirect
 from ..utils import get_all_routes, get_blueprinted_routes
 from . import operations, specification
 
+# TODO - move out of this branch, into helpers -- posibly with UI update
+
+DEFAULT_SWAGGER_UI_CONFIG = {
+        "apisSorter": "alpha",
+        "operationsSorter": "alpha",
+}
+
 
 def blueprint_factory():
     oas3_blueprint = Blueprint("openapi", url_prefix="/swagger")
@@ -17,9 +24,9 @@ def blueprint_factory():
     oas3_blueprint.static("/", dir_path)
 
     # Redirect "/swagger" to "/swagger/"
-    @oas3_blueprint.route("", strict_slashes=True)
-    def index(request):
-        return redirect("{}/".format(oas3_blueprint.url_prefix))
+    # @oas3_blueprint.route("", strict_slashes=True)
+    # def index(request):
+        # return redirect("{}/".format(oas3_blueprint.url_prefix))
 
     @oas3_blueprint.route("/swagger.json")
     def spec(request):
@@ -27,7 +34,8 @@ def blueprint_factory():
 
     @oas3_blueprint.route("/swagger-config")
     def config(request):
-        return json(getattr(request.app.config, "SWAGGER_UI_CONFIGURATION", {}))
+        return json(getattr(request.app.config, "SWAGGER_UI_CONFIGURATION",
+                            DEFAULT_SWAGGER_UI_CONFIG))
 
     @oas3_blueprint.listener("before_server_start")
     def build_spec(app, loop):

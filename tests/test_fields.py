@@ -257,20 +257,6 @@ def test_uuid_field(app):
     def test(request):
         return HTTPResponse(status=204)
 
-    _, response = app.test_client.get("/swagger/swagger.json")
-    assert response.status == 200
-    assert response.content_type == "application/json"
-
-    swagger_json = response.json
-    path = swagger_json["paths"]["/{id}"]["get"]
-    assert path["parameters"][0] == {
-        "in": "path",
-        "name": "id",
-        "type": "string",
-        "format": "uuid",
-        "required": True,
-    }
-
     @app.get("/")
     @doc.consumes(field, location="formData", required=True)
     @doc.response(204, {})
@@ -282,6 +268,16 @@ def test_uuid_field(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
+
+    path = swagger_json["paths"]["/{id}"]["get"]
+    assert path["parameters"][0] == {
+        "in": "path",
+        "name": "id",
+        "type": "string",
+        "format": "uuid",
+        "required": True,
+    }
+
     path = swagger_json["paths"]["/"]["get"]
     assert path["parameters"][0] == {
         "in": "formData",

@@ -57,7 +57,7 @@ def blueprint_factory():
 
                 route_spec = route_specs.get(_handler) or RouteSpec()
 
-                if _method == "OPTIONS" or route_spec.exclude:
+                if route_spec.exclude:
                     continue
 
                 api_consumes_content_types = getattr(app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"])
