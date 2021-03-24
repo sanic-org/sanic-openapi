@@ -5,9 +5,7 @@ from inspect import isawaitable
 from sanic import Sanic
 from sanic.response import HTTPResponse, json as json_response
 
-from sanic_openapi import api, openapi, oas3_blueprint
-
-from sanic_openapi.oas3 import openapi
+from sanic_openapi import openapi, openapi3_blueprint
 
 
 def test_documentation():
@@ -40,7 +38,7 @@ def get_app():
     Creates a Sanic application whose routes are documented using the `openPI` module.
     """
     app = Sanic("test_api_oas3_{}".format(next(app_ID)))
-    app.blueprint(oas3_blueprint)
+    app.blueprint(openapi3_blueprint)
 
 
     class Car:

@@ -5,8 +5,8 @@ from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 
 from ..autodoc import YamlStyleParametersParser
-from ..doc import RouteSpec, definitions, route_specs, serialize_schema
 from ..utils import get_all_routes, get_blueprinted_routes, remove_nulls
+from .doc import RouteSpec, definitions, route_specs, serialize_schema
 from .spec import Spec as Swagger2Spec
 
 

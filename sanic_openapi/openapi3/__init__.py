@@ -7,3 +7,8 @@ from .builders import OperationBuilder, SpecificationBuilder
 
 operations = defaultdict(OperationBuilder)
 specification = SpecificationBuilder()
+
+from .blueprint import blueprint_factory
+
+
+openapi3_blueprint = blueprint_factory()

@@ -2,7 +2,7 @@ import itertools
 import pytest
 from sanic import Sanic
 
-import sanic_openapi
+from sanic_openapi import openapi2_blueprint
 
 app_ID = itertools.count()
 
@@ -10,8 +10,8 @@ app_ID = itertools.count()
 @pytest.fixture()
 def app():
     app = Sanic("test_{}".format(next(app_ID)))
-    app.blueprint(sanic_openapi.swagger_blueprint)
+    app.blueprint(openapi2_blueprint)
     yield app
 
     # Clean up
-    sanic_openapi.swagger.definitions = {}
+    openapi2_blueprint.definitions = {}
