@@ -84,22 +84,22 @@ def get_all_routes(app, skip_prefix):
         if not hasattr(route, "handler"):
             # new sanic 21.3 style route...
 
-            # prior to sanic 21.3 routes came in both forms 
+            # prior to sanic 21.3 routes came in both forms
             # (e.g. /test and /test/ )
 
             # after sanic 21.3 routes come in one form, with an attribute "strict"
             # so we simulate that ourselves:
 
             if route.strict:
-                uris = ['/' + '/'.join(uri)]
+                uris = ["/" + "/".join(uri)]
             else:
-                uris = ['/' + '/'.join(uri), '/' + '/'.join(uri) + '/']
+                uris = ["/" + "/".join(uri), "/" + "/".join(uri) + "/"]
 
             for uri in uris:
                 if uri_filter(uri):
                     continue
 
-                if route.raw_path.startswith(skip_prefix.lstrip('/')):
+                if route.raw_path.startswith(skip_prefix.lstrip("/")):
                     continue
 
                 if route.name and "static" in route.name:
@@ -136,12 +136,9 @@ def get_all_routes(app, skip_prefix):
             method_handlers = route.handler.handlers
 
         elif hasattr(route.handler, "view_class"):
-            method_handlers = {
-                method: getattr(route.handler.view_class, method.lower())
-                for method in route.methods}
+            method_handlers = {method: getattr(route.handler.view_class, method.lower()) for method in route.methods}
         else:
-            method_handlers = {method: route.handler
-                               for method in route.methods}
+            method_handlers = {method: route.handler for method in route.methods}
 
         for parameter in route.parameters:
             uri = re.sub("<" + parameter.name + ".*?>", "{" + parameter.name + "}", uri)
