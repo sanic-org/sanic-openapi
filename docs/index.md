@@ -47,15 +47,10 @@ if __name__ == "__main__":
 And you can get your Swagger document at <http://localhost:8000/swagger> like this:
 ![](_static/images/hello_world_example.png)
 
-## Contents
+## Content
 
-* [Document Routes](sanic_openapi/document_routes)
-* [Configurations](sanic_openapi/configurations)
-* [Decorators](sanic_openapi/decorators)
-* [Fields](sanic_openapi/fields)
-* [API Factory](sanic_openapi/api_factory)
-* [Examples](sanic_openapi/examples)
-* [API Reference](sanic_openapi/api_reference)
+* [Sanic OpenAPI 2](/sanic_openapi2/index)
+* [Sanic OpenAPI 3](/sanic_openapi3/index)
 
 ## Indices and tables
 

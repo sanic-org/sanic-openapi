@@ -4,7 +4,7 @@ sanic-openAPI will try to parse your function for documentation to add to the sw
 
 ```python
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -27,7 +27,7 @@ Note: any decorators you use on the function must utilise functools.wraps or sim
 
 ```python
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")

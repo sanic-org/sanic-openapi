@@ -18,7 +18,7 @@ This section will explain how to document routes with above cases.
 
 ## Basic Routes
 
-To use Sanic-OpenAPI with basic routes, you only have to register `swagger_blueprint` and it will be all set.
+To use Sanic-OpenAPI with basic routes, you only have to register `openapi3_blueprint` and it will be all set.
 
 For example:
 
@@ -26,10 +26,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import openapi3_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi3_blueprint)
 
 
 @app.route("/")
@@ -55,10 +55,10 @@ You can aldo document routes under any `Blueprint` like this:
 from sanic import Blueprint, Sanic
 from sanic.response import json
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import openapi3_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi3_blueprint)
 
 bp = Blueprint("bp", url_prefix="/bp")
 
@@ -89,10 +89,10 @@ from sanic import Sanic
 from sanic.response import text
 from sanic.views import HTTPMethodView
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import openapi3_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi3_blueprint)
 
 
 class SimpleView(HTTPMethodView):
@@ -134,10 +134,10 @@ from sanic import Blueprint, Sanic
 from sanic.response import text
 from sanic.views import HTTPMethodView
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import openapi3_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi3_blueprint)
 
 bp = Blueprint("bp", url_prefix="/bp")
 
@@ -183,10 +183,10 @@ from sanic import Sanic
 from sanic.response import text
 from sanic.views import CompositionView
 
-from sanic_openapi import swagger_blueprint
+from sanic_openapi import openapi3_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi3_blueprint)
 
 
 def get_handler(request):

@@ -10,10 +10,10 @@ When you don't want to document some route in Swagger, you can use `exclude(True
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -39,10 +39,10 @@ You can add a short summary to your route by using `summary()` decorator. It is 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -63,10 +63,10 @@ Not only short summary, but also long description of your API route can be addre
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -86,10 +86,10 @@ If you want to group your API routes, you can use `tag()` decorator to accomplis
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -113,10 +113,10 @@ The `operation()` decorator would be useful when your routes have duplicate name
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -140,10 +140,10 @@ To document the parameter in query string, you can use `location="query"` in `co
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -166,10 +166,10 @@ For doucument parameters in header, you can set `location="header"` with simple 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -190,10 +190,10 @@ In most cases, your APIs might contains lots of parameter in your request body. 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class User:
@@ -222,10 +222,10 @@ The `produces()` decorator is used to document the default response(with status 
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class Test:
@@ -246,13 +246,13 @@ As you can see in this example, you can also use Python class in `produces()` de
 To document responses not with status `200`, you can use `response()` decorator. For example:
 
 ```python
-ffrom sanic import Sanic
+from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
