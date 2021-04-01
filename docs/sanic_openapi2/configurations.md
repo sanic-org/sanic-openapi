@@ -110,7 +110,7 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi2_blueprint)
-    app.config["API_TITLE"] = "Sanci-OpenAPI"
+    app.config["API_TITLE"] = "Sanic-OpenAPI"
 
     ```
 
