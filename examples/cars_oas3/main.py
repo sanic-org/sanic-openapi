@@ -5,7 +5,7 @@ from blueprints.manufacturer import blueprint as manufacturer_blueprint
 from blueprints.repair import blueprint as repair_blueprint
 from sanic import Sanic
 
-from sanic_openapi import oas3_blueprint
+from sanic_openapi import openapi3_blueprint
 
 app = Sanic("Cars API example")
 
@@ -15,7 +15,7 @@ app.blueprint(garage_blueprint)
 app.blueprint(manufacturer_blueprint)
 app.blueprint(repair_blueprint)
 
-app.blueprint(oas3_blueprint)
+app.blueprint(openapi3_blueprint)
 
 app.config.API_VERSION = '1.0.0'
 app.config.API_TITLE = 'Car API'
