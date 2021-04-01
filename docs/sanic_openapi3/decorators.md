@@ -12,7 +12,7 @@ from sanic.response import json
 
 from sanic_openapi import openapi, openapi3_blueprint
 
-app = Sanic()
+app = Sanic("Hello world")
 app.blueprint(openapi3_blueprint)
 
 
@@ -20,11 +20,10 @@ app.blueprint(openapi3_blueprint)
 @openapi.summary("Test route")
 async def test(request):
     return json({"Hello": "World"})
-
 ```
 
 The summary will show behind the path:
-![](../_static/images/decorators/sumary.png)
+![](../_static/images3/decorators/sumary.png)
 
 ## Description
 
@@ -47,7 +46,7 @@ async def test(request):
 ```
 
 To see the description, you have to expand the content of route and it would looks like:
-![](../_static/images/decorators/description.png)
+![](../_static/images3/decorators/description.png)
 
 ## Tag
 
@@ -71,7 +70,7 @@ async def test(request):
 ```
 
 And you can see the tag is change from `default` to `test`:
-![](../_static/images/decorators/tag.png)
+![](../_static/images3/decorators/tag.png)
 
 By default, all routes register under Sanic will be tag with `default`. And all routes under Blueprint will be tag with the blueprint name.
 
@@ -125,7 +124,7 @@ async def test(request):
 ```
 
 You can expand the contents of route and it will looks like:
-![](../_static/images/decorators/consumes_query.png)
+![](../_static/images3/decorators/consumes_query.png)
 
 When using `parameter()` with `location="query"`, it only support simple types like `str`, `int` but no complex types like `dict`.
 
@@ -151,7 +150,7 @@ async def test(request):
 ```
 
 It will looks like:
-![](../_static/images/decorators/consumes_header.png)
+![](../_static/images3/decorators/consumes_header.png)
 
 ### Request Body
 
@@ -187,7 +186,7 @@ async def test(request):
 ```
 
 This will be document like:
-![](../_static/images/decorators/consumes_body.png)
+![](../_static/images3/decorators/consumes_body.png)
 
 ## Produces
 
@@ -214,4 +213,4 @@ async def test(request):
 ```
 
 As you can see in this example, you can also use Python class in `produces()` decorator.
-![](../_static/images/decorators/produces.png)
+![](../_static/images3/decorators/produces.png)

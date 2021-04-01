@@ -28,7 +28,7 @@ from sanic.response import json
 
 from sanic_openapi import openapi3_blueprint
 
-app = Sanic()
+app = Sanic("Hello world")
 app.blueprint(openapi3_blueprint)
 
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 ```
 
 As you can see the result at <http://localhost:8000/swagger>, the Swagger is documented a route `/` with `GET` method.
-![](../_static/images/hello_world_example.png)
+![](../_static/images3/hello_world_example.png)
 
 If you want to add some additional information to this route, you can use other [decorators](decorators) like `summary()`, `description()`, and etc.
 
@@ -57,7 +57,7 @@ from sanic.response import json
 
 from sanic_openapi import openapi3_blueprint
 
-app = Sanic()
+app = Sanic("Hello world")
 app.blueprint(openapi3_blueprint)
 
 bp = Blueprint("bp", url_prefix="/bp")
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 ```
 
 The result looks like:
-![](../_static/images/blueprint_example.png)
+![](../_static/images3/blueprint_example.png)
 
 When you document routes under `Blueprint` instance, they will be document with `tags` which using the `Blueprint`'s name.
 
@@ -91,7 +91,7 @@ from sanic.views import HTTPMethodView
 
 from sanic_openapi import openapi3_blueprint
 
-app = Sanic()
+app = Sanic("Hello world")
 app.blueprint(openapi3_blueprint)
 
 
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 ```
 
 And the result:
-![](../_static/images/class_based_view_example.png)
+![](../_static/images3/class_based_view_example.png)
 
 Please note that Sanic-OpenAPI will not document any routes with `OPTIONS` method.
 
@@ -171,7 +171,7 @@ if __name__ == "__main__":
 ```
 
 The result:
-![](../_static/images/blueprint_class_based_view_example.png)
+![](../_static/images3/blueprint_class_based_view_example.png)
 
 
 ## CompositionView Routes
@@ -206,7 +206,7 @@ if __name__ == "__main__":
 ```
 
 The Swagger will looks like:
-![](../_static/images/composition_view_example.png)
+![](../_static/images3/composition_view_example.png)
 
 ```eval_rst
 .. note:: Sanic-OpenAPI does not support routes of `CompositionView` under `Bluebprint` instance now.

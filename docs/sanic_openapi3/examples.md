@@ -1,4 +1,3 @@
 # Examples
 
-* [Cars](/sanic_openapi/examples/cars/README)
-* [Class Based View](/sanic_openapi/examples/class_based_view/README)
+* [Cars](https://github.com/sanic-org/sanic-openapi/tree/master/examples/cars_oas3)
