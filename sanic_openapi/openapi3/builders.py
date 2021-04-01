@@ -94,7 +94,7 @@ class OperationBuilder:
 
 
 class SpecificationBuilder:
-    _url: str
+    _urls: List[str]
     _title: str
     _version: str
     _description: str
@@ -110,9 +110,10 @@ class SpecificationBuilder:
         self._paths = defaultdict(dict)
         self._tags = {}
         self._license = None
+        self._urls = []
 
     def url(self, value: str):
-        self._url = value
+        self._urls.append(value)
 
     def describe(self, title: str, version: str, description: str = None, terms: str = None):
         self._title = title
@@ -145,10 +146,11 @@ class SpecificationBuilder:
         paths = self._build_paths()
         tags = self._build_tags()
 
-        if getattr(self, "_url", None) is not None:
-            servers = [Server(url=self._url)]
-        else:
-            servers = []
+        url_servers = getattr(self, "_urls", None) 
+        servers = []
+        if url_servers is not None:
+            for url_server in url_servers:
+                servers.append(Server(url=url_server))
 
         return OpenAPI(info, paths, tags=tags, servers=servers)
 

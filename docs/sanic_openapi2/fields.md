@@ -26,10 +26,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -50,10 +50,10 @@ Using the `float` or `doc.Float` is quite similar with `doc.integer`:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -74,10 +74,10 @@ The `doc.String` might be the most common filed in API documents. You can use it
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -100,10 +100,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -130,10 +130,10 @@ from datetime import datetime
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -156,10 +156,10 @@ from datetime import datetime
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.get("/test")
@@ -181,10 +181,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.post("/test")
@@ -214,10 +214,10 @@ To document you request or response body, the `doc.JsonBody` is the best choice.
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 @app.post("/test")
@@ -252,10 +252,10 @@ For example:
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class User:
@@ -285,10 +285,10 @@ In Sanic-OpenAPI, you can document your data as a Python `class` and it wil be c
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class User:
@@ -312,10 +312,10 @@ Inheritance is also supported.
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class User:
@@ -349,10 +349,10 @@ from typing import List
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class Car:
@@ -396,10 +396,10 @@ As the object example, you can use python class to document your request or resp
 from sanic import Sanic
 from sanic.response import json
 
-from sanic_openapi import doc, swagger_blueprint
+from sanic_openapi import doc, openapi2_blueprint
 
 app = Sanic()
-app.blueprint(swagger_blueprint)
+app.blueprint(openapi2_blueprint)
 
 
 class Car:

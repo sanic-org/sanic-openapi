@@ -3,16 +3,7 @@
 ## sanic_openapi.doc
 
 ```eval_rst
-.. automodule:: sanic_openapi.doc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-```
-
-## sanic_openapi.swagger
-
-```eval_rst
-.. automodule:: sanic_openapi.swagger
+.. automodule:: sanic_openapi.openapi2.doc
     :members:
     :undoc-members:
     :show-inheritance:
@@ -21,7 +12,7 @@
 ## sanic_openapi.api
 
 ```eval_rst
-.. automodule:: sanic_openapi.api
+.. automodule:: sanic_openapi.openapi2.api
     :members:
     :undoc-members:
     :show-inheritance:
