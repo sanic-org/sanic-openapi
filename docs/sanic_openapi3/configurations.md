@@ -25,12 +25,12 @@ By default, Swagger will use exactly the same host which served itself as the AP
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_HOST"] = "petstore.swagger.io"
+    app.config.API_HOST = "petstore.swagger.io"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_HOST.png)
+  ![](../_static/images3/configurations/API_HOST.png)
 
 ### API_BASEPATH
 
@@ -45,12 +45,12 @@ By default, Swagger will use exactly the same host which served itself as the AP
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_BASEPATH"] = "/api"
+    app.config.API_BASEPATH = "/api"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_BASEPATH.png)
+  ![](../_static/images3/configurations/API_BASEPATH.png)
 
 ### API_SCHEMES
 
@@ -65,12 +65,12 @@ By default, Swagger will use exactly the same host which served itself as the AP
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_SCHEMES"] = ["https"]
+    app.config.API_SCHEMES = ["https"]
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_SCHEMES.png)
+  ![](../_static/images3/configurations/API_SCHEMES.png)
 
 ## API information
 
@@ -90,12 +90,12 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_VERSION"] = "0.1.0"
+    app.config.API_VERSION = "0.1.0"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_VERSION.png)
+  ![](../_static/images3/configurations/API_VERSION.png)
 
 ### API_TITLE
 
@@ -110,12 +110,12 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_TITLE"] = "Sanci-OpenAPI"
+    app.config.API_TITLE = "Sanic-Example-OpenAPI"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_TITLE.png)
+  ![](../_static/images3/configurations/API_TITLE.png)
 
 ### API_DESCRIPTION
 
@@ -130,12 +130,12 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_DESCRIPTION"] = "An example Swagger from Sanic-OpenAPI"
+    app.config.API_DESCRIPTION = "An example Swagger from Sanic-OpenAPI"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_DESCRIPTION.png)
+  ![](../_static/images3/configurations/API_DESCRIPTION.png)
 
 ### API_TERMS_OF_SERVICE
 
@@ -150,12 +150,12 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_TERMS_OF_SERVICE"] = "https://github.com/sanic-org/sanic-openapi/blob/master/README.md"
+    app.config.API_TERMS_OF_SERVICE = "https://github.com/sanic-org/sanic-openapi/blob/master/README.md"
 
   ```
 
 * Result:
-  ![](../_static/images/configurations/API_TERMS_OF_SERVICE.png)
+  ![](../_static/images3/configurations/API_TERMS_OF_SERVICE.png)
 
 ### API_CONTACT_EMAIL
 
@@ -170,12 +170,12 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_CONTACT_EMAIL"] = "foo@bar.com"
+    app.config.API_CONTACT_EMAIL = "foo@bar.com"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_CONTACT_EMAIL.png)
+  ![](../_static/images3/configurations/API_CONTACT_EMAIL.png)
 
 ### API_LICENSE_NAME
 
@@ -190,12 +190,12 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_LICENSE_NAME"] = "MIT"
+    app.config.API_LICENSE_NAME = "MIT"
 
     
 
 * Result:
-  ![](../_static/images/configurations/API_LICENSE_NAME.png)
+  ![](../_static/images3/configurations/API_LICENSE_NAME.png)
 
 ### API_LICENSE_URL
 
@@ -210,9 +210,9 @@ For more detail of those additional information, please check the [document](htt
 
     app = Sanic()
     app.blueprint(openapi3_blueprint)
-    app.config["API_LICENSE_URL"] = "https://github.com/sanic-org/sanic-openapi/blob/master/LICENSE"
+    app.config.API_LICENSE_URL = "https://github.com/sanic-org/sanic-openapi/blob/master/LICENSE"
 
     ```
 
 * Result:
-  ![](../_static/images/configurations/API_LICENSE_URL.png)
+  ![](../_static/images3/configurations/API_LICENSE_URL.png)
