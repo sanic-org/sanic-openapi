@@ -36,11 +36,7 @@ def remove_nulls(dictionary, deep=True):
     """
     Removes all null values from a dictionary.
     """
-    return {
-        k: remove_nulls(v, deep) if deep and type(v) is dict else v
-        for k, v in dictionary.items()
-        if v is not None
-    }
+    return {k: remove_nulls(v, deep) if deep and type(v) is dict else v for k, v in dictionary.items() if v is not None}
 
 
 def remove_nulls_from_kwargs(**kwargs):
@@ -57,9 +53,7 @@ def get_blueprinted_routes(app):
                 # before sanic 21.3, route.handler could be a number of
                 # different things, so have to type check
                 for http_method in route.methods:
-                    _handler = getattr(
-                        route.handler.view_class, http_method.lower(), None
-                    )
+                    _handler = getattr(route.handler.view_class, http_method.lower(), None)
                     if _handler:
                         yield (blueprint.name, _handler)
             else:
@@ -103,9 +97,7 @@ def get_all_routes(app, skip_prefix):
                     if route.name and "static" in route.name:
                         continue
 
-                    method_handlers = [
-                        (method, route.handler) for method in route.methods
-                    ]
+                    method_handlers = [(method, route.handler) for method in route.methods]
 
                     _, name = route.name.split(".", 1)
                     yield (uri, name, route.params.values(), method_handlers)
@@ -133,13 +125,10 @@ def get_all_routes(app, skip_prefix):
 
             elif hasattr(route.handler, "view_class"):
                 method_handlers = {
-                    method: getattr(route.handler.view_class, method.lower())
-                    for method in route.methods
+                    method: getattr(route.handler.view_class, method.lower()) for method in route.methods
                 }
             else:
-                method_handlers = {
-                    method: route.handler for method in route.methods
-                }
+                method_handlers = {method: route.handler for method in route.methods}
 
             for parameter in route.parameters:
                 uri = re.sub(
