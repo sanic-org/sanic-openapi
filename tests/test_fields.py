@@ -1,7 +1,8 @@
-import pytest
-
 from datetime import date, datetime
+
+import pytest
 from sanic.response import HTTPResponse, text
+
 from sanic_openapi import doc
 
 
@@ -260,7 +261,7 @@ def test_uuid_field(app):
     @app.get("/")
     @doc.consumes(field, location="formData", required=True)
     @doc.response(204, {})
-    def test(request):
+    def test2(request):
         return HTTPResponse(status=204)
 
     _, response = app.test_client.get("/swagger/swagger.json")

@@ -1,28 +1,27 @@
 from sanic_openapi import autodoc
 
-
 tests = []
 
-_ = ''
+_ = ""
 
-tests.append({'doc': _, 'expects': {}})
+tests.append({"doc": _, "expects": {}})
 
-_ = 'one line docstring'
+_ = "one line docstring"
 
-tests.append({'doc': _, 'expects': {"summary": "one line docstring"}})
+tests.append({"doc": _, "expects": {"summary": "one line docstring"}})
 
-_ = '''
+_ = """
 first line
 
 more lines
-'''
+"""
 
-tests.append({'doc': _, 'expects': {
-    "summary": "first line",
-    "description": "more lines"}})
+tests.append(
+    {"doc": _, "expects": {"summary": "first line", "description": "more lines"}}
+)
 
 
-_ = '''
+_ = """
 first line
 
 more lines
@@ -32,12 +31,18 @@ openapi:
 responses:
   '200':
     description: OK
-'''
+"""
 
-tests.append({'doc': _, 'expects': {
-    "summary": "first line",
-    "description": "more lines",
-    "responses": {"200": {"description": "OK"}}}})
+tests.append(
+    {
+        "doc": _,
+        "expects": {
+            "summary": "first line",
+            "description": "more lines",
+            "responses": {"200": {"description": "OK"}},
+        },
+    }
+)
 
 
 def test_autodoc():

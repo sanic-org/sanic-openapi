@@ -13,11 +13,14 @@
 import os
 import sys
 
+from recommonmark.transform import AutoStructify
+
+import sanic_openapi
+
 docs_directory = os.path.dirname(os.path.abspath(__file__))
 root_directory = os.path.dirname(docs_directory)
 sys.path.insert(0, root_directory)
 
-import sanic_openapi
 
 # -- Project information -----------------------------------------------------
 
@@ -58,7 +61,6 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_css_files = ["css/custom.css"]
 
-from recommonmark.transform import AutoStructify
 
 
 def setup(app):

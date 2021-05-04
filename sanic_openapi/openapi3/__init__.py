@@ -1,3 +1,7 @@
+"""
+   isort:skip_file
+"""
+
 from collections import defaultdict
 
 from .builders import OperationBuilder, SpecificationBuilder

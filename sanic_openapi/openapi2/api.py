@@ -7,7 +7,11 @@ from . import doc
 # An appropriate warning is raised below
 
 
-class Response(NamedTuple("Response", [("code", int), ("model", Any), ("description", Optional[str])])):
+class Response(
+    NamedTuple(
+        "Response", [("code", int), ("model", Any), ("description", Optional[str])]
+    )
+):
     """
     HTTP status code - returned object model pair with optional description.
 
@@ -216,7 +220,9 @@ class API:
                 summary = class_doc_parts[0].strip()
             if len(class_doc_parts) > 1:
                 # Preserve paragraphs.
-                description = "<br><br>".join(part.strip() for part in class_doc_parts[1:])
+                description = "<br><br>".join(
+                    part.strip() for part in class_doc_parts[1:]
+                )
 
         return doc.route(
             summary=summary if summary != cls.__MISSING else None,
@@ -241,7 +247,9 @@ class API:
         # If value is a type (class), convert it to a doc.Object to be able to specify
         # its name to avoid model name conflicts and have a more readable doc.
         if isinstance(value, type):
-            value = doc.Object(value, object_name=cls.__name__ + "Consumes", description=value.__doc__)
+            value = doc.Object(
+                value, object_name=cls.__name__ + "Consumes", description=value.__doc__
+            )
 
         # Use the same default values as in doc.consumes().
         return doc.consumes(
@@ -284,8 +292,12 @@ class API:
         # its name to avoid model name conflicts and have a more readable doc.
         if isinstance(value, type):
             produces_doc = value.__doc__.strip() if value.__doc__ else None
-            produces_description = get_attribute(cls, "produces_description", produces_doc)
-            value = doc.Object(value, object_name=cls.__name__ + "Produces", description=produces_doc)
+            produces_description = get_attribute(
+                cls, "produces_description", produces_doc
+            )
+            value = doc.Object(
+                value, object_name=cls.__name__ + "Produces", description=produces_doc
+            )
         else:
             produces_description = get_attribute(cls, "produces_description", None)
 
@@ -308,9 +320,13 @@ class API:
         """
         description = response.description
         if description is None and isinstance(response.model, type):
-            description = response.model.__doc__.strip() if response.model.__doc__ else None
+            description = (
+                response.model.__doc__.strip() if response.model.__doc__ else None
+            )
 
-        return doc.response(response.code, response.model, description=description)(func)
+        return doc.response(response.code, response.model, description=description)(
+            func
+        )
 
     @classmethod
     def _add_responses(cls, func, get_attribute):

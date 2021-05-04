@@ -7,23 +7,9 @@ for breaking user experience
 from collections import defaultdict
 
 from ..utils import remove_nulls, remove_nulls_from_kwargs
-from .definitions import (
-    Any,
-    Contact,
-    Dict,
-    ExternalDocumentation,
-    Info,
-    License,
-    List,
-    OpenAPI,
-    Operation,
-    Parameter,
-    PathItem,
-    RequestBody,
-    Response,
-    Server,
-    Tag,
-)
+from .definitions import (Any, Contact, Dict, ExternalDocumentation, Info,
+                          License, List, OpenAPI, Operation, Parameter,
+                          PathItem, RequestBody, Response, Server, Tag)
 
 
 class OperationBuilder:
@@ -115,7 +101,9 @@ class SpecificationBuilder:
     def url(self, value: str):
         self._urls.append(value)
 
-    def describe(self, title: str, version: str, description: str = None, terms: str = None):
+    def describe(
+        self, title: str, version: str, description: str = None, terms: str = None
+    ):
         self._title = title
         self._version = version
         self._description = description
@@ -146,7 +134,7 @@ class SpecificationBuilder:
         paths = self._build_paths()
         tags = self._build_tags()
 
-        url_servers = getattr(self, "_urls", None) 
+        url_servers = getattr(self, "_urls", None)
         servers = []
         if url_servers is not None:
             for url_server in url_servers:

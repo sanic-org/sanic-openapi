@@ -1,5 +1,5 @@
-import json
 import itertools
+import json
 from inspect import isawaitable
 
 from sanic import Sanic
@@ -7,6 +7,7 @@ from sanic.response import HTTPResponse
 
 from sanic_openapi import doc, openapi2_blueprint
 from sanic_openapi.openapi2 import api
+
 
 def test_message_api_response():
     """
@@ -107,12 +108,17 @@ def test_documentation():
     # so manually check they are the same without the app name,
     # then set them to be the same.
 
-    for path in benchmark_response.json['paths']:
-        for method in benchmark_response.json['paths'][path]:
+    for path in benchmark_response.json["paths"]:
+        for method in benchmark_response.json["paths"][path]:
             assert (
-                app_response.json['paths'][path][method]['operationId'].split('.')[-1] ==
-                benchmark_response.json['paths'][path][method]['operationId'].split('.')[-1])
-            app_response.json['paths'][path][method]['operationId'] = benchmark_response.json['paths'][path][method]['operationId']
+                app_response.json["paths"][path][method]["operationId"].split(".")[-1]
+                == benchmark_response.json["paths"][path][method]["operationId"].split(
+                    "."
+                )[-1]
+            )
+            app_response.json["paths"][path][method][
+                "operationId"
+            ] = benchmark_response.json["paths"][path][method]["operationId"]
 
     assert app_response.status == benchmark_response.status == 200
     assert app_response.json == benchmark_response.json

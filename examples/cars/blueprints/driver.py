@@ -1,10 +1,10 @@
 import json
 
-from data import test_driver, test_success
-from models import Driver, Status
 from sanic.blueprints import Blueprint
 from sanic.response import json
 
+from data import test_driver, test_success
+from models import Driver, Status
 from sanic_openapi import doc
 
 blueprint = Blueprint('Driver', '/driver')
