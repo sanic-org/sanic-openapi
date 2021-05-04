@@ -51,9 +51,7 @@ def blueprint_factory():
         # --------------------------------------------------------------- #
         # Operations
         # --------------------------------------------------------------- #
-        for uri, route_name, route_parameters, method_handlers in get_all_routes(
-            app, oas3_blueprint.url_prefix
-        ):
+        for uri, route_name, route_parameters, method_handlers in get_all_routes(app, oas3_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods

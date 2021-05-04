@@ -46,9 +46,7 @@ def blueprint_factory():
 
         paths = {}
 
-        for (uri, route_name, route_parameters, method_handlers) in get_all_routes(
-            app, swagger_blueprint.url_prefix
-        ):
+        for (uri, route_name, route_parameters, method_handlers) in get_all_routes(app, swagger_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods
@@ -62,19 +60,11 @@ def blueprint_factory():
                 if route_spec.exclude:
                     continue
 
-                api_consumes_content_types = getattr(
-                    app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"]
-                )
-                consumes_content_types = (
-                    route_spec.consumes_content_type or api_consumes_content_types
-                )
+                api_consumes_content_types = getattr(app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"])
+                consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
 
-                api_produces_content_types = getattr(
-                    app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"]
-                )
-                produces_content_types = (
-                    route_spec.produces_content_type or api_produces_content_types
-                )
+                api_produces_content_types = getattr(app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"])
+                produces_content_types = route_spec.produces_content_type or api_produces_content_types
 
                 # Parameters - Path & Query String
                 route_parameters = []
@@ -104,8 +94,7 @@ def blueprint_factory():
                             "required": consumer.required,
                             "in": consumer.location,
                             "name": consumer.field.name
-                            if not isinstance(consumer.field, type)
-                            and hasattr(consumer.field, "name")
+                            if not isinstance(consumer.field, type) and hasattr(consumer.field, "name")
                             else "body",
                         }
 
@@ -178,11 +167,7 @@ def blueprint_factory():
 
         _spec = Swagger2Spec(app=app)
 
-        _spec.add_definitions(
-            definitions={
-                obj.object_name: definition for obj, definition in definitions.values()
-            }
-        )
+        _spec.add_definitions(definitions={obj.object_name: definition for obj, definition in definitions.values()})
 
         # --------------------------------------------------------------- #
         # Tags
