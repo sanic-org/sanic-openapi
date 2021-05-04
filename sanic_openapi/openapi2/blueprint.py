@@ -46,7 +46,7 @@ def blueprint_factory():
 
         paths = {}
 
-        for uri, route_name, route_parameters, method_handlers in get_all_routes(app, swagger_blueprint.url_prefix):
+        for (uri, route_name, route_parameters, method_handlers) in get_all_routes(app, swagger_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods
@@ -57,7 +57,7 @@ def blueprint_factory():
 
                 route_spec = route_specs.get(_handler) or RouteSpec()
 
-                if _method == "OPTIONS" or route_spec.exclude:
+                if route_spec.exclude:
                     continue
 
                 api_consumes_content_types = getattr(app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"])
@@ -152,7 +152,8 @@ def blueprint_factory():
                     }
                 )
 
-                # otherwise, update with anything parsed from the docstrings yaml
+                # otherwise, update with anything parsed from the
+                # docstrings yaml
                 endpoint.update(autodoc_endpoint)
 
                 methods[_method.lower()] = endpoint

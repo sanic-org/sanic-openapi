@@ -146,7 +146,7 @@ class SpecificationBuilder:
         paths = self._build_paths()
         tags = self._build_tags()
 
-        url_servers = getattr(self, "_urls", None) 
+        url_servers = getattr(self, "_urls", None)
         servers = []
         if url_servers is not None:
             for url_server in url_servers:

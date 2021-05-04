@@ -1,7 +1,8 @@
-import pytest
-
 from datetime import date, datetime
+
+import pytest
 from sanic.response import HTTPResponse, text
+
 from sanic_openapi import doc
 
 
@@ -257,11 +258,18 @@ def test_uuid_field(app):
     def test(request):
         return HTTPResponse(status=204)
 
+    @app.get("/")
+    @doc.consumes(field, location="formData", required=True)
+    @doc.response(204, {})
+    def test2(request):
+        return HTTPResponse(status=204)
+
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
     assert response.content_type == "application/json"
 
     swagger_json = response.json
+
     path = swagger_json["paths"]["/{id}"]["get"]
     assert path["parameters"][0] == {
         "in": "path",
@@ -271,17 +279,6 @@ def test_uuid_field(app):
         "required": True,
     }
 
-    @app.get("/")
-    @doc.consumes(field, location="formData", required=True)
-    @doc.response(204, {})
-    def test(request):
-        return HTTPResponse(status=204)
-
-    _, response = app.test_client.get("/swagger/swagger.json")
-    assert response.status == 200
-    assert response.content_type == "application/json"
-
-    swagger_json = response.json
     path = swagger_json["paths"]["/"]["get"]
     assert path["parameters"][0] == {
         "in": "formData",

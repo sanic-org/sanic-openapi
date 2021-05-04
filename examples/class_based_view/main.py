@@ -1,7 +1,7 @@
-from blueprint import blueprint
 from sanic import Sanic
 from sanic.response import json
 
+from blueprint import blueprint
 from sanic_openapi import doc, swagger_blueprint
 
 app = Sanic("Class Based View example")
