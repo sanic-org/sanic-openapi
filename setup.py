@@ -5,13 +5,17 @@ import codecs
 import os
 import re
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 install_requires = ["sanic>=18.12.0", "pyyaml>=3.0.0"]
 
 dev_requires = ["black==19.3b0", "flake8==3.7.7", "isort==4.3.19"]
 
-doc_requires = ["recommonmark==0.5.0", "sphinx==2.1.2", "sphinx-rtd-theme==0.4.3"]
+doc_requires = [
+    "recommonmark==0.5.0",
+    "sphinx==2.1.2",
+    "sphinx-rtd-theme==0.4.3",
+]
 
 test_requires = [
     "coverage==4.5.3",
@@ -28,7 +32,9 @@ with codecs.open(
     os.path.join(project_root, "sanic_openapi", "__init__.py"), "r", "latin1"
 ) as fp:
     try:
-        version = re.findall(r"^__version__ = \"([^']+)\"\r?$", fp.read(), re.M)[0]
+        version = re.findall(
+            r"^__version__ = \"([^']+)\"\r?$", fp.read(), re.M
+        )[0]
     except IndexError:
         raise RuntimeError("Unable to determine version.")
 
@@ -44,7 +50,7 @@ setup(
     description="Easily document your Sanic API with a UI.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["sanic_openapi"],
+    packages=find_packages(),
     package_data={"sanic_openapi": ["ui/*"]},
     platforms="any",
     install_requires=install_requires,
