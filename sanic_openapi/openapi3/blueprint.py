@@ -1,12 +1,17 @@
+import inspect
 from os.path import abspath, dirname, realpath
 
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 
+from ..autodoc import YamlStyleParametersParser
 from ..utils import get_all_routes, get_blueprinted_routes
 from . import operations, specification
 
-DEFAULT_SWAGGER_UI_CONFIG = {"apisSorter": "alpha", "operationsSorter": "alpha"}
+DEFAULT_SWAGGER_UI_CONFIG = {
+    "apisSorter": "alpha",
+    "operationsSorter": "alpha",
+}
 
 
 def blueprint_factory():
@@ -51,7 +56,12 @@ def blueprint_factory():
         # --------------------------------------------------------------- #
         # Operations
         # --------------------------------------------------------------- #
-        for uri, route_name, route_parameters, method_handlers in get_all_routes(app, oas3_blueprint.url_prefix):
+        for (
+            uri,
+            route_name,
+            route_parameters,
+            method_handlers,
+        ) in get_all_routes(app, oas3_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods
@@ -64,7 +74,13 @@ def blueprint_factory():
                 if method == "OPTIONS":
                     continue
 
+                if hasattr(_handler, "view_class"):
+                    _handler = getattr(_handler.view_class, method.lower())
                 operation = operations[_handler]
+                docstring = inspect.getdoc(_handler)
+
+                if docstring:
+                    operation.autodoc(docstring)
 
                 # operation ID must be unique, and it isnt currently used for
                 # anything in UI, so dont add something meaningless
@@ -72,7 +88,9 @@ def blueprint_factory():
                 #     operation.operationId = "%s_%s" % (method.lower(), route.name)
 
                 for _parameter in route_parameters:
-                    operation.parameter(_parameter.name, _parameter.cast, "path")
+                    operation.parameter(
+                        _parameter.name, _parameter.cast, "path"
+                    )
 
                 specification.operation(uri, method, operation)
 

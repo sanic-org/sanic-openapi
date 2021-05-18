@@ -6,6 +6,7 @@ for breaking user experience
 """
 from collections import defaultdict
 
+from ..autodoc import YamlStyleParametersParser
 from ..utils import remove_nulls, remove_nulls_from_kwargs
 from .definitions import (
     Any,
@@ -44,6 +45,7 @@ class OperationBuilder:
         self.security = []
         self.parameters = []
         self.responses = {}
+        self._autodoc = None
 
     def name(self, value: str):
         self.operationId = value
@@ -68,10 +70,16 @@ class OperationBuilder:
     def body(self, content: Any, **kwargs):
         self.requestBody = RequestBody.make(content, **kwargs)
 
-    def parameter(self, name: str, schema: Any, location: str = "query", **kwargs):
-        self.parameters.append(Parameter.make(name, schema, location, **kwargs))
+    def parameter(
+        self, name: str, schema: Any, location: str = "query", **kwargs
+    ):
+        self.parameters.append(
+            Parameter.make(name, schema, location, **kwargs)
+        )
 
-    def response(self, status, content: Any = None, description: str = None, **kwargs):
+    def response(
+        self, status, content: Any = None, description: str = None, **kwargs
+    ):
         self.responses[status] = Response.make(content, description, **kwargs)
 
     def secured(self, *args, **kwargs):
@@ -90,7 +98,14 @@ class OperationBuilder:
             # todo -- look into more consistent default response format
             operation_dict["responses"]["default"] = {"description": "OK"}
 
+        if self._autodoc:
+            operation_dict.update(self._autodoc)
+
         return Operation(**operation_dict)
+
+    def autodoc(self, docstring: str):
+        y = YamlStyleParametersParser(docstring)
+        self._autodoc = y.to_openAPI_3()
 
 
 class SpecificationBuilder:
@@ -115,7 +130,13 @@ class SpecificationBuilder:
     def url(self, value: str):
         self._urls.append(value)
 
-    def describe(self, title: str, version: str, description: str = None, terms: str = None):
+    def describe(
+        self,
+        title: str,
+        version: str,
+        description: str = None,
+        terms: str = None,
+    ):
         self._title = title
         self._version = version
         self._description = description
@@ -174,6 +195,8 @@ class SpecificationBuilder:
         paths = {}
 
         for path, operations in self._paths.items():
-            paths[path] = PathItem(**{k: v.build() for k, v in operations.items()})
+            paths[path] = PathItem(
+                **{k: v.build() for k, v in operations.items()}
+            )
 
         return paths

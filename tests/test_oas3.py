@@ -2,7 +2,8 @@ import itertools
 
 from sanic import Sanic
 from sanic.response import json as json_response
-
+from sanic.response import text
+from sanic.views import HTTPMethodView
 from sanic_openapi import openapi, openapi3_blueprint
 
 
@@ -14,9 +15,11 @@ def test_documentation():
 
     _, app_response = app.test_client.get("/swagger/swagger.json")
     post_operation = app_response.json["paths"]["/garage"]["post"]
-    body_props = post_operation["requestBody"]["content"]["application/json"]["schema"][
-        "properties"
-    ]
+    get_operation = app_response.json["paths"][r"/garage/{garage_id}"]["get"]
+    body_props = post_operation["requestBody"]["content"]["application/json"][
+        "schema"
+    ]["properties"]
+
     assert post_operation["description"] == "Create a new garage"
     car_schema_in_body = body_props["cars"]
     assert car_schema_in_body["required"] is False
@@ -26,8 +29,14 @@ def test_documentation():
     assert spaces_schema_in_body["required"] is True
     assert spaces_schema_in_body["format"] == "int32"
     assert spaces_schema_in_body["type"] == "integer"
-    assert spaces_schema_in_body["description"] == "Space available in the garage"
+    assert (
+        spaces_schema_in_body["description"] == "Space available in the garage"
+    )
     assert app_response.status == 200
+
+    assert get_operation["description"] == "Query the cars in the garage"
+    assert get_operation["summary"] == "Get a list of all the cars in a garage"
+    assert len(get_operation["parameters"]) == 2
 
 
 app_ID = itertools.count()
@@ -42,7 +51,9 @@ def get_app():
     app.blueprint(openapi3_blueprint)
 
     class Car:
-        manufacturer = openapi.String(description="Car manufacturer", required=True)
+        manufacturer = openapi.String(
+            description="Car manufacturer", required=True
+        )
         model = openapi.String(description="Car model", required=True)
         production_date = openapi.Date(description="Car year", required=True)
 
@@ -65,5 +76,18 @@ def get_app():
     )
     async def create_garage(request):
         return json_response(request.json, 201)
+
+    class CarView(HTTPMethodView):
+        @openapi.parameter("make", str, location="query")
+        async def get(self, request, garage_id):
+            """
+            openapi:
+            ---
+            summary: Get a list of all the cars in a garage
+            description: Query the cars in the garage
+            """
+            return text("Fetching some cars.")
+
+    app.add_route(CarView.as_view(), "/garage/<garage_id:uuid>")
 
     return app
