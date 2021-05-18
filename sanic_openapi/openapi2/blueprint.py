@@ -16,7 +16,9 @@ def blueprint_factory():
     dir_path = dirname(dirname(realpath(__file__)))
     dir_path = abspath(dir_path + "/ui")
 
-    swagger_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
+    swagger_blueprint.static(
+        "/", dir_path + "/index.html", strict_slashes=True
+    )
     swagger_blueprint.static("/", dir_path)
 
     # Redirect "/swagger" to "/swagger/"
@@ -30,7 +32,9 @@ def blueprint_factory():
 
     @swagger_blueprint.route("/swagger-config")
     def config(request):
-        return json(getattr(request.app.config, "SWAGGER_UI_CONFIGURATION", {}))
+        return json(
+            getattr(request.app.config, "SWAGGER_UI_CONFIGURATION", {})
+        )
 
     @swagger_blueprint.listener("after_server_start")
     def build_spec(app, loop):
@@ -46,7 +50,12 @@ def blueprint_factory():
 
         paths = {}
 
-        for (uri, route_name, route_parameters, method_handlers) in get_all_routes(app, swagger_blueprint.url_prefix):
+        for (
+            uri,
+            route_name,
+            route_parameters,
+            method_handlers,
+        ) in get_all_routes(app, swagger_blueprint.url_prefix):
 
             # --------------------------------------------------------------- #
             # Methods
@@ -55,16 +64,33 @@ def blueprint_factory():
             methods = {}
             for _method, _handler in method_handlers:
 
+                if hasattr(_handler, "view_class"):
+                    _handler = getattr(_handler.view_class, _method.lower())
+
                 route_spec = route_specs.get(_handler) or RouteSpec()
 
                 if route_spec.exclude:
                     continue
 
-                api_consumes_content_types = getattr(app.config, "API_CONSUMES_CONTENT_TYPES", ["application/json"])
-                consumes_content_types = route_spec.consumes_content_type or api_consumes_content_types
+                api_consumes_content_types = getattr(
+                    app.config,
+                    "API_CONSUMES_CONTENT_TYPES",
+                    ["application/json"],
+                )
+                consumes_content_types = (
+                    route_spec.consumes_content_type
+                    or api_consumes_content_types
+                )
 
-                api_produces_content_types = getattr(app.config, "API_PRODUCES_CONTENT_TYPES", ["application/json"])
-                produces_content_types = route_spec.produces_content_type or api_produces_content_types
+                api_produces_content_types = getattr(
+                    app.config,
+                    "API_PRODUCES_CONTENT_TYPES",
+                    ["application/json"],
+                )
+                produces_content_types = (
+                    route_spec.produces_content_type
+                    or api_produces_content_types
+                )
 
                 # Parameters - Path & Query String
                 route_parameters = []
@@ -94,7 +120,8 @@ def blueprint_factory():
                             "required": consumer.required,
                             "in": consumer.location,
                             "name": consumer.field.name
-                            if not isinstance(consumer.field, type) and hasattr(consumer.field, "name")
+                            if not isinstance(consumer.field, type)
+                            and hasattr(consumer.field, "name")
                             else "body",
                         }
 
@@ -167,7 +194,12 @@ def blueprint_factory():
 
         _spec = Swagger2Spec(app=app)
 
-        _spec.add_definitions(definitions={obj.object_name: definition for obj, definition in definitions.values()})
+        _spec.add_definitions(
+            definitions={
+                obj.object_name: definition
+                for obj, definition in definitions.values()
+            }
+        )
 
         # --------------------------------------------------------------- #
         # Tags
