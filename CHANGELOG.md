@@ -1,5 +1,39 @@
 # Changelog
 
+
+## 21.3.2 (2021-05-19)
+
+### Features
+
+* [#234](https://github.com/sanic-org/sanic-openapi/pull/234) - CBV method support; OAS3 autodoc
+
+## 21.3 (2021-05-05)
+
+### Features
+
+* [#189](https://github.com/sanic-org/sanic-openapi/pull/189) - Path parameter description
+* [#198](https://github.com/sanic-org/sanic-openapi/pull/198) - Update With Raw Dictionary
+* [#207](https://github.com/sanic-org/sanic-openapi/pull/207) - Using both produces and response
+* [#208](https://github.com/sanic-org/sanic-openapi/pull/208) - Docstring parsing
+* [#210](https://github.com/sanic-org/sanic-openapi/pull/210) - OAS3 support for sanic-openapi3
+* [#218](https://github.com/sanic-org/sanic-openapi/pull/218) - Sanic v21.3 Support
+
+### Bug fixes
+
+* [#192](https://github.com/sanic-org/sanic-openapi/pull/192) - Fix getattr default
+* [#202](https://github.com/sanic-org/sanic-openapi/pull/202) - Fix consumes_content_type multiple times
+
+### Build system
+
+* [#204](https://github.com/sanic-org/sanic-openapi/pull/204) - Fix the broken build
+* [#214](https://github.com/sanic-org/sanic-openapi/pull/214) - add OS related section to .gitignore
+
+### Documentation
+
+* [#183](https://github.com/sanic-org/sanic-openapi/pull/183) - Fix README
+* [#197](https://github.com/sanic-org/sanic-openapi/pull/197) - Fix README
+* [#206](https://github.com/sanic-org/sanic-openapi/pull/206) - Fix badges in README
+  
 ### 0.6.2 (2020-06-01)
 
 ### Features
@@ -11,7 +45,7 @@
 * TypeError when Spec obj is not JSON serializable ([fe29d0](https://github.com/sanic-org/sanic-openapi/commit/fe29d07ccb0e02ec0be6496e971946269b2d7907))
 * Attribute name "name" conflict in consumes body ([67aaf3](https://github.com/sanic-org/sanic-openapi/commit/67aaf34eca5e339c349ef65bd0392cb8a97f184e))
 
-### 0.6.1 (2020-01-03)
+## 0.6.1 (2020-01-03)
 
 
 ### Features
