@@ -14,7 +14,11 @@ class Definition:
         return self.__fields
 
     def guard(self, fields):
-        return {k: v for k, v in fields.items() if k in _properties(self).keys() or k.startswith("x-")}
+        return {
+            k: v
+            for k, v in fields.items()
+            if k in _properties(self).keys() or k.startswith("x-")
+        }
 
     def serialize(self):
         return _serialize(self.fields)
@@ -98,9 +102,14 @@ class Schema(Definition):
 
             return Array(schema, **kwargs)
         elif _type == dict:
-            return Object({k: Schema.make(v) for k, v in value.items()}, **kwargs)
+            return Object(
+                {k: Schema.make(v) for k, v in value.items()}, **kwargs
+            )
         else:
-            return Object({k: Schema.make(v) for k, v in _properties(value).items()}, **kwargs)
+            return Object(
+                {k: Schema.make(v) for k, v in _properties(value).items()},
+                **kwargs,
+            )
 
 
 class Boolean(Schema):
@@ -201,6 +210,11 @@ def _serialize(value) -> Any:
 
 
 def _properties(value: object) -> Dict:
-    fields = {x: v for x, v in value.__dict__.items() if not x.startswith("_")}
+    try:
+        fields = {
+            x: v for x, v in value.__dict__.items() if not x.startswith("_")
+        }
+    except AttributeError:
+        return {}
 
     return {**get_type_hints(value.__class__), **fields}

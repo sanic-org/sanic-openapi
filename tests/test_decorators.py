@@ -1,6 +1,6 @@
 import pytest
 from sanic.response import text
-
+from sanic.views import HTTPMethodView
 from sanic_openapi import doc
 
 
@@ -11,8 +11,14 @@ from sanic_openapi import doc
         ({"description": "test"}, {"description": "test"}),
         ({"consumes": [doc.RouteField(str)]}, {}),
         ({"produces": doc.RouteField(str)}, {}),
-        ({"consumes_content_type": ["text/html"]}, {"consumes": ["text/html"]}),
-        ({"produces_content_type": ["text/html"]}, {"produces": ["text/html"]}),
+        (
+            {"consumes_content_type": ["text/html"]},
+            {"consumes": ["text/html"]},
+        ),
+        (
+            {"produces_content_type": ["text/html"]},
+            {"produces": ["text/html"]},
+        ),
         ({"response": [{400, doc.RouteField(str)}]}, {}),
     ],
 )
@@ -21,6 +27,43 @@ def test_route(app, route_kwargs, route_fields):
     @doc.route(**route_kwargs)
     def test(request):
         return text("")
+
+    _, response = app.test_client.get("/swagger/swagger.json")
+    assert response.status == 200
+    assert response.content_type == "application/json"
+
+    swagger_json = response.json
+    assert all(
+        item in swagger_json["paths"]["/"]["post"].items()
+        for item in route_fields.items()
+    )
+
+
+@pytest.mark.parametrize(
+    "route_kwargs, route_fields",
+    [
+        ({"summary": "test"}, {"summary": "test"}),
+        ({"description": "test"}, {"description": "test"}),
+        ({"consumes": [doc.RouteField(str)]}, {}),
+        ({"produces": doc.RouteField(str)}, {}),
+        (
+            {"consumes_content_type": ["text/html"]},
+            {"consumes": ["text/html"]},
+        ),
+        (
+            {"produces_content_type": ["text/html"]},
+            {"produces": ["text/html"]},
+        ),
+        ({"response": [{400, doc.RouteField(str)}]}, {}),
+    ],
+)
+def test_cbv_route(app, route_kwargs, route_fields):
+    class CBVRoute(HTTPMethodView):
+        @doc.route(**route_kwargs)
+        def post(request):
+            return text("")
+
+    app.add_route(CBVRoute.as_view(), "/")
 
     _, response = app.test_client.get("/swagger/swagger.json")
     assert response.status == 200
@@ -73,7 +116,10 @@ def test_description(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert swagger_json["paths"]["/"]["get"]["description"] == "This is test route"
+    assert (
+        swagger_json["paths"]["/"]["get"]["description"]
+        == "This is test route"
+    )
 
 
 class TestSchema:
@@ -86,12 +132,27 @@ class TestSchema:
         ([], {"location": "body", "required": False}, []),
         (
             [doc.String()],
-            {"location": "header", "required": True, "content_type": "text/html"},
-            [{"type": "string", "required": True, "in": "header", "name": None}],
+            {
+                "location": "header",
+                "required": True,
+                "content_type": "text/html",
+            },
+            [
+                {
+                    "type": "string",
+                    "required": True,
+                    "in": "header",
+                    "name": None,
+                }
+            ],
         ),
         (
             [TestSchema],
-            {"location": "body", "required": True, "content_type": "application/json"},
+            {
+                "location": "body",
+                "required": True,
+                "content_type": "application/json",
+            },
             [
                 {
                     "required": True,
@@ -225,4 +286,7 @@ def test_operation(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert swagger_json["paths"]["/"]["get"]["operationId"] == "This is test operation"
+    assert (
+        swagger_json["paths"]["/"]["get"]["operationId"]
+        == "This is test operation"
+    )
