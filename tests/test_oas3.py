@@ -1,3 +1,4 @@
+from enum import Enum
 import itertools
 
 from sanic import Sanic
@@ -24,7 +25,23 @@ def test_documentation():
     car_schema_in_body = body_props["cars"]
     assert car_schema_in_body["required"] is False
     assert car_schema_in_body["type"] == "array"
-    assert len(car_schema_in_body["items"]["properties"]) == 3
+    car_properties_in_body = car_schema_in_body["items"]["properties"]
+    assert len(car_properties_in_body) == 4
+    assert "manufacturer" in car_properties_in_body
+    assert car_properties_in_body["manufacturer"]["type"] == "string"
+    assert car_properties_in_body["manufacturer"]["required"] is True
+    assert "model" in car_properties_in_body
+    assert car_properties_in_body["model"]["type"] == "string"
+    assert car_properties_in_body["model"]["required"] is False
+    assert "fuel_type" in car_properties_in_body
+    assert car_properties_in_body["fuel_type"]["type"] == "string"
+    assert car_properties_in_body["fuel_type"]["required"] is True
+    assert len(car_properties_in_body["fuel_type"]["enum"]) == 3
+    assert None in car_properties_in_body["fuel_type"]["enum"]
+    assert "production_date" in car_properties_in_body
+    assert car_properties_in_body["production_date"]["type"] == "string"
+    assert car_properties_in_body["production_date"]["format"] == "date"
+    assert car_properties_in_body["production_date"]["required"] is True
     spaces_schema_in_body = body_props["spaces"]
     assert spaces_schema_in_body["required"] is True
     assert spaces_schema_in_body["format"] == "int32"
@@ -50,11 +67,21 @@ def get_app():
     app = Sanic("test_api_oas3_{}".format(next(app_ID)))
     app.blueprint(openapi3_blueprint)
 
+    class FuelTypes(Enum):
+        GASOIL = "gasoil"
+        DIESEL = "diesel"
+        NONE = None
+
     class Car:
         manufacturer = openapi.String(
             description="Car manufacturer", required=True
         )
-        model = openapi.String(description="Car model", required=True)
+        model = openapi.String(description="Car model", required=False)
+        fuel_type = openapi.String(
+            description="Kind of fuel used by the car",
+            required=True,
+            enum=FuelTypes,
+        )
         production_date = openapi.Date(description="Car year", required=True)
 
     class Garage:
