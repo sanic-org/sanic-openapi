@@ -1,6 +1,7 @@
 import json
+from enum import Enum
 from datetime import date, datetime, time
-from typing import Any, Dict, List, get_type_hints
+from typing import Any, Dict, List, Union, get_type_hints
 
 
 class Definition:
@@ -48,6 +49,7 @@ class Schema(Definition):
     maxLength: int
     minLength: int
     pattern: str
+    enum: Union[List[Any], Enum]
 
     @staticmethod
     def make(value, **kwargs):
@@ -199,6 +201,9 @@ class Array(Schema):
 def _serialize(value) -> Any:
     if isinstance(value, Definition):
         return value.serialize()
+
+    if isinstance(value, type) and issubclass(value, Enum):
+        return [item.value for item in value.__members__.values()]
 
     if isinstance(value, dict):
         return {k: _serialize(v) for k, v in value.items()}
