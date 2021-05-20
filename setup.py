@@ -38,8 +38,8 @@ with codecs.open(
     except IndexError:
         raise RuntimeError("Unable to determine version.")
 
-with open(os.path.join(project_root, "README.md"), "r") as f:
-    long_description = f.read()
+#with open(os.path.join(project_root, "README.md"), "r") as f:
+#    long_description = f.read()
 
 setup(
     name="sanic-openapi",
@@ -48,8 +48,8 @@ setup(
     license="MIT",
     author="Sanic Community",
     description="Easily document your Sanic API with a UI.",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
+    #long_description=long_description,
+    #long_description_content_type="text/markdown",
     packages=find_packages(),
     package_data={"sanic_openapi": ["ui/*"]},
     platforms="any",
