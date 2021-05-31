@@ -38,7 +38,7 @@ with codecs.open(
     except IndexError:
         raise RuntimeError("Unable to determine version.")
 
-with open(os.path.join(project_root, "README.md"), "r") as f:
+with open(os.path.join(project_root, "README.md"), "r", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
