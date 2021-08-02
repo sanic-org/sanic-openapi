@@ -4,7 +4,6 @@ from os.path import abspath, dirname, realpath
 from sanic.blueprints import Blueprint
 from sanic.response import json, redirect
 
-from ..autodoc import YamlStyleParametersParser
 from ..utils import get_all_routes, get_blueprinted_routes
 from . import operations, specification
 
@@ -85,7 +84,9 @@ def blueprint_factory():
                 # operation ID must be unique, and it isnt currently used for
                 # anything in UI, so dont add something meaningless
                 # if not hasattr(operation, "operationId"):
-                #     operation.operationId = "%s_%s" % (method.lower(), route.name)
+                #     operation.operationId = "%s_%s" % (
+                #       method.lower(), route.name
+                #     )
 
                 for _parameter in route_parameters:
                     operation.parameter(

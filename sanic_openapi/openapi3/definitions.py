@@ -74,7 +74,9 @@ class MediaType(Definition):
 
     @staticmethod
     def all(content: Any):
-        media_types = content if isinstance(content, dict) else {"*/*": content or {}}
+        media_types = (
+            content if isinstance(content, dict) else {"*/*": content or {}}
+        )
 
         return {x: MediaType.make(v) for x, v in media_types.items()}
 
@@ -91,7 +93,9 @@ class Response(Definition):
         if not description:
             description = "Default Response"
 
-        return Response(MediaType.all(content), description=description, **kwargs)
+        return Response(
+            MediaType.all(content), description=description, **kwargs
+        )
 
 
 class RequestBody(Definition):
@@ -230,8 +234,12 @@ class Server(Definition):
     description: str
     variables: Dict[str, ServerVariable]
 
-    def __init__(self, url: str, description: str = None, variables: dict = None):
-        super().__init__(url=url, description=description, variables=variables or [])
+    def __init__(
+        self, url: str, description: str = None, variables: dict = None
+    ):
+        super().__init__(
+            url=url, description=description, variables=variables or []
+        )
 
 
 class Tag(Definition):

@@ -7,7 +7,12 @@ from . import doc
 # An appropriate warning is raised below
 
 
-class Response(NamedTuple("Response", [("code", int), ("model", Any), ("description", Optional[str])])):
+class Response(
+    NamedTuple(
+        "Response",
+        [("code", int), ("model", Any), ("description", Optional[str])],
+    )
+):
     """
     HTTP status code - returned object model pair with optional description.
 
@@ -21,35 +26,45 @@ class Response(NamedTuple("Response", [("code", int), ("model", Any), ("descript
 
 class API:
     """
-    Decorator factory class for documenting routes using `sanic_openapi` and optionally
-    registering them in a `sanic` application or blueprint.
+    Decorator factory class for documenting routes using `sanic_openapi` and
+    optionally registering them in a `sanic` application or blueprint.
 
-    Supported class attribute names match the corresponding `sanic_openapi.doc` decorator's
-    name and attribute values work exactly as if they were passed to the given decorator
-    unless explicitly documented otherwise. The supported class attributes (all of which
-    are optional) are as follows:
-        - `summary`: Its value should be the short summary of the route. If neither `summary`
-            nor `description` is specified, then the first paragraph of the API class'
-            documentation will be used instead. You may also set it to `None` to disable
+    Supported class attribute names match the corresponding
+    `sanic_openapi.doc` decorator's name and attribute values work exactly as
+    if they were passed to the given decorator unless explicitly documented
+    otherwise. The supported class attributes (all of which are optional) are
+    as follows:
+        - `summary`: Its value should be the short summary of the route. If
+            neither `summary` nor `description` is specified, then the first
+            paragraph of the API class' documentation will be used instead.
+            You may also set it to `None` to disable automatic `summary` and
+            `description` generation.
+        - `description`: A longer description of the route. If neither
+            `summary` nor `description` is specified, then the API class'
+            documentation will be used except its first paragraph that serves
+            as the default summary. You may also set it to `None` to disable
             automatic `summary` and `description` generation.
-        - `description`: A longer description of the route. If neither `summary` nor
-            `description` is specified, then the API class' documentation will be used
-            except its first paragraph that serves as the default summary. You may also
-            set it to `None` to disable automatic `summary` and `description` generation.
-        - `exclude`: Whether to exclude the route (and related models) from the API documentation.
-        - `consumes`: The model of the data the API route consumes. If `consumes` is a class
-            that has a docstring, then the docstring will be used as the description of th data.
-        - `consumes_content_type`: The content type of the data the API route consumes.
-        - `consumes_location`: The location where the data is expected (`query` or `body`).
+        - `exclude`: Whether to exclude the route (and related models) from
+            the API documentation.
+        - `consumes`: The model of the data the API route consumes. If
+            `consumes` is a class that has a docstring, then the docstring
+            will be used as the description of th data.
+        - `consumes_content_type`: The content type of the data the API route
+            consumes.
+        - `consumes_location`: The location where the data is expected
+            (`query` or `body`).
         - `consumes_required`: Whether the consumed data is required.
         - `produces`: The model of the data the API route produces.
-        - `produces_content_type`: The content type of the data the API route produces.
-        - `produces_description`: The description of the data the API route produces. If
-            not specified but `produces` is a class that has a docstring, then the docstring
-            will be used as the default description.
-        - `response`: A `Response` instance or a sequence of `Response` instances that describe
-            the route's response for different HTTP status codes. The value of the `produces`
-            attribute corresponds to HTTP 200, you don't have to specify that here.
+        - `produces_content_type`: The content type of the data the API
+            route produces.
+        - `produces_description`: The description of the data the API
+            route produces. If not specified but `produces` is a class that
+            has a docstring, then the docstring will be used as the
+            default description.
+        - `response`: A `Response` instance or a sequence of `Response`
+            instances that describe the route's response for different HTTP
+            status codes. The value of the `produces` attribute corresponds
+            to HTTP 200, you don't have to specify that here.
         - `tag`: The tags/groups the API route belongs to.
 
     Example:
@@ -91,11 +106,12 @@ class API:
         return {"result": True}
     ```
 
-    Additionally, you may specify a `decorators` class attribute, whose value must be a
-    sequence of decorators to apply on the decorated routes. These decorators will be
-    applied *before* the `sanic_openapi` decorators - and the `sanic` routing decorators
-    if the routing decorators provided by this class are used - in *reverse* order. It
-    means that the following cases are equivalent:
+    Additionally, you may specify a `decorators` class attribute, whose value
+    must be a sequence of decorators to apply on the decorated routes. These
+    decorators will be applied *before* the `sanic_openapi` decorators - and
+    the `sanic` routing decorators if the routing decorators provided by this
+    class are used - in *reverse* order. It means that the following cases
+    are equivalent:
 
     ```Python
     class Data(API):
@@ -128,8 +144,9 @@ class API:
         return "data"
     ```
 
-    It is possible to override all the described class attributes on a per decorator basis
-    simply by passing the desired custom value to the decorator as a keyword argument:
+    It is possible to override all the described class attributes on a per
+    decorator basis simply by passing the desired custom value to the decorator
+    as a keyword argument:
 
     ```Python
     class JSONConsumerAPI(API):
@@ -158,7 +175,8 @@ class API:
 
     def __new__(cls, func=None, **kwargs):
         """
-        Decorator that automaticaly documents the decorated route and returns the decorated method.
+        Decorator that automaticaly documents the decorated route and returns
+        the decorated method.
 
         Arguments:
             func: The decorated request handler function.
@@ -166,9 +184,9 @@ class API:
         import warnings
 
         warnings.warn(
-            "sanic_openapi.api.API has been marked as deprecated, and may be removed"
-            " in 0.6.4. \n If you are using this class, please leave"
-            " an issue in https://github.com/sanic-org/sanic-openapi/issues",
+            "sanic_openapi.api.API has been marked as deprecated, and may be "
+            "removed in 0.6.4. \n If you are using this class, please leave "
+            "an issue in https://github.com/sanic-org/sanic-openapi/issues",
             UserWarning,
         )
 
@@ -183,9 +201,12 @@ class API:
             Arguments:
                 obj: The object to get the attribute value from.
                 name: The name of the attribute to look up.
-                default: The default value to return if the `name` attribute doesn't exist.
+                default: The default value to return if the `name` attribute
+                doesn't exist.
             """
-            return kwargs[name] if name in kwargs else getattr(obj, name, default)
+            return (
+                kwargs[name] if name in kwargs else getattr(obj, name, default)
+            )
 
         # The _add_decorators() call must precede everything else.
         func = cls._add_decorators(func, get_attribute)
@@ -210,13 +231,19 @@ class API:
 
         # If there was no explicit summary or description, determine them from
         # the class documentation if that exists.
-        if summary == cls.__MISSING and description == cls.__MISSING and cls.__doc__:
+        if (
+            summary == cls.__MISSING
+            and description == cls.__MISSING
+            and cls.__doc__
+        ):
             class_doc_parts = cls.__doc__.strip().split("\n\n")
             if len(class_doc_parts) > 0:
                 summary = class_doc_parts[0].strip()
             if len(class_doc_parts) > 1:
                 # Preserve paragraphs.
-                description = "<br><br>".join(part.strip() for part in class_doc_parts[1:])
+                description = "<br><br>".join(
+                    part.strip() for part in class_doc_parts[1:]
+                )
 
         return doc.route(
             summary=summary if summary != cls.__MISSING else None,
@@ -238,10 +265,15 @@ class API:
         if value is None or cls._exclude(get_attribute):
             return func
 
-        # If value is a type (class), convert it to a doc.Object to be able to specify
-        # its name to avoid model name conflicts and have a more readable doc.
+        # If value is a type (class), convert it to a doc.Object to be able to
+        # specify its name to avoid model name conflicts and have a more
+        # readable doc.
         if isinstance(value, type):
-            value = doc.Object(value, object_name=cls.__name__ + "Consumes", description=value.__doc__)
+            value = doc.Object(
+                value,
+                object_name=cls.__name__ + "Consumes",
+                description=value.__doc__,
+            )
 
         # Use the same default values as in doc.consumes().
         return doc.consumes(
@@ -254,7 +286,8 @@ class API:
     @classmethod
     def _add_decorators(cls, func, get_attribute):
         """
-        Adds the custom route decorators from the `decorators` class attribute to the route.
+        Adds the custom route decorators from the `decorators` class attribute
+        to the route.
 
         Arguments:
             func: The decorated request handler function.
@@ -280,14 +313,23 @@ class API:
         if value is None or cls._exclude(get_attribute):
             return func
 
-        # If value is a type (class), convert it to a doc.Object to be able to specify
-        # its name to avoid model name conflicts and have a more readable doc.
+        # If value is a type (class), convert it to a doc.Object to be able to
+        # specify its name to avoid model name conflicts and have a more
+        # readable doc.
         if isinstance(value, type):
             produces_doc = value.__doc__.strip() if value.__doc__ else None
-            produces_description = get_attribute(cls, "produces_description", produces_doc)
-            value = doc.Object(value, object_name=cls.__name__ + "Produces", description=produces_doc)
+            produces_description = get_attribute(
+                cls, "produces_description", produces_doc
+            )
+            value = doc.Object(
+                value,
+                object_name=cls.__name__ + "Produces",
+                description=produces_doc,
+            )
         else:
-            produces_description = get_attribute(cls, "produces_description", None)
+            produces_description = get_attribute(
+                cls, "produces_description", None
+            )
 
         # User the same default values as in doc.produces().
         return doc.produces(
@@ -304,19 +346,26 @@ class API:
 
         Arguments:
             func: The decorated request handler function.
-            response: The `Response` instance that defines the route's behavior.
+            response: The `Response` instance that defines the route's
+            behavior.
         """
         description = response.description
         if description is None and isinstance(response.model, type):
-            description = response.model.__doc__.strip() if response.model.__doc__ else None
+            description = (
+                response.model.__doc__.strip()
+                if response.model.__doc__
+                else None
+            )
 
-        return doc.response(response.code, response.model, description=description)(func)
+        return doc.response(
+            response.code, response.model, description=description
+        )(func)
 
     @classmethod
     def _add_responses(cls, func, get_attribute):
         """
-        Adds the documentation of responses corresponding to specific HTTP status
-        codes to the route.
+        Adds the documentation of responses corresponding to specific HTTP
+        status codes to the route.
 
         Arguments:
             func: The decorated request handler function.
@@ -365,16 +414,19 @@ class API:
     @classmethod
     def delete(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
         The decorated method will be registered for `DELETE` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `delete()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `delete()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -386,16 +438,19 @@ class API:
     @classmethod
     def get(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its API
+        using `sanic_openapi`.
 
         The decorated method will be registered for `GET` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `get()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `get()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -407,16 +462,19 @@ class API:
     @classmethod
     def head(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
         The decorated method will be registered for `HEAD` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `head()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `head()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -428,16 +486,19 @@ class API:
     @classmethod
     def options(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
         The decorated method will be registered for `OPTIONS` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `options()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `options()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -449,16 +510,19 @@ class API:
     @classmethod
     def patch(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
         The decorated method will be registered for `PATCH` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `patch()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `patch()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -470,16 +534,19 @@ class API:
     @classmethod
     def post(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
         The decorated method will be registered for `POST` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `post()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `post()` method
+        as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -491,16 +558,19 @@ class API:
     @classmethod
     def put(cls, app, uri, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
         The decorated method will be registered for `PUT` requests.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `put()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `put()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 
@@ -512,14 +582,17 @@ class API:
     @classmethod
     def route(cls, app, uri, *, methods, **kwargs):
         """
-        Decorator that registers the decorated route in the given `sanic` application or
-        blueprint with the given URI, and also documents its API using `sanic_openapi`.
+        Decorator that registers the decorated route in the given `sanic`
+        application or blueprint with the given URI, and also documents its
+        API using `sanic_openapi`.
 
-        Keyword arguments that are not listed in arguments section will be passed on to the
-        `sanic` application's or blueprint's `route()` method as they are.
+        Keyword arguments that are not listed in arguments section will be
+        passed on to the `sanic` application's or blueprint's `route()`
+        method as they are.
 
         Arguments:
-            app: The `sanic` application or blueprint where the route should be registered.
+            app: The `sanic` application or blueprint where the route should
+                be registered.
             uri: The URI the route should be accessible at.
         """
 

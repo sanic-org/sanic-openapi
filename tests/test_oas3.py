@@ -1,10 +1,11 @@
-from enum import Enum
 import itertools
+from enum import Enum
 
 from sanic import Sanic
 from sanic.response import json as json_response
 from sanic.response import text
 from sanic.views import HTTPMethodView
+
 from sanic_openapi import openapi, openapi3_blueprint
 
 

@@ -5,6 +5,7 @@ These are completely internal, so can be refactored if desired without concern
 for breaking user experience
 """
 from collections import defaultdict
+from typing import Optional
 
 from ..autodoc import YamlStyleParametersParser
 from ..utils import remove_nulls, remove_nulls_from_kwargs
@@ -112,8 +113,8 @@ class SpecificationBuilder:
     _urls: List[str]
     _title: str
     _version: str
-    _description: str
-    _terms: str
+    _description: Optional[str]
+    _terms: Optional[str]
     _contact: Contact
     _license: License
     _paths: Dict[str, Dict[str, OperationBuilder]]
@@ -134,8 +135,8 @@ class SpecificationBuilder:
         self,
         title: str,
         version: str,
-        description: str = None,
-        terms: str = None,
+        description: Optional[str] = None,
+        terms: Optional[str] = None,
     ):
         self._title = title
         self._version = version

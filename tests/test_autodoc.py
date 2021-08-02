@@ -17,7 +17,10 @@ more lines
 """
 
 tests.append(
-    {"doc": _, "expects": {"summary": "first line", "description": "more lines"}}
+    {
+        "doc": _,
+        "expects": {"summary": "first line", "description": "more lines"},
+    }
 )
 
 

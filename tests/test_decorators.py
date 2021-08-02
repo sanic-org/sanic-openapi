@@ -1,6 +1,7 @@
 import pytest
 from sanic.response import text
 from sanic.views import HTTPMethodView
+
 from sanic_openapi import doc
 
 

@@ -9,7 +9,14 @@ from sanic_openapi import doc
 @pytest.mark.parametrize(
     "description, required, name, choices, serialized_field, path_parameters",
     [
-        (None, None, None, None, {}, [{"required": True, "in": "body", "name": None}]),
+        (
+            None,
+            None,
+            None,
+            None,
+            {},
+            [{"required": True, "in": "body", "name": None}],
+        ),
         (
             "The test field",
             None,
@@ -49,12 +56,25 @@ from sanic_openapi import doc
             None,
             ["A", "B", "C"],
             {"enum": ["A", "B", "C"]},
-            [{"enum": ["A", "B", "C"], "required": True, "in": "body", "name": None}],
+            [
+                {
+                    "enum": ["A", "B", "C"],
+                    "required": True,
+                    "in": "body",
+                    "name": None,
+                }
+            ],
         ),
     ],
 )
 def test_base_field(
-    app, description, required, name, choices, serialized_field, path_parameters
+    app,
+    description,
+    required,
+    name,
+    choices,
+    serialized_field,
+    path_parameters,
 ):
 
     field = doc.Field(
@@ -250,7 +270,11 @@ def test_file_field(app):
 
 def test_uuid_field(app):
     field = doc.UUID(name="id")
-    assert field.serialize() == {"type": "string", "format": "uuid", "name": "id"}
+    assert field.serialize() == {
+        "type": "string",
+        "format": "uuid",
+        "name": "id",
+    }
 
     @app.get("/<id:uuid>")
     @doc.consumes(field, location="path")
@@ -320,7 +344,10 @@ class TestSchema:
         (dict, {"type": "object", "properties": {}}),
         ({"foo": "bar"}, {"type": "object", "properties": {"foo": {}}}),
         (list, {"type": "array", "items": []}),
-        (["foo", "bar"], {"type": "array", "items": {"description": ["foo", "bar"]}}),
+        (
+            ["foo", "bar"],
+            {"type": "array", "items": {"description": ["foo", "bar"]}},
+        ),
     ],
 )
 def test_serialize_schema(schema, expected_schema):
@@ -403,7 +430,10 @@ def test_list_field(app, field, serialized_field, path_parameters):
 def test_object_field(app):
 
     field = doc.Object(TestSchema)
-    assert field.serialize() == {"type": "object", "$ref": "#/definitions/TestSchema"}
+    assert field.serialize() == {
+        "type": "object",
+        "$ref": "#/definitions/TestSchema",
+    }
 
     @app.get("/")
     @doc.consumes(field, location="body", required=True)
