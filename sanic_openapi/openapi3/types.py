@@ -1,6 +1,6 @@
 import json
-from enum import Enum
 from datetime import date, datetime, time
+from enum import Enum
 from typing import Any, Dict, List, Union, get_type_hints
 
 

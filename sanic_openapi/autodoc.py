@@ -73,7 +73,9 @@ class YamlStyleParametersParser(OpenAPIDocstringParser):
         try:
             return yaml.safe_load(doc)
         except Exception as e:
-            warnings.warn("error parsing openAPI yaml, ignoring it. ({})".format(e))
+            warnings.warn(
+                "error parsing openAPI yaml, ignoring it. ({})".format(e)
+            )
             return {}
 
     def _parse_all(self) -> dict:

@@ -7,7 +7,9 @@ from itertools import chain
 
 
 class Field:
-    def __init__(self, description=None, required=None, name=None, choices=None):
+    def __init__(
+        self, description=None, required=None, name=None, choices=None
+    ):
         self.name = name
         self.description = description
         self.required = required
@@ -73,7 +75,10 @@ class Dictionary(Field):
     def serialize(self):
         return {
             "type": "object",
-            "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
+            "properties": {
+                key: serialize_schema(schema)
+                for key, schema in self.fields.items()
+            },
             **super().serialize(),
         }
 
@@ -87,7 +92,10 @@ class JsonBody(Field):
         return {
             "schema": {
                 "type": "object",
-                "properties": {key: serialize_schema(schema) for key, schema in self.fields.items()},
+                "properties": {
+                    key: serialize_schema(schema)
+                    for key, schema in self.fields.items()
+                },
             },
             **super().serialize(),
         }
@@ -125,7 +133,9 @@ class Object(Field):
         self.cls = cls
         self.object_name = object_name or cls.__name__
 
-        register_as = object_name or "{}.{}".format(cls.__module__, cls.__qualname__)
+        register_as = object_name or "{}.{}".format(
+            cls.__module__, cls.__qualname__
+        )
         if register_as not in definitions:
             definitions[register_as] = (self, self.definition)
 
@@ -136,7 +146,11 @@ class Object(Field):
             "properties": {
                 key: serialize_schema(schema)
                 for key, schema in chain(
-                    {key: getattr(self.cls, key) for key in dir(self.cls) if not key.startswith("_")}.items(),
+                    {
+                        key: getattr(self.cls, key)
+                        for key in dir(self.cls)
+                        if not key.startswith("_")
+                    }.items(),
                     typing.get_type_hints(self.cls).items(),
                 )
                 if not key.startswith("_")
@@ -191,7 +205,10 @@ def serialize_schema(schema):
             return Dictionary(schema).serialize()
         elif schema_type is list:
             return List(schema).serialize()
-        elif getattr(schema, "__origin__", None) in (list, collections.abc.Sequence):
+        elif getattr(schema, "__origin__", None) in (
+            list,
+            collections.abc.Sequence,
+        ):
             # Type hinting with either List or Sequence
             return List(list(schema.__args__)).serialize()
 
@@ -298,7 +315,9 @@ def description(text):
     return inner
 
 
-def consumes(*args, content_type="application/json", location="query", required=False):
+def consumes(
+    *args, content_type="application/json", location="query", required=False
+):
     def inner(func):
         if args:
             for arg in args:

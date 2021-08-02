@@ -31,7 +31,9 @@ def test_message_api_response():
     )
     assert app_response.headers == benchmark_response.headers
     assert (
-        app_response.json == benchmark_response.json == {"message": "Message received."}
+        app_response.json
+        == benchmark_response.json
+        == {"message": "Message received."}
     )
 
 
@@ -111,10 +113,12 @@ def test_documentation():
     for path in benchmark_response.json["paths"]:
         for method in benchmark_response.json["paths"][path]:
             assert (
-                app_response.json["paths"][path][method]["operationId"].split(".")[-1]
-                == benchmark_response.json["paths"][path][method]["operationId"].split(
+                app_response.json["paths"][path][method]["operationId"].split(
                     "."
                 )[-1]
+                == benchmark_response.json["paths"][path][method][
+                    "operationId"
+                ].split(".")[-1]
             )
             app_response.json["paths"][path][method][
                 "operationId"
