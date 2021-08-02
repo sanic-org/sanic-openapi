@@ -57,7 +57,9 @@ def test_swagger_endpoint_redirect(app):
     )  # post sanic21.3
     assert len(response.history) == 1
     status = getattr(
-        response.history[0], "status", getattr(response.history[0], "status_code", None)
+        response.history[0],
+        "status",
+        getattr(response.history[0], "status_code", None),
     )  # For request-async compatibility
     assert status == 302
     assert str(response.history[0].url).endswith("/swagger")
@@ -157,7 +159,9 @@ def test_class_based_view(app):
 
     swagger_json = response.json
 
-    assert sorted(set(METHODS)) == sorted(set(swagger_json["paths"]["/"].keys()))
+    assert sorted(set(METHODS)) == sorted(
+        set(swagger_json["paths"]["/"].keys())
+    )
 
 
 def test_blueprint_class_based_view(app):
@@ -172,7 +176,9 @@ def test_blueprint_class_based_view(app):
 
     swagger_json = response.json
 
-    assert sorted(set(METHODS)) == sorted(set(swagger_json["paths"]["/"].keys()))
+    assert sorted(set(METHODS)) == sorted(
+        set(swagger_json["paths"]["/"].keys())
+    )
     assert {"name": "test"} in swagger_json["tags"]
 
 
@@ -184,7 +190,9 @@ def test_document_compositionview(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert set(swagger_json["paths"]["/"].keys()) == set(["get", "post", "put"])
+    assert set(swagger_json["paths"]["/"].keys()) == set(
+        ["get", "post", "put"]
+    )
     assert {"name": "test"} in swagger_json["tags"]
 
 
@@ -199,7 +207,9 @@ def test_document_blueprint_compositionview(app):
     assert response.content_type == "application/json"
 
     swagger_json = response.json
-    assert set(swagger_json["paths"]["/"].keys()) == set(["get", "post", "put"])
+    assert set(swagger_json["paths"]["/"].keys()) == set(
+        ["get", "post", "put"]
+    )
 
 
 def test_swagger_ui_config(app):

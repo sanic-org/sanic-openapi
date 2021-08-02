@@ -6,23 +6,21 @@ documentation to operations and components created in the blueprints.
 from typing import Any
 
 from . import operations
-from .types import (  # noqa
-    Array,
-    Binary,
-    Boolean,
-    Byte,
-    Date,
-    DateTime,
-    Double,
-    Email,
-    Float,
-    Integer,
-    Long,
-    Object,
-    Password,
-    String,
-    Time,
-)
+from .types import Array  # noqa
+from .types import Binary  # noqa
+from .types import Boolean  # noqa
+from .types import Byte  # noqa
+from .types import Date  # noqa
+from .types import DateTime  # noqa
+from .types import Double  # noqa
+from .types import Email  # noqa
+from .types import Float  # noqa
+from .types import Integer  # noqa
+from .types import Long  # noqa
+from .types import Object  # noqa
+from .types import Password  # noqa
+from .types import String  # noqa
+from .types import Time  # noqa
 
 
 def operation(name: str):
