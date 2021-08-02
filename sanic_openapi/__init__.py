@@ -3,7 +3,7 @@ from .openapi3 import openapi, openapi3_blueprint
 
 swagger_blueprint = openapi2_blueprint
 
-__version__ = "21.3.2"
+__version__ = "21.3.4"
 __all__ = [
     "openapi2_blueprint",
     "swagger_blueprint",
