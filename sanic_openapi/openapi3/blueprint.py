@@ -111,19 +111,19 @@ def add_static_info_to_spec_from_config(app, specification):
 
     Modifies specification in-place and returns None
     """
-    specification.describe(
+    specification._do_describe(
         getattr(app.config, "API_TITLE", "API"),
         getattr(app.config, "API_VERSION", "1.0.0"),
         getattr(app.config, "API_DESCRIPTION", None),
         getattr(app.config, "API_TERMS_OF_SERVICE", None),
     )
 
-    specification.license(
+    specification._do_license(
         getattr(app.config, "API_LICENSE_NAME", None),
         getattr(app.config, "API_LICENSE_URL", None),
     )
 
-    specification.contact(
+    specification._do_contact(
         getattr(app.config, "API_CONTACT_NAME", None),
         getattr(app.config, "API_CONTACT_URL", None),
         getattr(app.config, "API_CONTACT_EMAIL", None),

@@ -11,6 +11,7 @@ from ..autodoc import YamlStyleParametersParser
 from ..utils import remove_nulls, remove_nulls_from_kwargs
 from .definitions import (
     Any,
+    Components,
     Contact,
     Dict,
     ExternalDocumentation,
@@ -123,14 +124,24 @@ class SpecificationBuilder:
     _license: License
     _paths: Dict[str, Dict[str, OperationBuilder]]
     _tags: Dict[str, Tag]
+    _components: Dict[str, Any]
+    _servers: List[Server]
     # _components: ComponentsBuilder
     # deliberately not included
 
     def __init__(self):
-        self._paths = defaultdict(dict)
-        self._tags = {}
+        self._components = defaultdict(dict)
+        self._contact = None
+        self._description = None
+        self._external = None
         self._license = None
+        self._paths = defaultdict(dict)
+        self._servers = []
+        self._tags = {}
+        self._terms = None
+        self._title = None
         self._urls = []
+        self._version = None
 
     def url(self, value: str):
         self._urls.append(value)
@@ -147,16 +158,44 @@ class SpecificationBuilder:
         self._description = description
         self._terms = terms
 
-    def tag(self, name: str, **kwargs):
-        self._tags[name] = Tag(name, **kwargs)
+    def _do_describe(
+        self,
+        title: str,
+        version: str,
+        description: Optional[str] = None,
+        terms: Optional[str] = None,
+    ):
+        if any([self._title, self._version, self._description, self._terms]):
+            return
+        self.describe(title, version, description, terms)
+
+    def tag(self, name: str, description: Optional[str] = None, **kwargs):
+        self._tags[name] = Tag(name, description=description, **kwargs)
+
+    def external(self, url: str, description: Optional[str] = None, **kwargs):
+        self._external = ExternalDocumentation(url, description=description)
 
     def contact(self, name: str = None, url: str = None, email: str = None):
         kwargs = remove_nulls_from_kwargs(name=name, url=url, email=email)
         self._contact = Contact(**kwargs)
 
+    def _do_contact(
+        self, name: str = None, url: str = None, email: str = None
+    ):
+        if self._contact:
+            return
+
+        self.contact(name, url, email)
+
     def license(self, name: str = None, url: str = None):
         if name is not None:
             self._license = License(name, url=url)
+
+    def _do_license(self, name: str = None, url: str = None):
+        if self._license:
+            return
+
+        self.license(name, url)
 
     def operation(self, path: str, method: str, operation: OperationBuilder):
         for _tag in operation.tags:
@@ -167,18 +206,62 @@ class SpecificationBuilder:
 
         self._paths[path][method.lower()] = operation
 
+    def add_component(self, location: str, name: str, obj: Any):
+        self._components[location].update({name: obj})
+
+    def raw(self, data):
+        if "info" in data:
+            self.describe(
+                data["info"].get("title"),
+                data["info"].get("version"),
+                data["info"].get("description"),
+                data["info"].get("terms"),
+            )
+
+        if "servers" in data:
+            for server in data["servers"]:
+                self._servers.append(Server(**server))
+
+        if "paths" in data:
+            self._paths.update(data["paths"])
+
+        if "components" in data:
+            for location, component in data["components"].items():
+                self._components[location].update(component)
+
+        if "security" in data:
+            ...
+
+        if "tags" in data:
+            for tag in data["tags"]:
+                self.tag(**tag)
+
+        if "externalDocs" in data:
+            self.external(**data["externalDocs"])
+
     def build(self) -> OpenAPI:
         info = self._build_info()
         paths = self._build_paths()
         tags = self._build_tags()
 
         url_servers = getattr(self, "_urls", None)
-        servers = []
+        servers = self._servers
         if url_servers is not None:
             for url_server in url_servers:
                 servers.append(Server(url=url_server))
 
-        return OpenAPI(info, paths, tags=tags, servers=servers)
+        components = (
+            Components(**self._components) if self._components else None
+        )
+
+        return OpenAPI(
+            info,
+            paths,
+            tags=tags,
+            servers=servers,
+            components=components,
+            externalDocs=self._external,
+        )
 
     def _build_info(self) -> Info:
         kwargs = remove_nulls(
@@ -201,7 +284,10 @@ class SpecificationBuilder:
 
         for path, operations in self._paths.items():
             paths[path] = PathItem(
-                **{k: v.build() for k, v in operations.items()}
+                **{
+                    k: v if isinstance(v, dict) else v.build()
+                    for k, v in operations.items()
+                }
             )
 
         return paths
