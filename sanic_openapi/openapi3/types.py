@@ -1,4 +1,5 @@
 import json
+import typing as t
 from datetime import date, datetime, time
 from enum import Enum
 from inspect import isclass
@@ -115,14 +116,11 @@ class Schema(Definition):
 
             return Array(schema, **kwargs)
         elif _type == dict:
-            return Object(
-                {k: Schema.make(v) for k, v in value.items()}, **kwargs
-            )
+            return Object.make(value, **kwargs)
+        elif _type == t._GenericAlias and value.__origin__ == list:
+            return Array(Schema.make(value.__args__[0]), **kwargs)
         else:
-            return Object(
-                {k: Schema.make(v) for k, v in _properties(value).items()},
-                **kwargs,
-            )
+            return Object.make(value, **kwargs)
 
 
 class Boolean(Schema):
@@ -197,6 +195,13 @@ class Object(Schema):
 
     def __init__(self, properties: Dict[str, Schema] = None, **kwargs):
         super().__init__(type="object", properties=properties or {}, **kwargs)
+
+    @classmethod
+    def make(cls, value: Any, **kwargs):
+        return cls(
+            {k: Schema.make(v) for k, v in _properties(value).items()},
+            **kwargs,
+        )
 
 
 class Array(Schema):

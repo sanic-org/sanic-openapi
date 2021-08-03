@@ -259,13 +259,13 @@ class SecurityScheme(Definition):
         return values
 
     @staticmethod
-    def make(_type: str, cls: type, **kwargs):
+    def make(_type: str, cls: Type, **kwargs):
         params = cls.__dict__ if hasattr(cls, "__dict__") else {}
 
         return SecurityScheme(_type, **params, **kwargs)
 
 
-class ServerVariable:
+class ServerVariable(Definition):
     default: str
     description: str
     enum: List[str]

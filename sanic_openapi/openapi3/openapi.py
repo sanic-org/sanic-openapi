@@ -7,12 +7,12 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 from sanic.blueprints import Blueprint
 from sanic.exceptions import SanicException
-
 from sanic_openapi.openapi3.definitions import (
     ExternalDocumentation,
     Parameter,
     RequestBody,
     Response,
+    Tag,
 )
 
 from . import operations
@@ -138,10 +138,15 @@ def definition(
     summary: Optional[str] = None,
     description: Optional[str] = None,
     document: Optional[Union[str, ExternalDocumentation]] = None,
-    tag: Optional[Union[str, Sequence[str]]] = None,
+    tag: Optional[Union[Union[str, Tag], Sequence[Union[str, Tag]]]] = None,
     deprecated: bool = False,
-    body: Union[Dict[str, Any], RequestBody, Any] = None,
-    parameter: Union[Dict[str, Any], Parameter, str] = None,
+    body: Optional[Union[Dict[str, Any], RequestBody, Any]] = None,
+    parameter: Optional[
+        Union[
+            Union[Dict[str, Any], Parameter, str],
+            List[Union[Dict[str, Any], Parameter, str]],
+        ]
+    ] = None,
     response: Optional[
         Union[
             Union[Dict[str, Any], Response, Any],
@@ -169,8 +174,8 @@ def definition(
             if isinstance(document, str):
                 kwargs["url"] = document
             else:
-                kwargs["url"] = (document.fields["url"],)
-                kwargs["description"] = (document.fields["description"],)
+                kwargs["url"] = document.fields["url"]
+                kwargs["description"] = document.fields["description"]
 
             glbl["document"](**kwargs)(func)
 
@@ -181,8 +186,14 @@ def definition(
                 if isinstance(tag, (list, tuple, set, frozenset))
                 else "append"
             )
+
             getattr(taglist, op)(tag)
-            glbl["tag"](*taglist)(func)
+            glbl["tag"](
+                *[
+                    tag.fields["name"] if isinstance(tag, Tag) else tag
+                    for tag in taglist
+                ]
+            )(func)
 
         if deprecated:
             glbl["deprecated"]()(func)
@@ -192,29 +203,41 @@ def definition(
             if isinstance(body, RequestBody):
                 kwargs = body.fields
             elif isinstance(body, dict):
-                kwargs = body
+                if "content" in body:
+                    kwargs = body
+                else:
+                    kwargs["content"] = body
             else:
                 kwargs["content"] = body
             glbl["body"](**kwargs)(func)
 
         if parameter:
-            kwargs = {}
-            if isinstance(parameter, Parameter):
-                kwargs = parameter.fields
-            elif isinstance(parameter, dict) and "name" in parameter:
-                kwargs = parameter
-            elif isinstance(parameter, str):
-                kwargs["name"] = parameter
-            else:
-                raise SanicException(
-                    "parameter must be a Parameter instance, a string, or "
-                    "a dictionary containing at least 'name'."
-                )
+            paramlist = []
+            op = (
+                "extend"
+                if isinstance(parameter, (list, tuple, set, frozenset))
+                else "append"
+            )
+            getattr(paramlist, op)(parameter)
 
-            if "schema" not in kwargs:
-                kwargs["schema"] = str
+            for param in paramlist:
+                kwargs = {}
+                if isinstance(param, Parameter):
+                    kwargs = param.fields
+                elif isinstance(param, dict) and "name" in param:
+                    kwargs = param
+                elif isinstance(param, str):
+                    kwargs["name"] = param
+                else:
+                    raise SanicException(
+                        "parameter must be a Parameter instance, a string, or "
+                        "a dictionary containing at least 'name'."
+                    )
 
-            glbl["parameter"](**kwargs)(func)
+                if "schema" not in kwargs:
+                    kwargs["schema"] = str
+
+                glbl["parameter"](**kwargs)(func)
 
         if response:
             resplist = []
