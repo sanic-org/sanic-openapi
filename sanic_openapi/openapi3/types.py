@@ -1,6 +1,7 @@
 import json
 from datetime import date, datetime, time
 from enum import Enum
+from inspect import isclass
 from typing import Any, Dict, List, Union, get_type_hints
 
 
@@ -27,14 +28,24 @@ class Definition:
     def __str__(self):
         return json.dumps(self.serialize())
 
+    def apply(self, func, operations, *args, **kwargs):
+        op = operations[func]
+        method_name = getattr(
+            self.__class__, "__method__", self.__class__.__name__.lower()
+        )
+        method = getattr(op, method_name)
+        if not args and not kwargs:
+            kwargs = self.__dict__
+        method(*args, **kwargs)
+
 
 class Schema(Definition):
     title: str
     description: str
     type: str
     format: str
-    nullable: False
-    required: False
+    nullable: bool
+    required: bool
     default: None
     example: None
     oneOf: List[Definition]
@@ -43,9 +54,9 @@ class Schema(Definition):
 
     multipleOf: int
     maximum: int
-    exclusiveMaximum: False
+    exclusiveMaximum: bool
     minimum: int
-    exclusiveMinimum: False
+    exclusiveMinimum: bool
     maxLength: int
     minLength: int
     pattern: str
@@ -192,7 +203,7 @@ class Array(Schema):
     items: Any
     maxItems: int
     minItems: int
-    uniqueItems: False
+    uniqueItems: bool
 
     def __init__(self, items: Any, **kwargs):
         super().__init__(type="array", items=Schema.make(items), **kwargs)
@@ -216,10 +227,13 @@ def _serialize(value) -> Any:
 
 def _properties(value: object) -> Dict:
     try:
-        fields = {
-            x: v for x, v in value.__dict__.items() if not x.startswith("_")
-        }
+        fields = {x: v for x, v in value.__dict__.items()}
     except AttributeError:
-        return {}
+        fields = {}
 
-    return {**get_type_hints(value.__class__), **fields}
+    cls = value if isclass(value) else value.__class__
+    return {
+        k: v
+        for k, v in {**get_type_hints(cls), **fields}.items()
+        if not k.startswith("_")
+    }

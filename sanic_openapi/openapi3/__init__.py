@@ -3,7 +3,6 @@
 """
 
 from collections import defaultdict
-
 from .builders import OperationBuilder, SpecificationBuilder
 
 # Static datastores, which get added to via the oas3.openapi decorators,

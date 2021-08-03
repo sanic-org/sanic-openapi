@@ -47,6 +47,7 @@ class OperationBuilder:
         self.parameters = []
         self.responses = {}
         self._autodoc = None
+        self._exclude = False
 
     def name(self, value: str):
         self.operationId = value
@@ -107,6 +108,9 @@ class OperationBuilder:
     def autodoc(self, docstring: str):
         y = YamlStyleParametersParser(docstring)
         self._autodoc = y.to_openAPI_3()
+
+    def exclude(self, flag: bool = True):
+        self._exclude = flag
 
 
 class SpecificationBuilder:

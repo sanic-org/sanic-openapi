@@ -54,6 +54,8 @@ def blueprint_factory():
         for blueprint_name, handler in get_blueprinted_routes(app):
             route_spec = route_specs[handler]
             route_spec.blueprint = blueprint_name
+            if route_spec.exclude:
+                continue
             if not route_spec.tags:
                 route_spec.tags.append(blueprint_name)
 
@@ -195,7 +197,9 @@ def blueprint_factory():
                 methods[_method.lower()] = endpoint
 
             if methods:
-                paths[uri] = methods
+                if uri not in paths:
+                    paths[uri] = {}
+                paths[uri].update(methods)
 
         # --------------------------------------------------------------- #
         # Definitions

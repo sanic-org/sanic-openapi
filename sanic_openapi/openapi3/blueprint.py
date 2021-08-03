@@ -76,6 +76,10 @@ def blueprint_factory():
                 if hasattr(_handler, "view_class"):
                     _handler = getattr(_handler.view_class, method.lower())
                 operation = operations[_handler]
+
+                if operation._exclude:
+                    continue
+
                 docstring = inspect.getdoc(_handler)
 
                 if docstring:
