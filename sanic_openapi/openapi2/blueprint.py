@@ -24,7 +24,7 @@ def blueprint_factory():
     swagger_blueprint.static(
         "/", dir_path + "/index.html", strict_slashes=True
     )
-    swagger_blueprint.static("/", dir_path)
+    swagger_blueprint.static("", dir_path)
 
     # Redirect "/swagger" to "/swagger/"
     @swagger_blueprint.route("", strict_slashes=True)
