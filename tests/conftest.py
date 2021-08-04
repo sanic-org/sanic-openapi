@@ -3,7 +3,7 @@ import itertools
 import pytest
 from sanic import Sanic
 
-from sanic_openapi import openapi2_blueprint
+from sanic_openapi import openapi2_blueprint, openapi3_blueprint
 
 app_ID = itertools.count()
 
@@ -16,3 +16,10 @@ def app():
 
     # Clean up
     openapi2_blueprint.definitions = {}
+
+
+@pytest.fixture()
+def app3():
+    app = Sanic("test_{}".format(next(app_ID)))
+    app.blueprint(openapi3_blueprint)
+    yield app

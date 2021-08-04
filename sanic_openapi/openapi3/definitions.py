@@ -4,7 +4,7 @@ Classes defined from the OpenAPI 3.0 specifications.
 I.e., the objects described https://swagger.io/docs/specification
 
 """
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Type, Union
 
 from .types import Definition, Schema
 
@@ -82,11 +82,20 @@ class MediaType(Definition):
 
 
 class Response(Definition):
-    content: Dict[str, MediaType]
-    description: str
+    content: Union[Any, Dict[str, Union[Any, MediaType]]]
+    description: Optional[str]
+    status: str
 
-    def __init__(self, content=None, **kwargs):
-        super().__init__(content=content, **kwargs)
+    def __init__(
+        self,
+        content: Optional[Union[Any, Dict[str, Union[Any, MediaType]]]] = None,
+        status: int = 200,
+        description: Optional[str] = None,
+        **kwargs,
+    ):
+        super().__init__(
+            content=content, status=status, description=description, **kwargs
+        )
 
     @staticmethod
     def make(content, description: str = None, **kwargs):
@@ -99,12 +108,29 @@ class Response(Definition):
 
 
 class RequestBody(Definition):
-    description: str
-    required: bool
-    content: Dict[str, MediaType]
+    description: Optional[str]
+    required: Optional[bool]
+    content: Union[Any, Dict[str, Union[Any, MediaType]]]
 
-    def __init__(self, content: Dict[str, MediaType], **kwargs):
-        super().__init__(content=content, **kwargs)
+    def __init__(
+        self,
+        content: Union[Any, Dict[str, Union[Any, MediaType]]],
+        required: Optional[bool] = None,
+        description: Optional[str] = None,
+        **kwargs,
+    ):
+        """Can be initialized with content in one of a few ways:
+
+        RequestBody(SomeModel)
+        RequestBody({"application/json": SomeModel})
+        RequestBody({"application/json": {"name": str}})
+        """
+        super().__init__(
+            content=content,
+            required=required,
+            description=description,
+            **kwargs,
+        )
 
     @staticmethod
     def make(content: Any, **kwargs):
@@ -138,15 +164,34 @@ class Header(Definition):
 
 class Parameter(Definition):
     name: str
+    schema: Union[Type, Schema]
     location: str
-    description: str
-    required: bool
-    deprecated: bool
-    allowEmptyValue: bool
-    schema: Schema
+    description: Optional[str]
+    required: Optional[bool]
+    deprecated: Optional[bool]
+    allowEmptyValue: Optional[bool]
 
-    def __init__(self, name, schema: Schema, location="query", **kwargs):
-        super().__init__(name=name, schema=schema, location=location, **kwargs)
+    def __init__(
+        self,
+        name: str,
+        schema: Union[Type, Schema],
+        location: str = "query",
+        description: Optional[str] = None,
+        required: Optional[bool] = None,
+        deprecated: Optional[bool] = None,
+        allowEmptyValue: Optional[bool] = None,
+        **kwargs,
+    ):
+        super().__init__(
+            name=name,
+            schema=schema,
+            location=location,
+            description=description,
+            required=required,
+            deprecated=deprecated,
+            allowEmptyValue=allowEmptyValue,
+            **kwargs,
+        )
 
     @property
     def fields(self):
@@ -214,13 +259,13 @@ class SecurityScheme(Definition):
         return values
 
     @staticmethod
-    def make(_type: str, cls: type, **kwargs):
+    def make(_type: str, cls: Type, **kwargs):
         params = cls.__dict__ if hasattr(cls, "__dict__") else {}
 
         return SecurityScheme(_type, **params, **kwargs)
 
 
-class ServerVariable:
+class ServerVariable(Definition):
     default: str
     description: str
     enum: List[str]
