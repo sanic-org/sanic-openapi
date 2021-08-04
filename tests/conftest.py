@@ -22,6 +22,3 @@ def app3():
     app = Sanic("test_{}".format(next(app_ID)))
     app.blueprint(openapi3_blueprint)
     yield app
-
-    # Clean up
-    openapi3_blueprint.definitions = {}

@@ -14,10 +14,24 @@ except ImportError:
 # Static datastores, which get added to via the oas3.openapi decorators,
 # and then read from in the blueprint generation
 
-operations: Dict[RouteHandler, OperationBuilder] = defaultdict(
-    OperationBuilder
-)
-specification = SpecificationBuilder()
+# operations: Dict[RouteHandler, OperationBuilder] = defaultdict(
+#     OperationBuilder
+# )
+# specification = SpecificationBuilder()
+operations = None
+specification = None
+
+
+def setup():
+    global operations
+    global specification
+    if operations:
+        raise Exception(">>>")
+    operations = defaultdict(OperationBuilder)
+    specification = SpecificationBuilder()
+
+
+setup()
 
 from .blueprint import blueprint_factory  # noqa
 
