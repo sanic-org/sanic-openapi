@@ -20,7 +20,12 @@ def test_exclude_entire_blueprint(app3):
     def noshow(_):
         ...
 
-    app3.router.reset()
+    # For 21.3+
+    try:
+        app3.router.reset()
+    except AttributeError:
+        ...
+
     app3.blueprint(bp)
     openapi.exclude(bp=bp)
 
@@ -46,7 +51,12 @@ def test_exclude_single_blueprint_route(app3):
     def ok(_):
         ...
 
-    app3.router.reset()
+    # For 21.3+
+    try:
+        app3.router.reset()
+    except AttributeError:
+        ...
+
     app3.blueprint(bp)
 
     _, response = app3.test_client.get("/swagger/swagger.json")
