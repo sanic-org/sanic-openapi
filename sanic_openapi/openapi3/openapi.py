@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 from sanic.blueprints import Blueprint
 from sanic.exceptions import SanicException
+
 from sanic_openapi.openapi3.definitions import (
     ExternalDocumentation,
     Parameter,

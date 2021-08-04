@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from sanic.blueprints import Blueprint
+
 from sanic_openapi import openapi, openapi3
 from sanic_openapi.openapi3.blueprint import blueprint_factory
 from sanic_openapi.openapi3.builders import (

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import yaml
+
 from sanic_openapi import specification
 
 

@@ -1,4 +1,5 @@
 import pytest
+
 from sanic_openapi import openapi
 from sanic_openapi.openapi3.definitions import (
     ExternalDocumentation,
