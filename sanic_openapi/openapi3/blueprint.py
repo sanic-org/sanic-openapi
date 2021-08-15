@@ -93,6 +93,14 @@ def blueprint_factory():
                 #     )
 
                 for _parameter in route_parameters:
+                    if any(
+                        (
+                            param.fields["name"] == _parameter.name
+                            for param in operation.parameters
+                        )
+                    ):
+                        continue
+
                     operation.parameter(
                         _parameter.name, _parameter.cast, "path"
                     )
