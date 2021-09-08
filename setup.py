@@ -18,6 +18,7 @@ doc_requires = [
 ]
 
 test_requires = [
+    "sanic-testing",
     "coverage==4.5.3",
     "pytest==4.6.2",
     "pytest-cov==2.7.1",
