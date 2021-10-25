@@ -179,7 +179,9 @@ def blueprint_factory():
 
                 endpoint = remove_nulls(
                     {
-                        "operationId": route_spec.operation or route_name,
+                        "operationId": route_spec.operation or "%s_%s" % (
+                            _method.lower(), route_name
+                        ),
                         "summary": route_spec.summary,
                         "description": route_spec.description,
                         "consumes": consumes_content_types,
