@@ -1,3 +1,5 @@
+⚠️ This package is being replaced by [Sanic Extensions](https://sanicframework.org/en/plugins/sanic-ext/getting-started.html). The project will continue to be monitored, but no new features or major development is anticipated. Sanic Extensions contains a near 1:1 upgrade if you are using Sanic OpenAPI with OAS3. Ask in the [forums](https://community.sanicframework.org/) or [discord server](https://discord.gg/FARQzAEMAA) for questions about upgrading.
+
 # Sanic OpenAPI
 
 [![Build Status](https://travis-ci.com/sanic-org/sanic-openapi.svg?branch=master)](https://travis-ci.com/sanic-org/sanic-openapi)
@@ -11,9 +13,6 @@ Give your Sanic API a UI and OpenAPI documentation, all for the price of free!
 ![Example Swagger UI](docs/_static/images/code-to-ui.png?raw=true "Swagger UI")
 
 Check out [open collective](https://opencollective.com/sanic-org) to learn more about helping to fund Sanic.
-
-[Try CodeStream]: https://alt-images.codestream.com/codestream_logo_sanicorg.png
-[99]: https://codestream.com/?utm_source=github&amp;utm_campaign=sanicorg&amp;utm_medium=banner
 
 
 ## Installation
@@ -61,7 +60,6 @@ And you can get your Swagger document at <http://localhost:8000/swagger> like th
 
 ## OpenAPI 3
 
-⚠️ Sanic OpenAPI 3 support is experimental. This feature may be subject to change in future releases.
 
 Here is an example to use Sanic-OpenAPI 3:
 
