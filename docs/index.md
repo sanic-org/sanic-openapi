@@ -24,7 +24,7 @@ pip install git+https://github.com/sanic-org/sanic-openapi.git
 ## Getting started
 
 * [Sanic OpenAPI 2](/sanic_openapi2/index)
-* [Sanic OpenAPI 3 (Experimental)](/sanic_openapi3/index)
+* [Sanic OpenAPI 3](/sanic_openapi3/index)
 
 ## Indices and tables
 
