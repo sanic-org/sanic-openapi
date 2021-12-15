@@ -1,6 +1,5 @@
 # Sanic OpenAPI 3
 
-⚠️ Sanic OpenAPI 3 support is experimental. This feature may be subject to change in future releases.
 
 ## Getting started
 
