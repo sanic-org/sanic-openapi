@@ -6,11 +6,9 @@ Sanic-OpenAPI support different ways to document APIs includes:
 * routes of `Blueprint` instance
 * routes of `HTTPMethodView` under `Sanic` instance
 * routes of `HTTPMethodView` under `Bluebprint` instance
-* routes of `CompositionView` under `Sanic` instance
 
 But with some exceptions:
 
-* Sanic-OpenAPI does not support routes of `CompositionView` under `Bluebprint` instance now.
 * Sanic-OpenAPI does not document routes with `OPTIONS` method.
 * Sanic-OpenAPI does not document routes which registered by `static()`.
 
@@ -172,42 +170,3 @@ if __name__ == "__main__":
 
 The result:
 ![](../_static/images/blueprint_class_based_view_example.png)
-
-
-## CompositionView Routes
-
-There is another class-based view named `CompositionView`. Sanic-OpenAPI also support to document routes under class-based view.
-
-```python
-from sanic import Sanic
-from sanic.response import text
-from sanic.views import CompositionView
-
-from sanic_openapi import openapi2_blueprint
-
-app = Sanic()
-app.blueprint(openapi2_blueprint)
-
-
-def get_handler(request):
-    return text("I am a get method")
-
-
-view = CompositionView()
-view.add(["GET"], get_handler)
-view.add(["POST", "PUT"], lambda request: text("I am a post/put method"))
-
-# Use the new view to handle requests to the base URL
-app.add_route(view, "/")
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
-
-```
-
-The Swagger will looks like:
-![](../_static/images/composition_view_example.png)
-
-```eval_rst
-.. note:: Sanic-OpenAPI does not support routes of `CompositionView` under `Bluebprint` instance now.
-```

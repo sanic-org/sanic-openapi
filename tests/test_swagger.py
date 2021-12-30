@@ -2,7 +2,7 @@ import pytest
 from sanic import Blueprint
 from sanic.constants import HTTP_METHODS
 from sanic.response import text
-from sanic.views import CompositionView, HTTPMethodView
+from sanic.views import HTTPMethodView
 
 METHODS = [method.lower() for method in HTTP_METHODS]
 
@@ -32,11 +32,6 @@ class SimpleView(HTTPMethodView):
 
 def get_handler(request):
     return text("I am a get method")
-
-
-view = CompositionView()
-view.add(["GET"], get_handler)
-view.add(["POST", "PUT"], lambda request: text("I am a post/put method"))
 
 
 def test_swagger_endpoint(app):
@@ -180,36 +175,6 @@ def test_blueprint_class_based_view(app):
         set(swagger_json["paths"]["/"].keys())
     )
     assert {"name": "test"} in swagger_json["tags"]
-
-
-def test_document_compositionview(app):
-    app.add_route(view, "/")
-
-    _, response = app.test_client.get("/swagger/swagger.json")
-    assert response.status == 200
-    assert response.content_type == "application/json"
-
-    swagger_json = response.json
-    assert set(swagger_json["paths"]["/"].keys()) == set(
-        ["get", "post", "put"]
-    )
-    assert {"name": "test"} in swagger_json["tags"]
-
-
-@pytest.mark.skip(reason="Not support now.")
-def test_document_blueprint_compositionview(app):
-
-    bp = Blueprint("test")
-    bp.add_route(view, "/")
-
-    _, response = app.test_client.get("/swagger/swagger.json")
-    assert response.status == 200
-    assert response.content_type == "application/json"
-
-    swagger_json = response.json
-    assert set(swagger_json["paths"]["/"].keys()) == set(
-        ["get", "post", "put"]
-    )
 
 
 def test_swagger_ui_config(app):

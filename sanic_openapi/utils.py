@@ -1,7 +1,5 @@
 import re
 
-from sanic.views import CompositionView
-
 
 def get_uri_filter(app):
     """
@@ -128,10 +126,7 @@ def get_all_routes(app, skip_prefix):
             # create dict httpMethod -> handler
             # e.g.  {"GET" -> lambda request: response}
 
-            if type(route.handler) is CompositionView:
-                method_handlers = route.handler.handlers
-
-            elif hasattr(route.handler, "view_class"):
+            if hasattr(route.handler, "view_class"):
                 method_handlers = {
                     method: getattr(route.handler.view_class, method.lower())
                     for method in route.methods
