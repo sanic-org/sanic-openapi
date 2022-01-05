@@ -14,9 +14,6 @@ def app():
     app.blueprint(openapi2_blueprint)
     yield app
 
-    # Clean up
-    openapi2_blueprint.definitions = {}
-
 
 @pytest.fixture()
 def app3():
