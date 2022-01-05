@@ -1,5 +1,10 @@
 # Changelog
 
+## 21.12.0 (2021-12-30)
+
+### Features
+
+* [#253](https://github.com/sanic-org/sanic-openapi/pull/253) - Sanic v21.12.0 Support
 
 ## 21.3.2 (2021-05-19)
 
