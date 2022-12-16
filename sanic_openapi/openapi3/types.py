@@ -243,7 +243,9 @@ def _serialize(value) -> Any:
 
 def _properties(value: object) -> Dict:
     try:
-        fields = {x: v for x, v in value.__dict__.items()}
+        fields = {
+            key: getattr(value, key) for key in dir(value) if not key.startswith("_")
+        }
     except AttributeError:
         fields = {}
 
