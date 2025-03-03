@@ -22,7 +22,7 @@ def blueprint_factory():
     dir_path = abspath(dir_path + "/ui")
 
     swagger_blueprint.static(
-        "/", dir_path + "/index.html", strict_slashes=True
+        "/", dir_path + "/index.html", strict_slashes=True, name="static-index"
     )
     swagger_blueprint.static("", dir_path)
 
