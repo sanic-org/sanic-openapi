@@ -19,7 +19,7 @@ def blueprint_factory():
     dir_path = dirname(dirname(realpath(__file__)))
     dir_path = abspath(dir_path + "/ui")
 
-    oas3_blueprint.static("/", dir_path + "/index.html", strict_slashes=True)
+    oas3_blueprint.static("/", dir_path + "/index.html", strict_slashes=True, name="static-index")
     oas3_blueprint.static("", dir_path)
 
     # Redirect "/swagger" to "/swagger/"
